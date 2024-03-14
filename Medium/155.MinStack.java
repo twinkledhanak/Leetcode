@@ -27,6 +27,8 @@ class MinStack {
     
     public int getMin() {
         return minVal;
+        // @TODO - If the minValue element was popped, this method will return a stale value
+        // Change it to store min element with every stack entry
     }
 }
 

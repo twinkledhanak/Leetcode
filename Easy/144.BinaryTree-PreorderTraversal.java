@@ -31,11 +31,17 @@ class Solution {
             TreeNode node = stack.pollLast();
             output.add(node.val);
 
-            // Explore left and right
-            if(node.left!=null)
-                stack.add(node.left);
+            // EXPLORE RIGHT FIRST **************************
             if(node.right!=null)
                 stack.add(node.right);
+
+
+
+            if(node.left!=null)
+                stack.add(node.left);
+
+
+            
         }
         return output; 
     }

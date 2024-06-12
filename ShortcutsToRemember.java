@@ -26,8 +26,18 @@ private Map<Integer, Integer> cache = new HashMap<>(Map.of(0, 0, 1, 1));
 //https://www.geeksforgeeks.org/hashmap-computeifabsent-method-in-java-with-examples/
 //https://www.geeksforgeeks.org/hashmap-getordefaultkey-defaultvalue-method-in-java-with-examples/ 
 
+Map<Integer,List<Integer> adjMap = new HashMap<>();
+    for(int[] edge: edges){
+        adjMap.computeIfAbsent(edge[0], k-> new ArrayList()).add(edge[1]);
+    }
+
+for(int vertex: adjMap.getOrDefault(currentNode,Collections.emptyList())){}
 
 //https://stackoverflow.com/questions/9255620/why-does-dijkstras-algorithm-use-decrease-key
+
+
+// *************************************************************************************************************************
+
 
 // pair class in Java
 Pair<Integer, String> pair = new Pair<>(1, "One");
@@ -52,6 +62,7 @@ public static class MyPair{
         }
     }
 
+// *************************************************************************************************************************
 
 
 
@@ -90,13 +101,13 @@ size() - Returns the number of elements currently in the circular queue.
 
 // Priority Queue
 PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.offer(startVertex); // push
+pq.offer(startVertex); // push, aligns with Queue's actual push, handles all capacity restrictions by itself
 pq.peek(); // peek
 pq.poll(); // pop
 
 // direct min heap
 PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.add(stick);
+pq.add(stick); // used less frequently, similar behaviour as offer(). We will have to manually handle scenario when queue is full.
 pq.remove();
 
 // Max Heap
@@ -105,8 +116,8 @@ PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
 // Create a priority queue, but put the entire map inside. Use Map.Entry
 // Max heap
 PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(
-        (a, b) ->
-    a.getValue() - b.getValue()
+        (a, b) -> // a and b are two consecutive elements in PriorityQueue
+    a.getValue() - b.getValue() // THIS CREATES MIN HEAP , FOR MAX HEAP: b.value() - a.value()
 );
 // REFER to TopKFrequentElements.java
 

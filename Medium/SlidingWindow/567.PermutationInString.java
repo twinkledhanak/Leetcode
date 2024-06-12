@@ -13,8 +13,6 @@ class Solution {
         return Arrays.equals(ch1,ch2);
     }
 
-
-
     public boolean checkInclusion(String s1, String s2) {
         // s1 - length = window size
         // Fixed window type problem, the smaller string's length is the size of the sliding window

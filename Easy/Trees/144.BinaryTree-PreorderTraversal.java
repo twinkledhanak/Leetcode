@@ -13,6 +13,7 @@
  *     }
  * }
  */
+ // DFS style
 class Solution {
     public List<Integer> preorderTraversal(TreeNode root) {
         // Note the LL used here

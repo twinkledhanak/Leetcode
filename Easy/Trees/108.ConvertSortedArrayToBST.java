@@ -1,6 +1,11 @@
 class Solution {
     int[] nums;
 
+    public TreeNode sortedArrayToBST(int[] nums) {
+        this.nums = nums;
+        return helper(0, nums.length - 1);
+    }
+
     public TreeNode helper(int left, int right) {
         if (left > right) return null;
 
@@ -18,8 +23,45 @@ class Solution {
         return root;
     }
 
+    
+}
+
+// Another approach, but handling the overflow issue when splitting middle, all in one liner
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
-        this.nums = nums;
-        return helper(0, nums.length - 1);
+        // given inorder
+        // find the mid
+        int n = nums.length;
+        return helper(nums,0,n-1);
+    }
+
+    public TreeNode helper(int[] nums,int start, int end){
+        if(start > end)
+            return null;
+
+        int mid = start + (end-start)/2; // universally accepted!!!
+        TreeNode root = new TreeNode(nums[mid]); // setting the root
+
+        // left and right
+        root.left = helper(nums,start,mid-1);
+        root.right = helper(nums,mid+1,end);
+
+        return root;
     }
 }

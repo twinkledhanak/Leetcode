@@ -18,7 +18,7 @@ class Node {
 */
 
 class Solution {
-    public List<Integer> preorder(Node root) {
+    public List<Integer> postorder(Node root) {
         LinkedList<Node> stack = new LinkedList<>();
         LinkedList<Integer> output = new LinkedList<>();
 
@@ -31,9 +31,6 @@ class Solution {
             Node node = stack.pollLast();
             output.add(node.val);
 
-            // MOST IMP **********
-            // In trees, we did reverse for Postorder
-            Collections.reverse(node.children); // we reverse at intermediate level only
             
             // Instead of left and right, we just add all nodes in the list
             // We have to add them in given order
@@ -43,7 +40,7 @@ class Solution {
             
         }    
 
-
+        Collections.reverse(output); // we reverse at last
         return output;
     }
 }

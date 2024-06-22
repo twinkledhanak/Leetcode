@@ -1,3 +1,12 @@
+
+// REFER THIS CLASS:
+// PREORDER: +AB
+// ITERATIVE, USING DFS 
+// THE ONLY RECURSION IS USE OF STACKS BY DFS
+// EXPECTED ADD: NODE-LEFT-RIGHT
+// SINCE STACKS: NODE-RIGHT-LEFT
+// LINKED-LIST IS USED TO IMPLEMENT STACKS, GETTING THE TOPMOST ELEMENT OF STACK IS SAME AS GETTING LAST ELEMENT OF LL
+
 class Solution {
   public List<Integer> preorderTraversal(TreeNode root) {
     LinkedList<TreeNode> stack = new LinkedList<>(); // it is still some variant of LIST, USE ADD() ONLY

@@ -13,6 +13,14 @@
  *     }
  * }
  */
+
+// REFER THIS CLASS:
+// POSTORDER: AB+
+// ITERATIVE, USING DFS 
+// THE ONLY RECURSION IS USE OF STACKS BY DFS
+// EXPECTED ADD: LEFT-RIGHT-NODE
+// SINCE STACKS: LEFT-RIGHT-NODE + Collections.rev()
+
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
     LinkedList<TreeNode> stack = new LinkedList<>();

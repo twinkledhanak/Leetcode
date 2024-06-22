@@ -8,6 +8,11 @@ class Solution {
         return res;
     }
 
+
+// OUR HELPER() IS NOT RETURNING ANYTHING, SO WE CANNOT ADD THIS CONDITION:
+// if (root == null)
+//    return null
+
 // inorder -> a+b
     public void helper(TreeNode root, List<Integer> res) {
         if (root != null) {
@@ -26,6 +31,15 @@ class Solution {
                 
             }
         }
+
+// PRE-ORDER -> +ab
+    public void helper(TreeNode root,List<Integer> result){
+        if(root != null){
+            // +ab
+        result.add(root.val);
+        helper(root.left,result);
+        helper(root.right,result);
+    }    
 
 
 }

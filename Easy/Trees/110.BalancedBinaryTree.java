@@ -12,11 +12,6 @@ class Solution {
         && isBalanced(root.left)
         && isBalanced(root.right);
   }
-
-
-
-
-
     // Recursively obtain the height of a tree. An empty tree has -1 height
   private int height(TreeNode root) {
     // An empty tree has height -1
@@ -25,7 +20,5 @@ class Solution {
     }
     return 1 + Math.max(height(root.left), height(root.right));
   }
-
-
 
 };

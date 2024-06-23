@@ -1,5 +1,12 @@
 class Solution {
     List<Integer> rightside = new ArrayList();
+
+    public List<Integer> rightSideView(TreeNode root) {
+        if (root == null) return rightside;
+        
+        helper(root, 0);
+        return rightside;
+    }
     
     public void helper(TreeNode node, int level) {
         if (level == rightside.size()) 
@@ -19,10 +26,5 @@ class Solution {
 
     }    
     
-    public List<Integer> rightSideView(TreeNode root) {
-        if (root == null) return rightside;
-        
-        helper(root, 0);
-        return rightside;
-    }
+    
 }

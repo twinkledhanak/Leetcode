@@ -28,3 +28,41 @@ class Solution {
 // to the height of the tree. In the worst case, the tree is skewed so the height of the tree is O(N). 
 // If the tree is balanced, it'd be O(logN).
 
+
+int answer = 0;
+
+public int diameterOfBinaryTree(TreeNode root) {
+    int maxLengthToRoot = lengthToLeaf(root);
+    return answer;
+    
+}
+
+int lengthToLeaf(TreeNode root){
+
+    if(root == null)
+        return -1;
+
+    if(root.left == null && root.right == null)
+        return 0;
+    
+    
+    int maxPathLength = 0;
+    
+    int leftLength = 0;
+    if(root.left != null){
+        leftLength = lengthToLeaf(root.left);
+        maxPathLength = leftLength + 1;
+    }
+        
+    
+    int rightLength = 0;
+    if(root.right != null){
+        rightLength = lengthToLeaf(root.right);
+        maxPathLength = maxPathLength + rightLength + 1;
+    }
+        
+    answer = Math.max(answer, maxPathLength);
+    return Math.max(leftLength, rightLength) + 1;
+    
+}
+

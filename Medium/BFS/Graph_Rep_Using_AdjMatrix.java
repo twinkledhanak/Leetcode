@@ -19,6 +19,8 @@ public class Main {
         // so there's no need for memset equivalent. The array is already filled with zeros.
 
         for (int i = 0; i < edges.length; i++) {
+            // matrix[0][3] = 1 but how do we get 0? edge[0][0]
+            // matrix[1][2] = 1 bur how do we get 1? edge[1][0] // in general, edge[i][0] for first val and edge[i][1] for second
             matrix[edges[i][0]][edges[i][1]] = 1; // only one initialization means only unidirected graph
         }
 

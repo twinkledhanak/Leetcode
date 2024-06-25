@@ -3,7 +3,7 @@
 // 2. Start with the initial source vertex, loop through each of the nieghbours and keep updating the queue.
 // 3. We go to a node, then its neighbours (A,B,C), and once these neighbours are explore, 
 // we explore neighbours of first neighbour A again
-// Down, L ---> R in a queue
+// Down, L ---> R in a queue, just like level order traversal in a tree
 
 // USES ADJACENCY MATRIX TO REPRESENT GRAPH
 

@@ -25,7 +25,7 @@ class Solution {
         }
         // Call the helper function with initial indices
         // start,end,preorder , start,end,inorder
-        return helper(0, preorder.length-1, preorder, 0,inorder.length-1, inorder);
+        return helper(0, preorder.length-1, preorder, 0,inorder.length-1, inorder); // ***** passing length-1
         
     }
 
@@ -36,11 +36,11 @@ class Solution {
         }
 
         // The first element in preorder array is the root
-        TreeNode root = new TreeNode(preorder[preStart]);
+        TreeNode root = new TreeNode(preorder[preStart]); // **** use preStart, not inStart
 
         // Find the root in the inorder array
         int parent = -1;
-        for (int i = inStart; i <= inEnd; i++) {
+        for (int i = inStart; i <= inEnd; i++) { // ********* WE START FROM inStart
             if (inorder[i] == preorder[preStart]) {
                 parent = i;
                 break;
@@ -51,6 +51,7 @@ class Solution {
         int leftTreeSize = parent - inStart;
 
         // Recursively construct the left and right subtrees
+                  //helper(int preStart, int preEnd, int[] preorder,  int inStart, int inEnd, int[] inorder) {
         root.left = helper(preStart + 1, preStart + leftTreeSize, preorder,  inStart, parent - 1, inorder);
         root.right = helper(preStart + leftTreeSize + 1, preEnd, preorder,  parent + 1, inEnd, inorder);
 

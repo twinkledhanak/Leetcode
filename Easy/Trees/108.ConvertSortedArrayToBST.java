@@ -65,3 +65,10 @@ class Solution {
         return root;
     }
 }
+
+// What I thought of:
+// Time Complexity: O(n) since we traverse entire array once
+// Space Complexity: O(logN) we split at middle, creating a balanced tree, recursion stack height O(logN). Non-recursion: no storage
+
+// Actual:
+// Same!!

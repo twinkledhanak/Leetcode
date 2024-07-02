@@ -20,3 +20,9 @@ public boolean isMirror(TreeNode t1, TreeNode t2) {
 // and the height is in O(n). Therefore, space complexity due to recursive calls on the stack is O(n) 
 // in the worst case.
 
+// Example of Symmetric tree
+/*
+1
+2 - 2
+3,4 - 4,3
+*/

@@ -1,0 +1,40 @@
+// Example
+
+      1
+    /   \
+    2   3   
+  /  \
+ 4    5
+
+Inorder: 4,2,5,1,3
+Preordr: 1,2,4,5,3 (another variant of DFS) +ab
+Postord: 4,5,2,3,1
+BFStrav: 1,2,3,4,5 (level order)
+
+Types of Traversal:
+
+1. Inorder
+2. Preorder (Variant of DFS traversal)
+3. Postorder
+4. Level order
+
+
+Ways to traverse a Binary tree:
+-------------------------------------------------------------------------------------------------
+Iterative                       Iterative                               Recursive
+(Using DFS)                     (Using BFS)
+-------------------------------------------------------------------------------------------------
+Inorder(Stack)(Y)               Inorder                                 Inorder(Y)
+Preorder(LL)(Y)                 Preorder                                Preorder(Y)
+Postorder(LL)(Y)                Postorder                               Postorder(Y)
+                                LevelOrder(Y)                           LevelOrder(Y)(Sim to RHS view)
+
+
+Ways to traverse a N-ary tree:
+-------------------------------------------------------------------------------------------------
+Iterative                       Iterative                               Recursive
+(Using DFS)                     (Using BFS)
+-------------------------------------------------------------------------------------------------
+Inorder                         Level Order (Queue using LL)(Y)
+Preorder(LL)(Y)                
+Postorder(LL)(Y)               

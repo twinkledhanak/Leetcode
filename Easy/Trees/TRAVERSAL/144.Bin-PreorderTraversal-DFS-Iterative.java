@@ -21,7 +21,7 @@ class Solution {
 
     while (!stack.isEmpty()) {
 // get the last, instead of using stack.peek()
-      TreeNode node = stack.pollLast();
+      TreeNode node = stack.pollLast(); // since we use LL impl, use this. poll() will remove the first element, more deque suitable
 
        // Node, RIght , Left 
       output.add(node.val); // +
@@ -41,3 +41,13 @@ class Solution {
     return output;
   }
 }
+
+
+/*
+Aspect:	poll()	;; pollLast()
+Function:	Retrieves and removes the first element of the deque ;;	Retrieves and removes the last element of the deque.
+Equivalent Method:	Similar to removeFirst() ;;	Similar to removeLast().
+Return Value:	Returns the head (first element) or null if the deque is empty ;;	Returns the tail (last element) or null if the deque is empty.
+Typical Use Case:	Used when you need to operate on the front of the deque ;;	Used when you need to operate on the end of the deque.
+Null Handling:	Returns null if the deque is empty, without throwing an exception ;;	Returns null if the deque is empty, without throwing an exception.
+*/

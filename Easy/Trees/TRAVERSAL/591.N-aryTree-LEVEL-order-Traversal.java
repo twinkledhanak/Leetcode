@@ -29,16 +29,16 @@ class Solution {
         List<List<Integer>> result = new ArrayList<>();
 
 
-        queue.add(root);
+        queue.add(root); // add() since it is a LL
         List<Integer> list1 = new ArrayList<>();
         list1.add(root.val);
         result.add(list1);
 
 
         while(!queue.isEmpty()){
-            Node curr = queue.pollLast();
+            Node curr = queue.pollLast(); // Since LL
 
-            List<Integer> list2 = new ArrayList<>();
+            List<Integer> list2 = new ArrayList<>(); // [2,3]
 
             for(Node n: curr.children){
                 if(n != null){
@@ -48,7 +48,7 @@ class Solution {
                 
             }    
 
-            result.add(list2);
+            result.add(list2); // Before: [[1]] , After: [[1],[2,3]]
 
 
         }

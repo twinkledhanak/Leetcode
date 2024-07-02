@@ -23,3 +23,23 @@ class Solution {
 
 // Because of recursion, O(h) function calls will be placed on the stack in the worst case, where h is the height of the tree.
 //  Because h∈O(n), the space complexity is O(n).
+
+// We can do a BFS traversal of the tree and invert
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode current = queue.poll();
+            TreeNode temp = current.left;
+            current.left = current.right;
+            current.right = temp;
+            if (current.left != null) 
+                queue.add(current.left);
+            if (current.right != null) 
+                queue.add(current.right);
+        }
+        return root;
+    }
+}

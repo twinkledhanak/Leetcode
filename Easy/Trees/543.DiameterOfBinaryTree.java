@@ -1,3 +1,20 @@
+
+/*
+      1
+    /   \
+    2   3   
+  /  \
+ 4    5
+ */
+
+
+// For every node, get the max height/longest path of Left tree and right tree. Find the node where sum of its longest left and 
+// right branches is maximised
+
+// It is NOT the following - max height of lhs + max height of rhs => why? we are only considering root node here.
+// Our diameter may or may not pass through the root node. So we have to do this calculation for every node recursively
+
+
 class Solution {
     private int diameter;
     public int diameterOfBinaryTree(TreeNode root) {
@@ -5,6 +22,9 @@ class Solution {
         longestPath(root);
         return diameter;
     }
+
+    // The return value of this function is a height, but it is not used anywhere. We just calculate both height and diameter
+    // diameter is a class level variable that is updated by this function. Height is returned but not used
     private int longestPath(TreeNode node){
         if(node == null) return 0;
         // recursively find the longest path in
@@ -17,7 +37,7 @@ class Solution {
 
         // return the longest one between left_path and right_path;
         // remember to add 1 for the path connecting the node and its parent
-        return Math.max(leftPath, rightPath) + 1;
+        return Math.max(leftPath, rightPath) + 1; // since we start from root.left and root.right
     }
 }
 

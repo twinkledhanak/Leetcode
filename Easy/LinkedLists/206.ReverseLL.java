@@ -12,18 +12,21 @@ class Solution {
     public ListNode reverseList(ListNode head) {
         ListNode prev = null;
 
-        ListNode curr = head; // Initializing with start node, curr is a pointer. We point our curr to nodes
+        ListNode ptr = head; // Initializing with start node, ptr is a pointer. We point our ptr to nodes
         // and manipulate them
 
-        while (curr != null) {
-            ListNode nextTemp = curr.next; // Save the next values of this curr; It is the main info
+        while (ptr != null) {
+            ListNode post = ptr.next; // Save the next values of this ptr; It is the main info
 
-            curr.next = prev; // Now that we saved the remaining list, this one's link is useless. Overwrite it.
-            prev = curr;
+            ptr.next = prev; // Now that we saved the remaining list, this one's link is useless. Overwrite it.
+            prev = ptr;
 
             // Move over to the next node
-            curr = nextTemp;
+            ptr = post;
         }
         return prev; // prev is going to be our new head!
     }
 }
+
+// Time: O(n) - to traverse the LL 
+// Space: O(1)

@@ -16,10 +16,14 @@ public class Solution {
             }
         }
 
-        // Check if there is no cycle
+        // Check if there is no cycle using FAST ptr
         if (hare == null || hare.next == null) {
             return null;
         }
+
+        // ***************
+        // At this point, we know both ptrs are in a cycle
+        // We just need the start
 
         // Reset either tortoise or hare pointer to the head
         hare = head;

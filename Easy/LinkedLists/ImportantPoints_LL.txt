@@ -1,0 +1,40 @@
+1. Remember to check if ptr is null
+if(ptr != null) rather than if(ptr.next != null)
+
+Only when we return last node, keep track as follows:
+while (cur != null && cur.next != null) {
+        cur = cur.next;
+    }
+
+2. Never lose track of Head 
+
+3. Never make any operation such that we lose entire chain of LL after a node
+
+4. We can easily achieve Time: O(n) and Space: O(1) in LLs, just using ptr
+
+5. If we modify the LL in-place, esp. in problems where we have to determine if a LL is pallindrome or not,
+WE HAVE TO REVERT THE LIST BACK TO THE ORIGINAL ONES
+
+6. When we get the middle of LL, it can be considered as part of first half
+
+7. In such cases, it is easier to reverse the second half of LL
+
+8.
+
+1. l1.next = l2;
+This statement sets the next pointer (or reference) of the node that l1 currently points to, to point to the node that l2 is 
+pointing to. In other words, this links the node pointed to by l1 directly to the node pointed to by l2.
+
+Effect: This operation does not change the l1 pointer itself but modifies the structure of the linked list. The node at l1 
+will now be followed by the node at l2.
+Use Case: You'd use this when you want to extend a linked list by connecting the l1 node to the l2 node.
+
+
+2. l1 = l2;
+This statement makes the pointer l1 point to the same node as l2. Essentially, you are reassigning l1 to reference the same node 
+that l2 references, so l1 no longer points to its original node.
+
+Effect: This operation changes the reference held by l1, making it point to the node that l2 is pointing to. The original link 
+from l1 to its previous node is lost (assuming there was one).
+Use Case: You'd use this when you want l1 to start pointing to the same list or node as l2, possibly to traverse from the 
+node l2 points to, or to realign l1 to a different part of the linked list.

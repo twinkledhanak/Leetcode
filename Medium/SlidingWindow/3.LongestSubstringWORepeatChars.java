@@ -1,17 +1,5 @@
 class Solution {
 
-    // One way to check for unique characters is by creating a hashset
-    public boolean hasAllDistinct(String s){
-        Set<Character> hashSet = new HashSet<>();
-        char[] ch = s.toCharArray();
-        for(char c: ch){
-            if(hashSet.contains(c))
-                return false;
-            hashSet.add(c);
-        }
-        return true;
-    }
-
     public int lengthOfLongestSubstring(String subs){
         int n = subs.length();
         int windowStart = 0, windowEnd = 0;
@@ -34,4 +22,18 @@ class Solution {
         return maxLen == Integer.MIN_VALUE? 1: maxLen;
 
     }
+
+    // One way to check for unique characters is by creating a hashset
+    public boolean hasAllDistinct(String s){
+        Set<Character> hashSet = new HashSet<>();
+        char[] ch = s.toCharArray();
+        for(char c: ch){
+            if(hashSet.contains(c))
+                return false;
+            hashSet.add(c);
+        }
+        return true;
+    }
 }
+
+// Time: O(n) ; Space: O(min(m,n))

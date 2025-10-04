@@ -1,5 +1,33 @@
 class Solution {
     // Function to merge two sub-arrays in sorted order.
+    /* 
+    Merge the sorted arrays in better way. If arrays are not sorted, they will get sorted while merging
+    */
+
+    public int[] sortArray(int[] nums) {
+        int[] temporaryArray = new int[nums.length];
+
+        mergeSort(nums, 0, nums.length - 1, temporaryArray);
+        return nums;
+    }
+
+    // Recursive function to sort an array using merge sort
+    private void mergeSort(int[] arr, int left, int right, int[] tempArr) { //*** Golden rule of passing indices, not actual partitions */
+        // LOOKS LIKE A PIECE OF CODE FROM BINARY SEARCH
+
+        if (left >= right) {
+            return;
+        }
+        int mid = (left + right) / 2;
+        // Sort first and second halves recursively.
+        mergeSort(arr, left, mid, tempArr);
+        mergeSort(arr, mid + 1, right, tempArr);
+
+
+        // Merge the sorted halves.
+        merge(arr, left, mid, right, tempArr);
+    }
+
 
     private void merge(int[] arr, int left, int mid, int right, int[] tempArr) {
         // 1. Calculate the start and sizes of two halves.
@@ -42,24 +70,13 @@ class Solution {
         }
     }
 
-    // Recursive function to sort an array using merge sort
-    private void mergeSort(int[] arr, int left, int right, int[] tempArr) {
-        if (left >= right) {
-            return;
-        }
-        int mid = (left + right) / 2;
-        // Sort first and second halves recursively.
-        mergeSort(arr, left, mid, tempArr);
-        mergeSort(arr, mid + 1, right, tempArr);
-
-
-        // Merge the sorted halves.
-        merge(arr, left, mid, right, tempArr);
-    }
-    
-    public int[] sortArray(int[] nums) {
-        int[] temporaryArray = new int[nums.length];
-        mergeSort(nums, 0, nums.length - 1, temporaryArray);
-        return nums;
-    }
 }
+
+/* 
+Time Complexity:
+
+Best Case: O(n log n), When the array is already sorted or nearly sorted.
+Average Case: O(n log n), When the array is randomly ordered.
+Worst Case: O(n log n), When the array is sorted in reverse order.
+Space Complexity: O(n), Additional space is required for the temporary array used during merging.
+*/

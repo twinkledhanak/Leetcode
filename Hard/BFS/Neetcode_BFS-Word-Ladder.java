@@ -6,7 +6,7 @@ class Solution {
         Map<String, List<String>> adjlist = new HashMap<>();
         wordList.add(beginWord);
 
-        
+        // going over all words, O(n) * Max length of string: L => Time: O(n*L)
         for (String word : wordList) {
             StringBuilder string = null;
             for (int i = 0; i < word.length(); i++) {
@@ -17,7 +17,7 @@ class Solution {
                     new ArrayList<String>()
                 );
                 wordlist.add(word);
-                adjlist.put(string.toString(), wordlist);
+                adjlist.put(string.toString(), wordlist); // adjList: ["h*t": {hit,hot}]
             }
         }
 
@@ -35,8 +35,8 @@ class Solution {
 
                 for (int i = 0; i < str.length(); i++) {
                     string = new StringBuilder(str);
-                    string.setCharAt(i, '*');
-                    for (String pat : adjlist.get(string.toString())) {
+                    string.setCharAt(i, '*'); // begin word: hot, *ot, h*t
+                    for (String pat : adjlist.get(string.toString())) { /// ["h*t": {hit,hot}]
                         if (pat.equals(endWord)) {
                             return step;
                         }

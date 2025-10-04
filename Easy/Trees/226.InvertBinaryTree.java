@@ -1,4 +1,23 @@
-// Trees are mirrio images of each other, values of left and right are swapped completely
+// Symmetric trees - The LST of node A is RST of node B
+// Symmetric trees - The RST of node A is LST of node B
+
+// Example of Symmetric tree - Pretend Mirror is in middle
+/*
+      1
+    2 - 2
+  3,4 - 4,3
+*/
+
+// Invert Tree - Pretend Mirror is at extreme RHS
+/*
+        4
+     2    7  
+    1,3   6,9
+
+        4
+     7    2
+    9,6   3,1
+*/
 
 class Solution {
     public TreeNode invertTree(TreeNode root) {
@@ -31,10 +50,12 @@ class Solution {
         Queue<TreeNode> queue = new LinkedList<TreeNode>();
         queue.add(root);
         while (!queue.isEmpty()) {
+            // Swap LHS and RHS
             TreeNode current = queue.poll();
             TreeNode temp = current.left;
             current.left = current.right;
             current.right = temp;
+            
             if (current.left != null) 
                 queue.add(current.left);
             if (current.right != null) 

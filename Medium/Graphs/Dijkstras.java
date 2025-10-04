@@ -1,5 +1,7 @@
 //https://stackoverflow.com/questions/9255620/why-does-dijkstras-algorithm-use-decrease-key
 
+// Refer to Algo excel sheet for complexities
+
 import java.util.*;
 
 class Graph {
@@ -20,20 +22,30 @@ class Graph {
     }
 
     void shortestPath(int src) {
-        PriorityQueue<iPair> pq = new PriorityQueue<>(V, Comparator.comparingInt(o -> o.second));
+        // Min Heap
+        PriorityQueue<iPair> pq = new PriorityQueue<>(V, Comparator.comparingInt(o -> o.weight));
         int[] dist = new int[V];
-        Arrays.fill(dist, Integer.MAX_VALUE);
+        Arrays.fill(dist, Integer.MAX_VALUE); // initialized with infinity
 
         pq.add(new iPair(0, src));
         dist[src] = 0;
 
-        while (!pq.isEmpty()) {
-            int u = pq.poll().second;
+        /**
+        // a,b,weight => Pair (b,weight)
+        1 — u — A — v — B
+        When at node A, we perform relaxation.
+        If (dist until A + cost(A,B) < dist (1,B) ).     
+        If (dist till A frm 1 + v < dist till B from 1)
+        Update value of v = dist until U + cost(A,B)
+         */
 
-            for (iPair v : adj.get(u)) {
-                if (dist[v.first] > dist[u] + v.second) {
-                    dist[v.first] = dist[u] + v.second;
-                    pq.add(new iPair(dist[v.first], v.first));
+        while (!pq.isEmpty()) {
+            iPair u = pq.poll();
+
+            for (iPair v : adj.get(u)) { // Same as example of graph with weights, we created a Pair class
+                if (dist[v.node] > dist[u.node] + v.weight) { // v.node is vertex ; v.weight = edge weight of v
+                    dist[v.node] = dist[u.node] + v.weight; ?
+                    pq.add(new iPair(dist[v.node], v.node)); // instead of decrease-key, insert a new node in PQ
                 }
             }
         }
@@ -45,11 +57,11 @@ class Graph {
     }
 
     static class iPair {
-        int first, second;
+        int node, weight;
 
-        iPair(int first, int second) {
-            this.first = first;
-            this.second = second;
+        iPair(int node, int weight) {
+            this.node = node;
+            this.weight = weight;
         }
     }
 }
@@ -77,3 +89,12 @@ public class Main {
         g.shortestPath(0);
     }
 }
+
+// Time Complexity:
+/*
+O(V^2)	Using Prims implementation
+O(E * log V) 	If the input graph is represented using adjacency list, it can be reduced with the help of a binary heap.
+O(E * log V) 	Same as above but priority queue instead of heap, that priority_queue doesn’t support the decrease key.
+To resolve this problem, do not update a key, but insert one more copy of it. So we allow multiple instances of the same vertex 
+in the priority queue. This approach doesn’t require decreasing key operations
+*/

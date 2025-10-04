@@ -16,7 +16,7 @@ class Solution {
     }
 
     // Just like DFS, add first one to stack
-    stack.add(root);
+    stack.add(root); // ADD(), NOT PUSH; Since add works, offer() will also work
 
 
     while (!stack.isEmpty()) {
@@ -27,13 +27,14 @@ class Solution {
       output.add(node.val); // +
 
       // SInce it is stack, reverse the order of pushing
-      // +ab , push right first
+      // When doing it for N-ary tree, we completely reverse the list. Here, when we have control, we just push it in reverse way
+      // +ab , push right first ****
       if (node.right != null) {
-        stack.add(node.right); // ADD, NOT PUSH
+        stack.add(node.right); // ADD, NOT PUSH, we have a LL; Since add works, offer() will also work
       }
 
       if (node.left != null) {
-        stack.add(node.left); // ADD, NOT PUSH
+        stack.add(node.left); // ADD, NOT PUSH; Since add works, offer() will also work
       }
 
 

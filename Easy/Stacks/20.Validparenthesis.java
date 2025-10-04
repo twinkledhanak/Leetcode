@@ -1,25 +1,30 @@
 class Solution {
     public boolean isValid(String s) {
-        HashMap <Character,Character> hmap = new HashMap<Character,Character>();
-        hmap.put(')','(');
-        hmap.put('}','{');
-        hmap.put(']','[');
+        Stack<Character> stack = new Stack<>();
+        Map<Character,Character> map = new HashMap<>();
+        map.put('(',')'); map.put('[',']'); map.put('{','}'); // Order is imp
+        
+        for(Character ch: s.toCharArray()){
+            // Every open character, push in stack
+            if(ch=='[' || ch=='(' || ch=='{')
+                stack.push(ch);
 
-        Stack<Character> stck = new Stack<>();
-        for (char ch : s.toCharArray()){
-            if (hmap.containsKey(ch)){
-                if(stck.empty())return false;
-                char topE = stck.pop();
-                if (topE != hmap.get(ch)){
-                    return false;
+            else{ // it is closing character
+                if(stack.isEmpty()) // Eg. s = "]"
+                    return false; // do not consider anything, just terminate
+                else{
+                    Character stPop = stack.peek();
+                    if(ch == map.get(stPop))// stack top is matching with current char
+                        stack.pop();
+                    else
+                        return false;    
                 }
             }
-            else{
-                stck.push(ch);
-            }
+
 
         }
-        return stck.empty();
         
+        return stack.isEmpty();
     }
 }
+// Consider edge cases ] and (])

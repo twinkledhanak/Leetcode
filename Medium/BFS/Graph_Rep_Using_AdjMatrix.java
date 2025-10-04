@@ -21,7 +21,7 @@ public class Main {
         for (int i = 0; i < edges.length; i++) {
             // matrix[0][3] = 1 but how do we get 0? edge[0][0]
             // matrix[1][2] = 1 bur how do we get 1? edge[1][0] // in general, edge[i][0] for first val and edge[i][1] for second
-            matrix[edges[i][0]][edges[i][1]] = 1; // only one initialization means only unidirected graph
+            matrix[edges[i][0]][edges[i][1]] = 1; // only one initialization means only uni-directed graph
         }
 
         // Printing the matrix

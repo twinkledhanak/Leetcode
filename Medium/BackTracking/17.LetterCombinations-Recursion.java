@@ -20,7 +20,7 @@ class Solution {
     }
 
 
-
+    // EVEN WHEN THE MAP IS STATIC, IT HAS TO BE PASSED IN AS A PARAMETER
     public List<String> helper(String digits, Map<Integer,List<String>> map){
         List<String> mainRes = new ArrayList<>();
 
@@ -30,14 +30,18 @@ class Solution {
             return new ArrayList<>();
         // "2" or "3"
         if(digits.length() == 1){
-            Integer key = digits.charAt(0) - '0';    
-            mainRes.addAll(map.get(key));
+            Integer key = digits.charAt(0) - '0';   // '2' - '0' 
+            // Existential crisisssssss
+            // We do not return anything for this base case
+            // Integer.parseInt() and Integer.valueOf() does NOT work here
+            // !!!!!!!!!!!Note the addAll(...)
+            mainRes.addAll(map.get(key)); 
         }
 
         // ******************************* Prep for Recursion *******************************
         // 5, 73 -- assume that result for 73 will be from recursion
-        char ch = digits.charAt(0);
-        String rem = digits.substring(1);
+        Integer key = digits.charAt(0) - '0';
+        List<String> list = map.get(key); 
 
 
         // ******************************* RECURSION *******************************
@@ -47,12 +51,12 @@ class Solution {
         // But always go from higher to lower call -> direction where parameter size decreases
         // We have to reduce in order to reach base case
         // We cannot go increasing parameter size ever in recursion
+        String rem = digits.substring(1);
         List<String> res = helper(rem,map);
         
 
         // ******************************* Post Recursion *******************************
-        Integer key = digits.charAt(0) - '0';
-        List<String> list = map.get(key);   
+          
         // I have two lists, I have to combine
         for(String l: list){
             for(String r: res){
@@ -66,11 +70,11 @@ class Solution {
 }
 /*
 Time complexity: O(4^n * n), where N is the length of digits. Note that 4 in this expression is referring to the maximum value 
-length in the hash map, and not to the length of the input.
+length in the hash map, eg, p,q,r,s, and not to the length of the input.
 
 The worst-case is where the input consists of only 7s and 9s. In that case, we have to explore 4 additional paths for every extra 
-digit. Then, for each combination, it costs up to NNN to build the combination. This problem can be generalized to a scenario 
-where numbers correspond with up to MMM digits, in which case the time complexity would be O(m^n * n)
+digit. Then, for each combination, it costs up to N to build the combination. This problem can be generalized to a scenario 
+where numbers correspond with up to M digits, in which case the time complexity would be O(m^n * n)
 // For the problem constraints, we're given, M=4, because of digits 7 and 9 having 4 letters each.
 
 */

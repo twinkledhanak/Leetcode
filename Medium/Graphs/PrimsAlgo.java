@@ -1,6 +1,11 @@
 // java program for Prim's MST for adjacency list
 // representation of graph
 
+// select a min edge
+// select a connected min edge
+
+// Refer to Algo excel sheet for complexities
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -56,6 +61,10 @@ public class Main {
 			adj.get(dest).add(new Node(src, weight));
 		}
 
+
+
+// We're working with adjList, visited, Min Heap
+// We have MST -> parent[], key[]
 		// Function to find the Minimum Spanning Tree using Prim's algorithm
 		void primMST() {
 			int[] parent = new int[V];
@@ -73,18 +82,21 @@ public class Main {
 			key[0] = 0;					 // Start the MST from vertex 0
 			minHeap.add(new Node(0, key[0]));
 
+			// 	SELECT MIN
 			while (!minHeap.isEmpty()) {
 				Node u = minHeap.poll(); // Extract the node with the minimum key value
 				int uVertex = u.dest;
 				inMST[uVertex] = true;
 
+				// SELECTED CONNECTED
 				// Traverse through all adjacent vertices of u (the extracted vertex) and update their key values
 				for (Node v : adj.get(uVertex)) {
 					int vVertex = v.dest;
 					int weight = v.weight;
 
-					// If v is not yet included in MST and weight of u-v is less than key value of v, then update key value and parent of v
-					if (!inMST[vVertex] && weight < key[vVertex]) {
+					// If v is not yet included in MST and weight of u-v is less than key value of v, 
+					// then update key value and parent of v
+					if (!inMST[vVertex] && weight < key[vVertex]) { // assuming the weights from 0 to vVertex
 						parent[vVertex] = uVertex;
 						key[vVertex] = weight;
 						minHeap.add(new Node(vVertex, key[vVertex]));

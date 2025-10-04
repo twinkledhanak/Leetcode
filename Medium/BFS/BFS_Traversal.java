@@ -1,6 +1,6 @@
 // Higher level intuition: Imagine a tree/graph
 // 1. This BFS version is from a single source
-// 2. Start with the initial source vertex, loop through each of the nieghbours and keep updating the queue.
+// 2. Start with the initial source vertex, loop through each of the neighbours and keep updating the queue.
 // 3. We go to a node, then its neighbours (A,B,C), and once these neighbours are explore, 
 // we explore neighbours of first neighbour A again
 // Down, L ---> R in a queue, just like level order traversal in a tree
@@ -24,7 +24,7 @@ class Graph {
 
     public void BFS(int startVertex){
         boolean[] visited = new boolean[V]; // By default set to false
-        Queue<Integer> q = new ArrayQueue<>(); // or new LinkedList<>();
+        Queue<Integer> q = new LinkedList<>();// THERE IS NO CLASS CALLED ARRAYQUEUE
 
         visited[startVertex] = true;
         q.offer(startVertex);
@@ -55,3 +55,6 @@ class Graph {
 }
 
 
+// Time complexity:
+// O(v+e) with adjList
+// O(v^2) with matrix

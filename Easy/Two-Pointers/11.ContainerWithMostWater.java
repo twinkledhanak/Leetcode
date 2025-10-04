@@ -1,21 +1,21 @@
 class Solution {
-    public int maxArea(int[] height) {
-        int n = height.length;
-        int a = 0, b = n-1;
-        long maxVal = Integer.MIN_VALUE;
+    public int maxArea(int[] nums) {
+        int i=0;
+        int j=nums.length-1;
 
-        while(a<b){
-            long area = (b-a) * Math.min(height[a],height[b]);
-            maxVal = Math.max(maxVal,area);
+        int maxArea = Integer.MIN_VALUE;
 
-            if(height[a]<height[b])
-                a++;
-            else
-                b--;
-               
+        while(i<j){
+            int area = (j-i) * (Math.min(nums[i],nums[j]));
+            maxArea = Math.max(maxArea,area);
+            if(nums[i]<=nums[j]) i++; // Note the <= here, not just <
+            else j--;
         }
-
-        return (int)maxVal;
-
+        
+        return (maxArea == Integer.MIN_VALUE)? 0: maxArea;
     }
 }
+
+Time complexity: O(n). Single pass.
+
+Space complexity: O(1). Constant space is used.

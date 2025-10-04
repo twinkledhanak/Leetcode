@@ -16,6 +16,12 @@ class Node {
     }
 };
 */
+/**
+
+HERE, WE REVERSE THE OUTPUT
+
+ */
+
 
 class Solution {
     public List<Integer> postorder(Node root) {

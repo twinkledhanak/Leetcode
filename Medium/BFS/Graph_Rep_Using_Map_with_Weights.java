@@ -21,7 +21,7 @@ class Solution {
             int weight = edges[i][2];
 
             // Add edge from a to b with weight
-            graph.computeIfAbsent(a, k -> new ArrayList<>()).add(new Pair(b, weight));
+            graph.computeIfAbsent(a, k -> new ArrayList<>()).add(new Pair(b, weight)); // 0 -> {3,weight}
             // Add edge from b to a with weight (if the graph is undirected)
             graph.computeIfAbsent(b, k -> new ArrayList<>()).add(new Pair(a, weight));
         }

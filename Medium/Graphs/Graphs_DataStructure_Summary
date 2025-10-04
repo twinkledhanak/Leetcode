@@ -1,0 +1,25 @@
+// *************************************************************************************************************************
+
+BFS/DFS -    Queue/Stack    ; adjMap; visited[] ;         ;
+Prims  -     MinHeap        ; adjMap; visited[] ; parent[]; dist[]/key[];
+Kruskals -   Uses only Union Find
+Dijkstras -  MinHeap        ; adjMap;           ;         ; dist[]
+Union Find - Rank, Parent, 
+
+Prims:
+select a min edge
+select a connected min edge
+
+Kruskals:
+select min cost edge
+keep selecting min cost edge, but it it forms a cycle, de-select it. de-selecting is also removing nodes
+move to next min edge
+we are not removing edges in greedy or desc order of weight!!! We remove edges that form cycle/rather dont consider them
+
+
+// Time complexities:
+BFS and DFS -
+
+v : no of vertices ; e : no of edges 
+O(v+e) with adjList
+O(v^2) with matrix

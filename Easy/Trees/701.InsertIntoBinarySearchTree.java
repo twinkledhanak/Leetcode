@@ -27,7 +27,8 @@ class Solution {
             return new TreeNode(val);
         }
 
-        if (val <= root.val & root.left == null){
+        // Try to add one value at a time, either lst or rst
+        if (val <= root.val & root.left == null){ // Left has to be null; otherwise whatever we add will override existing
             root.left = new TreeNode(val);
             return root;
         }
@@ -59,20 +60,20 @@ class Solution {
             // insert right now
             if (node.right == null) {
                 node.right = new TreeNode(val);
-                return root;
+                return root; // if insertion is done; then just return
             }
             else 
-                node = node.right;
+                node = node.right; // ** Go more right
         }
         // insert into the left subtree
         else {
             // insert right now
             if (node.left == null) {
                 node.left = new TreeNode(val);
-                return root;
+                return root; // if insertion is done; then just return
             }
             else
-                node = node.left;
+                node = node.left; // ** Go more left
         }
     }
 

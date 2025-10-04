@@ -1,0 +1,106 @@
+// HashMap 
+// Key- value pair 
+// LinkedList
+Key ; Value
+
+Ideally:
+Key: LinkedListNode ; Value: LinkedList itself
+
+Key: LinkedListNode ; Value: Red Black Tree/BST (O(logn))
+
+Key: LinkedListNode1  : Value (Tree-root) // LL (head)
+key: LinkedListNode2  : Value (Tree-root) // LL (head)
+
+BST -> Search Time: O(logN)
+
+// Array - holds all the buckets
+list of index: [0 1 2 3 4]
+
+key: 11 -> bucket no: 1
+arr[1] : 
+
+insert() and contains()
+
+Overall:
+
+arr[] of size n
+hash
+each element of array -> store a root of BST 
+
+
+
+
+
+// 1 4 25 10 8
+// 1 4 0 0 3
+
+// 12 3 4 5 6 7 8 9 10 11
+// 1 2 3 4 0 1 2 3 4 0 1
+
+arr[] of size n
+hash
+each element of array -> store a root of BST 
+
+
+Class MyHashmap{
+  private int size;
+  private List<TreeNode> arr;
+
+  public Myhashmap(int size){
+    this.size = size;
+    this.arr = new ArrayList<>(); // get()
+  }
+
+  public void insert(Integer key, Integer value){
+    // contains() and check the return type
+
+    // If key does not exists
+
+    int index = getHash(key); // tell me index where I have to insert the value
+    if(arr.get(index) == null){
+      // No ref
+      TreeNode root = new TreeNode(value);
+      arr.put(root,key);
+    }
+    else{
+      // There is a Bin Tree already
+      TreeNode node = new TreeNode(value);
+      TreeNode root = arr.get(index);
+      insertIntoTree(root,node);
+      
+    }
+
+
+
+  }
+
+
+  public void contains(Integer key){
+
+  }
+
+  public int getHash(Integer key){
+    // lets say this returns the hashed value
+
+    return hashVal;
+  }
+
+  
+
+}
+
+class TreeNode {
+  Integer val;
+  TreeNode left;
+  TreeNode right;
+
+  TreeNode(Integer val){
+    this.val = val;
+  }
+}
+
+
+// How to invoke
+MyHashmap<Integer,Integer> map = new MyHashmap<>();
+map.insert(5,1);
+map.contains(5);

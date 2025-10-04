@@ -26,7 +26,7 @@ public class Solution {
         // We just need the start
 
         // Reset either tortoise or hare pointer to the head
-        hare = head;
+        hare = head; // ********suppose we set fast pointer to head, then slow gives start of cycle
 
         // Move both pointers one step until they meet again
         while (tortoise != hare) {
@@ -35,7 +35,7 @@ public class Solution {
         }
 
         // Return the node where the cycle begins
-        return tortoise;
+        return tortoise; // ********suppose we set fast pointer to head, then slow gives start of cycle
     }
 }
 

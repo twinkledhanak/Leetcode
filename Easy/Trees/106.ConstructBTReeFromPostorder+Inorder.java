@@ -14,53 +14,57 @@
  * }
  */
 
-///// DOESNT WORK, CHECK WHYYYY??????
-
+// **** In Postorder, the tree is formed from Right to Left
 
 class Solution {
-    public TreeNode buildTree(int[] postorder, int[] inorder) {
-        if (postorder.length == 0 || inorder.length == 0) {
-            return null;
-        }
-        // Call the helper function with initial indices
-        // start,end,postorder , start,end,inorder
-        return helper(postorder.length-1, 0, postorder, 0,inorder.length-1, inorder);
-        
+    int parent;
+    int[] postorder;
+    int[] inorder;
+    HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+     public TreeNode buildTree(int[] inorder, int[] postorder) {
+        this.postorder = postorder;
+        this.inorder = inorder;
+        // start from the last postorder element
+        // **We calculate parent globally only -> Why? postorder.length might change as we are consider diff partition size always
+        parent = postorder.length - 1;
+
+        // build a hashmap value -> its index
+        int idx = 0;
+        for (Integer val : inorder) 
+            map.put(val, idx++); // (val, integer) -> just like two sum (10,i=0), (11,i=1), (12,i=3)
+
+        return helper(0, inorder.length - 1); // only pass indices for inorder; not sure why postorder is used
     }
 
-    private TreeNode helper(int postStart, int postEnd, int[] postorder,  int inStart, int inEnd, int[] inorder) {
-        // Base case: if there are no elements to construct the tree
-        if (postStart > postEnd || inStart > inEnd) { // check this
-            return null;
-        }
+    public TreeNode helper(int inStart, int inEnd) {
+        // if there are no elements to construct subtrees
+        if (inStart > inEnd) return null;
 
-        
-        // The first element in postorder array is the root
-        TreeNode root = new TreeNode(postorder[postStart]);
+        // pick up parent element as a root
+        int parentVal = postorder[parent];
+        TreeNode root = new TreeNode(parentVal);
 
-        // Find the root in the inorder array
-        int parent = -1;
-        for (int i = inStart; i <= inEnd; i++) {
-            if (inorder[i] == postorder[postStart]) {
-                parent = i;
-                break;
-            }
-        }
+        // root splits inorder list
+        // into left and right subtrees
+        int index = map.get(parentVal);
 
-        // Calculate the number of elements in the left subtree
-        //int leftTreeSize = parent - inStart;
-        int leftTreeSize = parent - inStart;
-        int rightTreeSize = inEnd - parent;
+        // recursion
+        // parent is the index, parentVal is the actual value
+        parent--;
 
-        // Recursively construct the left and right subtrees
-        //root.left = helper(postStart + 1, postStart + leftTreeSize, postorder,  inStart, parent - 1, inorder);
-        //root.right = helper(postStart + leftTreeSize + 1, postEnd, postorder,  parent + 1, inEnd, inorder);
+        // ****
+        // FOR POSTORDER, RST IS FORMED FIRST
+        // build the right subtree
+        root.right = helper(index + 1, inEnd);
 
-        
-        root.right = helper(postEnd - 1 - rightTreeSize, postEnd - 1, postorder,  parent + 1, inEnd, inorder);
-        root.left = helper(postStart, postStart + leftTreeSize - 1, postorder,  inStart, parent - 1, inorder);
-        
+
+        // build the left subtree
+        root.left = helper(inStart, index - 1);
         return root;
     }
 
+   
 }
+
+// Time: O(n); Space: O(n)

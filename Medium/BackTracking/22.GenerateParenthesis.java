@@ -29,3 +29,49 @@ class Solution {
         }
     }
 }
+
+// Time: O(4^n/sqrt(n))
+// Space: O(n),  so the space complexity would be the maximum depth of the recursion stack. At any given time, 
+// the recursive function call stack would contain at most n function calls.
+
+
+// WHat I TRIED AND WORKED
+// Start with 3 of each type
+// Keep a count at each state of how many are remaining
+// Note how we are using a SB instead of storing everything in a path
+
+class Solution {
+     public List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+        backtrack(n, n, new StringBuilder(), result, n);
+        return result;
+    }
+
+    private void backtrack(int leftRem, int rightRem, StringBuilder sb, List<String> result, int n) {
+        // Base case: when no more parentheses left to add
+        //if (leftRem == 0 && rightRem == 0) { // can only be 0 when string length is 6
+        if (sb.length() == 2*n)   { // can use either condition they mean the same. Length 2n cannot be reached w/o using both
+            result.add(sb.toString());
+            return;
+        }
+
+        // Prune: invalid state if more '(' needed than ')' available
+        if (leftRem > rightRem) 
+            return;
+
+        // Add '(' if any left
+        if (leftRem > 0) {
+            sb.append('(');
+            backtrack(leftRem - 1, rightRem, sb, result, n);
+            sb.deleteCharAt(sb.length() - 1); // backtrack
+        }
+
+        // Add ')' if any left
+        if (rightRem > 0) {
+            sb.append(')');
+            backtrack(leftRem, rightRem - 1, sb, result, n);
+            sb.deleteCharAt(sb.length() - 1); // backtrack
+        }
+    }
+
+}

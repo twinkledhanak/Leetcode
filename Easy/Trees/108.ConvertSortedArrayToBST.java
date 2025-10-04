@@ -60,7 +60,7 @@ class Solution {
 
         // left and right
         root.left = helper(nums,start,mid-1);
-        root.right = helper(nums,mid+1,end);
+        root.right = helper(nums,mid+1,end); //not mid
 
         return root;
     }

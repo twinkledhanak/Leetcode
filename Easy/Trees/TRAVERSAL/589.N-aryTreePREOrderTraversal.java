@@ -16,6 +16,15 @@ class Node {
     }
 };
 */
+// +ab
+/**
+
+HERE, WE REVERSE 'ALL THE CHILDREN' BEFORE ADDING.
+WHY REVERSE? WE HAVE A STACK
+
+ */
+
+
 
 class Solution {
     public List<Integer> preorder(Node root) {
@@ -33,7 +42,8 @@ class Solution {
 
             // MOST IMP **********
             // In trees, we did reverse for Postorder
-            Collections.reverse(node.children); // we reverse at intermediate level only
+            Collections.reverse(node.children); // we reverse at intermediate level only, we cannot control the left and right order
+            // just like we did in stacks; For binary tree, we just have two nodes - we dont have a list to reverse
             
             // Instead of left and right, we just add all nodes in the list
             // We have to add them in given order

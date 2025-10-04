@@ -1,6 +1,34 @@
+// Direct Recursive approach
+public class Solution {
+    public int climbStairs(int n) {
+        return climb_Stairs(0, n);
+    }
+
+    public int climb_Stairs(int i, int n) {
+        if (i > n) {
+            return 0;
+        }
+        // ******** Why do we return 1? It represents the No of ways to go from s to n, we atleast found 1 way
+        // #$%^*&^%$#$%^&^&**((*^%$#@#$%))
+        if (i == n) {
+            return 1; // If it was cost, it can be return i
+        }
+        return climb_Stairs(i + 1, n) + climb_Stairs(i + 2, n);
+    }
+}
+
+// Problem is in Time complexity
+// T: O(2^n) -> (Fan-out)^(height) = (Fan-out)^(No of nodes)
+// No of choices = fan out = 2
+
+// Space: O(n)
+
+
+
 
 // RECURSIVE APPROACH WITH MEMOIZATION
 class Solution {
+    // Either make it global at class level or pass it as a param
     private HashMap<Integer, Integer> memo = new HashMap<>();
     
     private int dp(int i) {

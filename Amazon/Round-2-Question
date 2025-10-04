@@ -1,0 +1,104 @@
+
+//https://leetcode.com/problems/sliding-window-maximum/editorial/
+
+// Given an integer array and a window of size w, find the current maximum value in the window as it
+// slides through the entire array.b
+
+
+
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+window_size = 3
+
+/*
+Constraints:
+1. Array may/ may not be sorted
+2. Array can have positive and negative values
+
+Working:
+1, 2, 3 -> 3
+2, 3, 4 -> 4
+
+Input: array, window size
+Output: List<Integer>
+
+Brute Force:
+for()
+    for()
+Time: O(n^2)    
+
+Sliding WIndow: Time: O(n)
+
+nums = [2, 20, 3, -4, -15, 6, 7, 8, 9, 10]
+window_size = 3
+*/
+l = no of invocations for array, <a 3 ; sizeArray%windowsize
+O(n)
+Time: O(l*n)
+
+public List<Integer> calculateMaximum(int[] inputNums, int windowSize){
+    int l = inputNums.length;
+    List<Integer> window = new ArrayList<>();
+    List<Integer> maxValues = new ArrayList<>();
+    int startWindow = 0, endWindow = 0;
+    
+    for(endWindow=startWindow; endWindow<l; endWindow++){
+        window.add(inputNums[endWindow));
+        
+    /*
+    1. Keeping adding elements to a window
+    2. When window size = w; consider that window separately; do some processing
+    3. Shrink the window size, update my start to my current end; start:0 ; end:2, update start:end+1
+    */
+        if(endWindow >= windowSize-1){
+            // Do something for this window
+            maxValues.add(calculateMaximum(window));
+            // Shrink
+            startWindow = endWindow-(windowSize-1);
+        }    
+        
+        window.clear();
+    }
+    
+    return maxValues;
+    
+    
+}
+
+// O(k) 
+// [2,-2,3]
+public int calculateMaximum(List<Integer> window){
+    int maxWindowVal = Integer.MIN_VALUE;
+    if(window.size() > 0){
+    maxWindowVal = window.get(0);//Integer.MIN_VALUE;
+    for(int values: window){
+        maxWindowVal = Math.max(maxWindowVal,values);
+    }
+    }
+    return maxWindowVal;
+}
+
+
+
+/*
+[1,2,3] , [-1,0,1], [8,7,6]
+
+// 1. Sort -> pick last element -> k -> O(k*logk) ; O(k)
+// 2. maxHeap -> just insert -> O(k*logk) -> O(1) ; O(k)
+// 3. Have a max variable: 
+
+*/
+
+nums = [2, 20, 3, -4, -15, 6, 7, 8, 9, 10]
+window_size = 3
+
+[2,20,3]
+[20,3,-4]
+
+
+
+
+
+
+
+
+

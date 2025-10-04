@@ -4,7 +4,7 @@
      */
     public int[] topKFrequent(int[] nums, int k) {
         int[] arr = new int[k];
-        HashMap<Integer, Integer> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
 
         // Create hashmap
         for (int num : nums) 
@@ -21,7 +21,8 @@
         // Inside this map structure, we just copy entire record directly
         for (Map.Entry<Integer, Integer> it : map.entrySet()) {
             pq.add(it);
-            if (pq.size() > k) pq.poll();
+            if (pq.size() > k) 
+                pq.poll();
         }
         int i = k;
         while (!pq.isEmpty()) {

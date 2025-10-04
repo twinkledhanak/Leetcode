@@ -1,0 +1,32 @@
+--------------------------------------------------------------------------------------------------------------------------------------------
+Template for STATIC Sliding window for Strings:
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Template for DYNAMIC Sliding window for Strings:
+--------------------------------------------------------------------------------------------------------------------------------------------
+1. Have a loop to go through the string
+2. Have a while to check for given condition on the string, NOT the window length
+The risk? If we write -  while(checkIfValid(....)){}, the function must be as optimised as possible, otherwise TLE
+
+3. If we enter the while loop, it is true condition. Check/update required variables
+4. Add condition to compress string inside while loop itself
+5. return result
+
+Alternate version:
+
+2. Have a while to check for given condition on the string, NOT the window length
+Sometimes, this while loop can also have invalid condition - while(set.contains(char)) // we know set holds only unique values
+
+while(map.get(ch) > 1)
+
+Now we dont know which condition to use when, while(positive) or while(negative)
+while(sum >= targetSum) or while(map.get(ch) > 1)
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Template for DYNAMIC Sliding window, where are comparing two windows against each other, one small and one big
+Ref. Permutation in String 
+--------------------------------------------------------------------------------------------------------------------------------------------
+We create an array of frequencies for both strings and just compare them

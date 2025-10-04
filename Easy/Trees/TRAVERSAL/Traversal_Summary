@@ -6,10 +6,10 @@
   /  \
  4    5
 
-Inorder: 4,2,5,1,3
+Inorder: 4,2,5,1,3 // Only inorder of BST will give sorted array
 Preordr: 1,2,4,5,3 (another variant of DFS) +ab
 Postord: 4,5,2,3,1
-BFStrav: 1,2,3,4,5 (level order)
+BFStrav: 1,2,3,4,5 (level order), different from Preorder
 
 Types of Traversal:
 
@@ -18,23 +18,45 @@ Types of Traversal:
 3. Postorder
 4. Level order
 
+Ways to write a traversal code:
+1. Iterative (Time Efficient)
+2. Recursive (Intuitive and Easy)
+3. Morris (Space Efficient)
+
+4. Just traversing as needed (without stacks or queues)
+
 
 Ways to traverse a Binary tree:
 -------------------------------------------------------------------------------------------------
-Iterative                       Iterative                               Recursive
-(Using DFS)                     (Using BFS)
+Iterative                                   Iterative                               Recursive
+(Using DFS)                                 (Using BFS)
 -------------------------------------------------------------------------------------------------
-Inorder(Stack)(Y)               Inorder                                 Inorder(Y)
-Preorder(LL)(Y)                 Preorder                                Preorder(Y)
-Postorder(LL)(Y)                Postorder                               Postorder(Y)
-                                LevelOrder(Y)                           LevelOrder(Y)(Sim to RHS view)
+Inorder(Stack)(Y)                            -                                        Inorder(Y)
+Preorder(LL,plast)(Y)                        -                                        Preorder(Y)
+Postorder(LL,plast)(Y)                       -                                        Postorder(Y)
+    -                                        LevelOrder(Y)                            LevelOrder(Y)(Sim to RHS view)
 
+
+ONLY Postorder uses reverse(), in pre - we ourselves reverse it 
 
 Ways to traverse a N-ary tree:
 -------------------------------------------------------------------------------------------------
 Iterative                       Iterative                               Recursive
 (Using DFS)                     (Using BFS)
 -------------------------------------------------------------------------------------------------
-Inorder                         Level Order (Queue using LL)(Y)
-Preorder(LL)(Y)                
-Postorder(LL)(Y)               
+Inorder                         Level Order (Queue using LL,poll)(Y)
+Preorder(LL)(Y)(*)                
+Postorder(LL)(Y)(*)
+
+
+* Both uses Collections.reverse() but their order is different
+* They both use LL, so we have pollLast()
+
+Balanced trees are usually balanced in two areas - 
+
+Height-balanced
+For each node in the tree, the difference in height between its left and right subtrees is no more than one. The height of an empty subtree is -1. The height difference is calculated by subtracting the absolute value of the left subtree from the absolute value of the right subtree, or vice versa. 
+
+
+Weight-balanced
+For each node in the tree, the difference in the number of inner nodes in its left and right subtrees is no more than one.

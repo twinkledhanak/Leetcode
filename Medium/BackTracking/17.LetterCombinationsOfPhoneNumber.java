@@ -38,3 +38,13 @@ class Solution {
 }
 
 // Time: O(n * m^n) , n digits, m = no of letters each digit corr to, eg, 27 -> n=2, 2=abc, 7=pqrs, so m=max(abc,pqrs) = 4 (length)
+// Referring back to old formula:
+// (Time at every node) * (fan-out)^(height+1)
+// Fan-out => no of expansion nodes for every nodes // no of choices => 3 for letter '2' [a,b,c] and 4 for letter '7' = 4
+// m^(height+1)
+// Height is no of nodes of tree , in worst case is n, good case - logn
+// m^(n+1) ~ = m^(n)
+// We iterate through all digits, array size is n
+// (n) * m^(n+1) OR (n) * m^(n)
+
+// Space: O(n) , not sure if: n=height of tree or size of input array

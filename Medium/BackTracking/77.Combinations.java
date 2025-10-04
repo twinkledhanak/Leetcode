@@ -1,3 +1,12 @@
+   public List<List<Integer>> combine(int n, int k) {
+        this.n = n;
+        this.k = k;
+        List<List<Integer>> ans = new ArrayList<>();
+        backtrack(new ArrayList<>(), 1, ans);
+        return ans;
+    }
+
+
 public void backtrack(List<Integer> list, int firstNum, List<List<Integer>> ans) {
     // considered along the tree path, when we are done adding 2 elements
     // OR
@@ -21,3 +30,4 @@ public void backtrack(List<Integer> list, int firstNum, List<List<Integer>> ans)
 
 // Time: O(n!/(k-1)! * (n-k)!)
 // Space: O(k)
+// @TODO: To understand

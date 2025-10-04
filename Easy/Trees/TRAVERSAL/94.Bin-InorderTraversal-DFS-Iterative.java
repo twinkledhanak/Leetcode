@@ -11,14 +11,14 @@ public class Solution {
         Stack<TreeNode> stack = new Stack<>();
         TreeNode curr = root;
 
-        while (curr != null || !stack.isEmpty()) {
+        while (curr != null || !stack.isEmpty()) { // Uses ORRRRRRRRRRR
             while (curr != null) {
-                stack.push(curr);
-                curr = curr.left;
+                stack.push(curr); // Here we use push ; not add
+                curr = curr.left; // Keep going left of curr
             }
-            curr = stack.pop();
+            curr = stack.pop(); // we use poll() in queue
             res.add(curr.val);
-            curr = curr.right;
+            curr = curr.right; // curr.right, not , root.right
         }
         return res;
     }

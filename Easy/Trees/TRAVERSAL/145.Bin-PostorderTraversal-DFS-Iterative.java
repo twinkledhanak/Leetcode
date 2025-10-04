@@ -30,24 +30,22 @@ class Solution {
     }
 
     // Just like DFS, add first one to stack
-    stack.add(root);
+    stack.add(root); // Since add works, offer() will also work
 
 
     while (!stack.isEmpty()) {
 // get the last, instead of using stack.peek()
-      TreeNode node = stack.pollLast();
+      TreeNode node = stack.pollLast(); 
 
 
-      // Left, right, node   -> +ab  
+     // ab+
 
       if (node.left != null) {
-        stack.add(node.left);
+        stack.add(node.left); // Since add works, offer() will also work
       } 
 
-      // SInce it is stack, reverse the order of pushing
-      // +ab , push right first
       if (node.right != null) {
-        stack.add(node.right);
+        stack.add(node.right);// Since add works, offer() will also work
       }
       
      
@@ -55,6 +53,8 @@ class Solution {
       output.add(node.val); // +
 
     }
+
+    
     /// *******************************
      Collections.reverse(output);
     return output;

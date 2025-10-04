@@ -14,6 +14,15 @@
 // It is NOT the following - max height of lhs + max height of rhs => why? we are only considering root node here.
 // Our diameter may or may not pass through the root node. So we have to do this calculation for every node recursively
 
+/***
+THIS QUESTION IS VERY SIMILAR TO MAX-SUM PATH QUESTION
+IN THAT Q, WE ADD THE VALUES OF ALL NODES AND GIVE THE PATH WITH MAX SUM
+HERE, WE DO EXACT SAME THING, BUT INSTEAD, RETURN THE NUMBER OF NODES ON THE LONGEST PATH (DIAMETER)
+
+We have to traverse the tree - DFS, BFS
+We need to find the longest route - suggesting going from root to leaf - 
+But, we need the maximum of both the children, suggesting, we have POSTorder -> first processing the children, then parent
+*/
 
 class Solution {
     private int diameter;
@@ -23,8 +32,7 @@ class Solution {
         return diameter;
     }
 
-    // The return value of this function is a height, but it is not used anywhere. We just calculate both height and diameter
-    // diameter is a class level variable that is updated by this function. Height is returned but not used
+    // Even though the return value is not used; we use it internally to update diameter
     private int longestPath(TreeNode node){
         if(node == null) return 0;
         // recursively find the longest path in

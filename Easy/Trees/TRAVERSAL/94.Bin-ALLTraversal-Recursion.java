@@ -12,12 +12,14 @@ class Solution {
 // OUR HELPER() IS NOT RETURNING ANYTHING, SO WE CANNOT ADD THIS CONDITION:
 // if (root == null)
 //    return null
+// NO OTHER ADD() CONDITIONS TO BE WRITTEN!!!
 
 // inorder -> a+b
     public void helper(TreeNode root, List<Integer> res) {
+        // ********** No writing of extra conditions
         if (root != null) {
             helper(root.left, res);
-            res.add(root.val);
+            res.add(root.val); // only add in the entire method
             helper(root.right, res);
         }
     }

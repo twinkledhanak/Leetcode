@@ -42,7 +42,7 @@ class Solution {
         int parent = -1;
         for (int i = inStart; i <= inEnd; i++) { // ********* WE START FROM inStart
             if (inorder[i] == preorder[preStart]) {
-                parent = i;
+                parent = i; // ****WE SAVE THE INDEX WHERE WE FOUND PARENT; WE ALREADY KNOW WHO PARENT IS :)
                 break;
             }
         }
@@ -52,6 +52,7 @@ class Solution {
 
         // Recursively construct the left and right subtrees
                   //helper(int preStart, int preEnd, int[] preorder,  int inStart, int inEnd, int[] inorder) {
+                 // ** PRESTART + 1, since first one is parent :)   
         root.left = helper(preStart + 1, preStart + leftTreeSize, preorder,  inStart, parent - 1, inorder);
         root.right = helper(preStart + leftTreeSize + 1, preEnd, preorder,  parent + 1, inEnd, inorder);
 
@@ -59,3 +60,5 @@ class Solution {
     }
 
 }
+
+// Time: O(n); Space: O(n) - since we are building tree of n nodes

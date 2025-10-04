@@ -2,12 +2,15 @@ class Solution {
   public boolean hasPathSum(TreeNode root, int sum) {
     if (root == null)
       return false;
-
-      // Every time there is a sum variable, we keep on decreasing it
-
+    
+    // Every time there is a sum variable, we keep on decreasing it
     sum -= root.val;
+
+    // If there is only single node...
     if ((root.left == null) && (root.right == null))
-      return (sum == 0);
+        return (sum == 0); // sum == 0 ? true : false
+
+
     return hasPathSum(root.left, sum) || hasPathSum(root.right, sum); //****** */
   }
 }

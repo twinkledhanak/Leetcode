@@ -1,3 +1,61 @@
+// Morris traversal code, but same pattern as Pre-order iterative code
+// Tested this code for Pre-order traversal and it works
+class Solution {
+  public List<Integer> preorderTraversal(TreeNode root) {
+    LinkedList<Integer> output = new LinkedList<>();
+    if (root == null) {
+      return output;
+    }
+
+    TreeNode node = root; // Start from root
+
+    // Morris Traversal: O(1) space
+    while (node != null) {
+
+      if (node.left == null) {
+        // No left child → visit and go right
+        output.add(node.val); // +  
+        node = node.right;
+      } else {
+        // Has left child → move to the left child
+        TreeNode child = node.left;
+
+        // We know, node (root)
+        // We know the left child
+        // We know that the rightmost grandchild will come visit the node (root), not its immediate parent (left child)
+
+        // Explore rightmost node of left child
+        // It must not be same as grandparent
+        while (child.right != null && child.right != node) {
+          child = child.right;
+        }
+
+        // When we reach null, now we know the backtrack needs to happen
+        // We must store the ref of grandparent in this rightmost child's right
+        if (child.right == null) {
+          output.add(node.val); // +  
+          child.right = node; // ***Thread back
+
+          node = node.left; // proceed next in Pre-order manner
+        } else {
+          // Second time at this node → remove thread and go right
+          child.right = null;
+          node = node.right;
+        }
+      }
+
+    }
+
+    return output;
+  }
+}
+  
+
+
+
+
+
+
 class Solution {
     // Morris is suited for all traversals, we learnt this one variant - for Preorder using Morris.
     // TBT (Threaded BT) are only good for Inorder traversal, Morris is good for all 3

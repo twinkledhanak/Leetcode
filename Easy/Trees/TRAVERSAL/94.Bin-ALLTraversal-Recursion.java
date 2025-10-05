@@ -1,5 +1,6 @@
 class Solution {
     // USES RECURSION
+    // ** Note that we are also passing the ArrayList as a parameter in the recursive function
     
 
     public List<Integer> inorderTraversal(TreeNode root) {

@@ -46,6 +46,8 @@ class Solution {
 
 /*
 Aspect:	poll()	;; pollLast()
+Stack<Node> stack = new Stack<>(); LinkedList<Node> stack = new LinkedList<>();
+When we use original stack class; When we use LinkedList as stack class
 Function:	Retrieves and removes the first element of the deque ;;	Retrieves and removes the last element of the deque.
 Equivalent Method:	Similar to removeFirst() ;;	Similar to removeLast().
 Return Value:	Returns the head (first element) or null if the deque is empty ;;	Returns the tail (last element) or null if the deque is empty.

@@ -13,15 +13,15 @@ BFStrav: 1,2,3,4,5 (level order), different from Preorder
 
 Types of Traversal:
 
-1. Inorder
+1. Inorder (Some distant variant of DFS as I cannot write it using BFS)
 2. Preorder (Variant of DFS traversal)
-3. Postorder
-4. Level order
+3. Postorder (Some distant variant of DFS as I cannot write it using BFS)
+4. Level order (Strictly BFS)
 
 Ways to write a traversal code:
-1. Iterative (Time Efficient)
+1. Iterative (Time Efficient, we use stacks to store full context)
 2. Recursive (Intuitive and Easy)
-3. Morris (Space Efficient)
+3. Morris (Space Efficient, we just use right node values to store location of next parent node (not our own parent) we have to go )
 
 4. Just traversing as needed (without stacks or queues)
 

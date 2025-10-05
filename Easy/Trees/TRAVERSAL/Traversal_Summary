@@ -18,6 +18,8 @@ Types of Traversal:
 3. Postorder (Some distant variant of DFS as I cannot write it using BFS)
 4. Level order (Strictly BFS)
 
+Inorder traversal is not a unique identifier of BST. At the same time, both preorder and postorder traversals are unique identifiers of BST.
+
 Ways to write a traversal code:
 1. Iterative (Time Efficient, we use stacks to store full context)
 2. Recursive (Intuitive and Easy)

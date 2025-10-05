@@ -13,7 +13,7 @@ public class Solution {
 
         while (curr != null || !stack.isEmpty()) { // Uses ORRRRRRRRRRR
             while (curr != null) {
-                stack.push(curr); // Here we use push ; not add
+                stack.push(curr); // add() will also work since we are using the original Stack class
                 curr = curr.left; // Keep going left of curr
             }
             curr = stack.pop(); // we use poll() in queue

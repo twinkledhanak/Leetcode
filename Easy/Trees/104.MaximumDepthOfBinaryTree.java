@@ -17,6 +17,39 @@ class Solution {
 
 
 // Alternate code:
+public int maxDepth(TreeNode root) {
+        // No of nodes
+        // No of edges + 1
+
+        return helper(root,0);
+    }
+
+// No of nodes
+    public int helper(TreeNode root, int sum){
+        if(root == null)
+            return 0;
+
+        if(root.left == null && root.right == null)
+            return 1;    
+
+        // I have to capture the value from recursion 
+        sum += 1;
+
+        int left = helper(root.left,sum);
+        int right = helper(root.right,sum);   
+
+        int maxDepth = Math.max(left,right)+1; 
+        return maxDepth;
+    }
+
+The benefit of having tail recursion is that for certain programming languages (e.g. C++) the compiler could optimize the 
+memory allocation of the call stack by reusing the same space for every recursive call, rather than creating the space for 
+each one. As a result, one could obtain the constant space complexity O(1) for the overhead of the recursive calls.
+
+Note that the optimization of tail recursion is not supported by Python or Java.
+
+
+
 /*
 class Solution {
     public int maxDepth(TreeNode root) {

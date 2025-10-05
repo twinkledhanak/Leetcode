@@ -42,27 +42,32 @@ class Solution {
  *         this.right = right;
  *     }
  * }
- */
+ **/
 class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
-        // given inorder
-        // find the mid
-        int n = nums.length;
-        return helper(nums,0,n-1);
-    }
-
-    public TreeNode helper(int[] nums,int start, int end){
-        if(start > end)
+        if(nums.length == 0)
             return null;
 
-        int mid = start + (end-start)/2; // universally accepted!!!
-        TreeNode root = new TreeNode(nums[mid]); // setting the root
+        return helper(nums,0,nums.length-1);    
+    }
 
-        // left and right
-        root.left = helper(nums,start,mid-1);
-        root.right = helper(nums,mid+1,end); //not mid
+    public TreeNode helper(int[] nums, int low, int high){
+        // Whenever we have boundary variables - we always do check their validity
+        if(low > high)
+            return null;
+
+        // Need to find midpoint
+        int midpoint = low + (high-low)/2; // @#$%^*(*&^%#$%^*(I*^%$%^UIO))
+        // Made the mistake here: [l + (h-l)] / 2 is incorrect. The divide by 2 is only for (h-l)
+
+
+        // Found my root
+        TreeNode root = new TreeNode(nums[midpoint]);
+        root.left = helper(nums, low, midpoint-1);
+        root.right = helper(nums, midpoint+1, high);
 
         return root;
+
     }
 }
 

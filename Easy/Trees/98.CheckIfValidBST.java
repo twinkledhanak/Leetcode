@@ -6,6 +6,18 @@
 // If we have an in-order traversal of a BST, we get a sorted array
 // One approach is to convert the given tree to its inorder traversal and see if we get a sorted array
 
+/**
+WHY DO WE EVEN HAVE LOW & HIGH? WHY IS THERE A RANGE TO COMPARE?
+
+Every node doesn't just need to be compared to its parent.
+It needs to respect the full ancestry of constraints passed down from the root.
+Let’s reframe the rule:
+Every node must fall within a certain valid range:
+For left children: valid range is (min, parent.val)
+For right children: valid range is (parent.val, max)
+So we need to pass down constraints as we recurse.
+*/
+
 class Solution {
     public boolean isValidBST(TreeNode root) {
         return helper(root, null, null); // Integer is a reference, so it can store null
@@ -17,6 +29,13 @@ class Solution {
             return true;
         }
 
+        /**
+        NOT to be added as it does not compare anything for values or their limits
+        if(node.left == null && node.right == null)
+            return true; 
+
+        */
+
         // The current node's value must be between low and high.
         if ((low != null && root.val <= low) // Acc to me, it should be root.val < low for invalid. root.val>= low is valid bst
             ||
@@ -25,11 +44,20 @@ class Solution {
         }
 
         // The left and right subtree must also be valid.
-        return (helper(root.right, root.val, high) && helper(root.left, low, root.val));
+        // For leftmost node, the root.val is the max value that can node following leftmost node can have
+        return (helper(root.left, low, root.val) && helper(root.right, root.val, high));
     }
 
     
 }
+
+// My thoughts:
+// Time: Lets say it is BST. H= N or logN, this case is logN but that is the best case. 
+// Worst case => Tree will not be BST, hence NOT balanced and hence O(n)
+// Space: Recurs stack + non recursive: logN + constant => logN
+
+// This is true for average case
+// For worse case: Time and Space: O(n)
 
 
 // Stanford link:
@@ -48,9 +76,3 @@ private boolean isBST(Node node) {
 
 
 
-// My thoughts:
-// Time: Lets say it is BST. H= N or logN, this case is logN
-// Space: Recurs stack + non recursive: logN + constant => logN
-
-// This is true for average case
-// For worse case: Time and Space: O(n)

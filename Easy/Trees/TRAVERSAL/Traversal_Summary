@@ -54,6 +54,21 @@ Postorder(LL)(Y)(*)
 * Both uses Collections.reverse() but their order is different
 * They both use LL, so we have pollLast()
 
+// POST-ORDER TRAVERSAL CODE THAT MIGHT NOT LOOK LIKE POST-ORDER
+
+WE ARE USED TO SEEING IT AS: AB+
+PROCESSING THE LEFT, THE RIGHT AND THEN DOING SOMETHING WITH THE NODE
+
+BUT,
+WE CAN ALSO HAVE EXAMPLE OF FUNCTIONAL POST ORDER TRAVERSAL
+
+REFER TO THIS QUESTION:
+MAXIMUM PATH SUM IN A TREE (SIMILAR TO KADANE BUT TO BE APPLIED ON A TREE)
+
+
+
+
+
 Balanced trees are usually balanced in two areas - 
 
 Height-balanced

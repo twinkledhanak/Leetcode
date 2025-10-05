@@ -1,3 +1,47 @@
+// Whenever we are calculating Depth, use this function:
+
+// A height-balanced binary tree is a binary tree in which the depth of the two subtrees of every node never differs 
+// by more than one.
+// Height Balanced Tree can mention Height, but the real calculation is based upon Depth
+// Height Balanced Tree = Depth(two subtrees) !> 1
+
+
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        if(root == null)
+            return true;
+        if(root.left == null && root.right == null)
+            return true;
+
+        // This was my mistake => To return from root node and not add further recursion
+        //return (getDepth(root.left,0) - getDepth(root.right,0)) > 1? false:true;        
+        if (Math.abs(getDepth(root.left, 0) - getDepth(root.right, 0)) > 1)
+            return false;
+
+        // We also have to traverse entire tree LOL
+        return isBalanced(root.left) && isBalanced(root.right);    
+    }
+
+    // No of nodes
+    public int getDepth(TreeNode root, int sum){
+        if(root == null)
+            return 0;
+        if(root.left == null && root.right == null)
+            return 1; // single node
+
+        sum += 1;
+        int left = getDepth(root.left, sum);
+        int right = getDepth(root.right, sum);    
+
+        return Math.max(left,right) + 1;
+    }
+}
+
+
+
+
+
+
 class Solution {
   public boolean isBalanced(TreeNode root) {
     // An empty tree (wow) satisfies the definition of a balanced tree

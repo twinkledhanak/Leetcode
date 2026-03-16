@@ -43,3 +43,30 @@ Time complexity: O(n). Only a single pass is needed.
 
 Space complexity: O(1). Only two variables are used.
 */
+
+// Feb 2026
+// Most simplest solution
+// This problem was never a sliding window or two pointer
+// It falls in some prefix some category
+// One of the constraints is that we do NOT buy and sell the same day
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        // We keep track of two things -
+        // Min value of buy price - we literally compare with MAX_VALUE and keep updating minPrice
+        int minPrice = Integer.MAX_VALUE;
+        int maxProfit = 0;
+
+        for (int price : prices) {
+            if (price < minPrice) {
+                minPrice = price;   // best buy so far
+                // If it is the best buy, why dont we sell it then?
+                // Reason: It is still the same day and we are not allowed to sell on same day
+                // Also the profit would be zero since the BuyPrice = SellPrice = minPrice
+            } else {
+                maxProfit = Math.max(maxProfit, price - minPrice);
+            }
+        }
+        return maxProfit;
+    }
+}

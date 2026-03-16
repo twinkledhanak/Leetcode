@@ -19,3 +19,6 @@ class Solution {
 Time complexity: O(n). Single pass.
 
 Space complexity: O(1). Constant space is used.
+
+Remember that we are comparing the current pointers only, a and b.
+Not their lookahead pointers (a+1 or b-1)

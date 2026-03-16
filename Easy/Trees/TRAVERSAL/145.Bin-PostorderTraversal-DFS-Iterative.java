@@ -62,3 +62,8 @@ class Solution {
 
     }
 }
+
+/**
+Pre-order recursion = Pre-order Iterative opposite in order
+Post-order recursion = Post-order Iterative opposite in order + reverse list
+ */

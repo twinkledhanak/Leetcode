@@ -14,6 +14,22 @@ dp[3] = if(elem[3]>maxElemUntil2)? dp[2]+1: dp[2]
 
 */
 
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, 1); // each element is at least length 1
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) { // Checking all j before i
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1); // dp[i] -> start from self (val: 1), dp[j] + 1 => add yourself into prev & increase length
+                }
+            }
+        }
+        return Arrays.stream(dp).max().getAsInt(); // can replace with calculating max at every dp[i]
+
+    }
+}
+
 
 */
     // Dynamic programming, O(n^2) - Iterative Solution
@@ -124,3 +140,38 @@ class Solution {
         return left;
     }
 }
+
+
+// Feb 2026 solution:
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp,1); // all are valid subsequences
+        int maxLen = 1;
+
+        if(nums.length == 0)
+            return 0;
+
+        for(int i=1; i<nums.length; i++){
+
+            // check all indexes before i
+            for(int j=0; j<i; j++){
+                if(nums[j] < nums[i])
+                    dp[i] = Math.max(dp[i], dp[j]+1);
+            }
+        }    
+
+        for(int d: dp)
+            maxLen = Math.max(maxLen,d);
+        
+        
+        return maxLen;
+    }
+}
+
+/**
+
+dp[i] = max length so far upto index i of array
+
+
+*/

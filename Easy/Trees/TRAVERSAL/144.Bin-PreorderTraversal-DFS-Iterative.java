@@ -54,3 +54,25 @@ Return Value:	Returns the head (first element) or null if the deque is empty ;;	
 Typical Use Case:	Used when you need to operate on the front of the deque ;;	Used when you need to operate on the end of the deque.
 Null Handling:	Returns null if the deque is empty, without throwing an exception ;;	Returns null if the deque is empty, without throwing an exception.
 */
+
+LinkedList<TreeNode> stack = new LinkedList<>();
+stack.push(...);
+stack.poll();
+
+LinkedList<TreeNode> stack = new LinkedList<>();
+stack.add(...);
+stack.pollLast();
+
+why do we reverse the order in iterative approach?
+
+Recursion and iteration both use a stack — but recursion uses the call stack, 
+while iteration uses an explicit data stack.
+The “reversal” happens because stacks are LIFO, and you must manually simulate the call order that 
+recursion gives you for free.
+
+In iterative preorder, you are replacing the JVM call stack with your own stack.
+
+This means:
+	•	You must push nodes manually
+	•	You must decide push order
+	•	You must respect LIFO behavior

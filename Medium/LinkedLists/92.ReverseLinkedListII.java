@@ -22,11 +22,20 @@ class Solution {
         }
 
         // The two pointers that will fix the final connections.
-        ListNode con = prev, tail = ptr;// @TODO - Understand the need 
+        ListNode con = prev, tail = ptr; // @TODO - Understand the need 
 
         // Iteratively reverse the nodes until right becomes 0.
         // Right-left = 4-2 = 2 => we have to reverse the list that has 3 nodes, from left, left+i until right
         // Instead of traversing to right again and then reversing, we reverse WHILE we iterate.
+        
+        // what we have until now,
+        //              Left        right
+        // a -> b -> c -> d -> e -> f   -> g -> h -> i
+        //         prev  ptr
+
+        // a -> b -> c -> d -> e -> f   -> g -> h -> i
+        //         prev  ptr  post
+        
         ListNode post = null;
         while (right > 0) { // **** FOR REMAINING RIGHT
             post = ptr.next;

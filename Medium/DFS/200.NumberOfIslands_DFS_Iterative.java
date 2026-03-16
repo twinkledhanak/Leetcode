@@ -56,6 +56,36 @@ class Solution{
 
 }
 
+// In recursive, we return from the frame to stop execution
+// In Iterative, we skip execution using continue [which is a hint to write inside the loop]
+// Same concept but difference in control structures
+
+Recursive DFS           Iterative DFS
+if (invalid) return;    if (invalid) continue;
+Stops this call         Skips this pop
+Implicit stack frame    Explicit stack
+
+// Latest 7th Feb work,
+   public void dfs(int i, int j, int row, int col, char[][] grid){
+        // DFS Iterative using Stacks
+        Stack<int[]> stack = new Stack<>();
+        int[][] dir = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+        stack.push(new int[]{i,j});
+        
+        while(!stack.isEmpty()){
+            int[] pos = stack.pop();
+            if(pos[0]>=row||pos[0]<0||pos[1]>=col||pos[1]<0||grid[pos[0]][pos[1]]!='1')
+                continue;
+
+            grid[pos[0]][pos[1]] = '#';
+            for(int x[]: dir)
+                stack.push(new int[]{pos[0]+x[0], pos[1]+x[1]});
+
+        }
+
+    }
+
+
 |                                                | **DFS Recursive**                      | **DFS Iterative**                                                    | **BFS Recursive**                                  | **BFS Iterative**                                         |
 | ---------------------------------------------- | -------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------- |
 | **When to mark visited?**                      | ✅ Before recursive call                | ✅ After popping from stack                                           | ⚠️ Rarely used                                     | ✅ When enqueuing                                          |

@@ -37,3 +37,49 @@ class Solution {
     return exists;
     }
 }
+
+
+// Latest Feb 2026 Solution:
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        int windowSize = s1.length();
+        int start=0, end=0;
+        int[] map = new int[26];
+        int[] map2 = new int[26];
+
+        for(char ch: s1.toCharArray()){
+            map[ch-'a'] += 1;
+        }
+
+        for(end=0; end<s2.length(); end++){
+            // Keep increasing
+            map2[s2.charAt(end) - 'a'] += 1;
+            
+            
+            // Now that we have a valid window
+            // check if window valid - yes? return true  
+            if((end-start) == windowSize-1){
+                if(isValid(map,map2))
+                    return true;
+                else{
+                    map2[s2.charAt(start) - 'a'] -= 1;
+                    start += 1;
+                }
+
+            }
+
+        }
+
+        return false;
+    }
+
+
+    public boolean isValid(int[] map, int[] map2){
+        for(int i=0; i<map.length; i++){
+            if(map[i] != map2[i])
+                return false;
+        }
+
+        return true;
+    }
+}

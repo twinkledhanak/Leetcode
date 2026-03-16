@@ -1,34 +1,25 @@
 class MinStack {
+    int min = Integer.MAX_VALUE;
+    Stack<int[]> stack = new Stack<>(); // {element, minimum until given element}
 
-    Stack<Integer> stack;
-    int minVal = Integer.MAX_VALUE;
+    public void push(int x) {
+        if(!stack.isEmpty())
+            stack.push(new int[]{x,Math.min(x, stack.peek()[1])});
+        else
+            stack.push(new int[]{x,x});
+    }
 
-    public MinStack() {
-        stack = new Stack<Integer>();
-    }
-    
-    public void push(int val) {
-        stack.push(val);
-        if (minVal > val)
-        minVal = val;
-    }
-    
     public void pop() {
         if(!stack.isEmpty())
-        stack.pop();
+            stack.pop();
     }
-    
+
     public int top() {
-        if(!stack.isEmpty())
-        return stack.peek();
-        else
-        return -1;
+        return stack.peek()[0];
     }
-    
+
     public int getMin() {
-        return minVal;
-        // @TODO - If the minValue element was popped, this method will return a stale value
-        // Change it to store min element with every stack entry
+        return stack.peek()[1];
     }
 }
 

@@ -32,7 +32,13 @@ class Solution {
 
         // marking as visited before recursion
         grid[i][j] = 0; 
-        int area = 1; // Learning #1 => instantiate variable inside the function
+
+        // Learning #1 => instantiate variable inside the function
+        // But, IF WE SET THIS TO 0 => IT WILL RESET THE ENTIRE HISTORY
+        // HENCE WE SET IT TO 1
+        // IF I HAD PASSED area in parameter - along with some more changes - it would have counted
+        // all the ones we have in the grid & we have better techniques than recursion to do that
+        int area = 1; 
 
         int[][] directions = {{0,1}, {0,-1}, {1,0}, {-1,0}};
         for(int[] dir : directions){
@@ -44,6 +50,9 @@ class Solution {
 
 
 }
+
+Time: O(m*n)
+Space: O(m*n) - nothing is min max here 
 
 | Statement   | Valid in this context? | What it does                                      | Result              |
 | ----------- | ---------------------- | ------------------------------------------------- | ------------------- |

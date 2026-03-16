@@ -38,6 +38,7 @@ class Solution {
     }
 
 
+// CODE SEGMENT A: (Refer B below)
 
     // DFS method here detects if there is cycle present or not
     private boolean dfs(int course, Map<Integer, List<Integer>> adjMap,
@@ -72,3 +73,85 @@ class Solution {
 }
 
 // Time: O(V+E) ; Space: O(V+E)
+
+// CODE SEGMENT B:
+// Cycle detection logic core is same, if cycle exists - yes return true
+// We handle the other business logic from this output
+// We reverse the path obtained from DFS.
+
+public int[] findOrder(int numCourses, int[][] prerequisites) {
+        // dfs, recursion
+
+        // make a directed graph
+        Map<Integer,List<Integer>> graph = new HashMap<>();
+        for(int edge[]: prerequisites){
+            graph.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
+        }
+
+        Set<Integer> parentSet = new HashSet<>();
+        Set<Integer> visitedSet = new HashSet<>();
+        List<Integer> path = new ArrayList<>();
+
+        for(int i=0; i< numCourses; i++){
+            if(doesCycleExists(i,graph,parentSet,visitedSet,path))
+                return new int[]{}; // cycle exists, return nothing
+
+        }
+
+        Collections.reverse(path); // #$%^&*(*&^%$#$%^&*(*&^%$#$%^&*(O*^%$#$%^&*())))
+        return path.stream()
+                .mapToInt(Integer::intValue)
+                .toArray();
+    }
+
+boolean doesCycleExists(int course, Map<Integer,List<Integer>> graph, Set<Integer> parentSet, Set<Integer> visitedSet, List<Integer> path){
+
+        if(parentSet.contains(course))
+            return true; // has cycle  
+        
+        if(visitedSet.contains(course))
+            return false; // already processed
+
+        parentSet.add(course);
+        for(int neigh: graph.getOrDefault(course, new ArrayList<>())){
+            if(doesCycleExists(neigh,graph,parentSet,visitedSet,path))
+                return true;
+        }
+
+        parentSet.remove(course);
+        path.add(course);
+        visitedSet.add(course);
+        
+        return false;
+    }
+
+
+//Difference in code A vs code B
+/**
+At first glance - yes both A and B look opposite of each other - A returning true and B returning false
+Since the meaning to be interpreted here is different
+
+Both codes do POSTORDER DFS.
+path.add(course);   // after exploring neighbors
+
+That means:
+	•	dependencies are added before
+	•	dependents are added after
+
+Because of this line: graph.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
+This is the correct direction for topo, but postorder traversal produces reverse topo    
+
+// This template refers to another similar template of BACKTRACKING
+
+parentSet.add(course);
+    for(int neigh: graph.getOrDefault(course, new ArrayList<>())){
+        if(doesCycleExists(neigh,graph,parentSet,visitedSet,path))
+            return true;
+    }
+parentSet.remove(course);
+
+What is even difference between Post order DFS and Backtracking?
+
+
+
+*/

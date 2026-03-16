@@ -28,3 +28,39 @@ class Solution {
     }
 }
 // Consider edge cases ] and (])
+
+// Feb 2026 solution
+
+class Solution {
+    // Note how static variable is defined
+    // and initialized
+    static Map<Character,Character> map = new HashMap<>();
+    static {
+        map.put(')','(');
+        map.put('}','{');
+        map.put(']','[');
+    }
+    
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        
+
+        for(char ch: s.toCharArray()){
+            if(ch=='(' || ch=='{' || ch=='[')
+                stack.push(ch);
+            else{
+                //Now we have closing bracket, but nothing in stack
+                // WHich means, ip string could be "]"
+                // which is invalid
+                if(stack.isEmpty() || stack.peek() != map.get(ch))    
+                    return false;
+                stack.pop();  
+            }  
+        }
+
+        return stack.isEmpty();
+    }
+}
+
+Time: O(n)
+Space: O(n)

@@ -1,0 +1,13 @@
+having two different matrices to store visited is a bit tricky 
+- we can store all positions in a list and then iterate over smaller list to 
+check what all exists in bigger list. Only problem is we might have to store 
+positions as string as tuple comparison is tricky
+
+NO.
+
+If the state space is a fixed grid → use a matrix
+If the state space is sparse or unbounded → use a set
+
+We anyway have space complexity of order (m*n)
+Storing and iterating two more matrices will also result in the same time complexity
+

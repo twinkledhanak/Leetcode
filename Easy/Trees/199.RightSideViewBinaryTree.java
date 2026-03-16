@@ -62,3 +62,47 @@ class Solution {
 
     
 }
+
+// Feb 2026
+// Iterative solution loosely based on level order traversal
+// Core idea: Do level order traversal of tree, after we have all the nodes of a given level - 
+// pick the last node and save it
+
+
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        // I need to do level order traversal and pick the last element
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> rhs = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        int level = 0;
+        if(root==null)
+            return rhs;
+
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            int qSize = queue.size();
+            result.add(new ArrayList<>());
+
+            for(int i=0; i<qSize; i++){
+                TreeNode node = queue.poll();
+
+                result.get(level).add(node.val);
+
+                if(node.left!=null)
+                    queue.offer(node.left);
+                if(node.right!=null)
+                    queue.offer(node.right);
+
+            }
+
+            List<Integer> ls = result.get(level);
+            rhs.add(ls.get(ls.size()-1)); // CORE IDEA
+            level +=1;
+            
+        }
+
+        return rhs;
+
+    }
+}

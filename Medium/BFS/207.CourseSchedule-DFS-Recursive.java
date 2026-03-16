@@ -107,9 +107,21 @@ class Solution {
             }
         }
 
-        cycle.remove(node);    // done exploring this path
+        cycle.remove(node);    // done exploring this path @#$%^&*(OP)OIUYTR$E#@#$%^&*()(*&^%$#)
         visited.add(node);     // mark as completely explored, no need to remove anything from visited. visited does not go through BTracking
 
         return false; // no cycle found from this node
     }
 }
+
+//@#$%^&*(OP)OIUYTR$E#@#$%^&*()(*&^%$#)
+//Why even remove a node from cycle set? Arent we supposed to store parents to check for cycles?
+/*
+cycle = nodes that are currently in the DFS call stack
+If during DFS you reach a node that is already in the current ACTIVE recursion stack, that means:
+You came back to a node that is STILL BEING EXPLORED → directed cycle exists.
+
+This is different than the visited part, which tells that:
+I've explored this node and can confirm that no cycle originated from this node.
+
+*/

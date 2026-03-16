@@ -18,6 +18,8 @@ BFS Traversal: (~) 1,2,3,4,5
 // https://leetcode.com/discuss/general-discussion/1094690/views-and-traversal-of-binary-tree-important-topics-must-read
 
 // Binary tree - level order traversal - Iterative ; BFS; Uses Queues
+
+// REFER TO FEB 2026 ITERATIVE SOLUTION WITHOUT THE EXTRA LEVELS VARIABLE
 class Solution {
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> results = new ArrayList<List<Integer>>();
@@ -108,4 +110,37 @@ class Solution {
         // We have the steps for left side also, but we are always making the call to right first.
         // By the time we reach left nodes, the level val has increased and it may not match the result array size
     }    
+}
+
+// Feb 2026
+
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        // Iterative one
+        Queue<TreeNode> queue = new LinkedList<>();
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null)
+            return result;
+
+        queue.offer(root);
+
+        while(!queue.isEmpty()){
+            
+            int qSize = queue.size();
+            List<Integer> list = new ArrayList<>();
+
+            for(int i=0; i<qSize; i++){
+                TreeNode node = queue.poll();
+                list.add(node.val);
+
+                if(node.left!=null)
+                    queue.offer(node.left);
+                if(node.right!=null)
+                    queue.offer(node.right);    
+            }
+            result.add(list);
+
+        }    
+        return result;
+    }
 }

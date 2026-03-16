@@ -46,3 +46,75 @@ class Solution {
 
 
 }
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode(int val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+// Feb 2026
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+
+        if(root == null)
+            return result;
+
+        return helper(root,result);      
+
+    }
+
+    // Pre-order helper
+    public List<Integer> helper(TreeNode root, List<Integer> result){
+        if(root == null)
+            return null;
+
+        result.add(root.val);    
+        helper(root.left,result);
+        helper(root.right,result);
+
+        return result;    
+    }
+
+    // In-order helper
+    public void helper(TreeNode node, List<Integer> result){
+        if(node == null)
+            return;
+        helper(node.left,result);
+        result.add(node.val);
+        helper(node.right,result);  
+    }
+
+    // Post-order helper
+    public void helper(TreeNode node, List<Integer> result){
+        if(node == null)
+            return;
+        helper(node.left,result);
+        helper(node.right,result);  
+        result.add(node.val);
+    }
+    
+}

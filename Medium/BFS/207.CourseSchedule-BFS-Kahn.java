@@ -4,6 +4,10 @@
 // Input -> DAG
 // Output -> True or False, if all courses can be taken or not
 // Idea is to process everything with least dependency first
+prerequisites[i] = [a, b]
+To take course a, you must first take course b.
+b → a
+
 
 class Solution {
 
@@ -20,7 +24,7 @@ class Solution {
             adjMap.add(new ArrayList<>());
         }
         for (int[] prerequisite : prerequisites) {
-            adjMap.get(prerequisite[1]).add(prerequisite[0]); // {0,1} : 0 <- 1
+            adjMap.get(prerequisite[1]).add(prerequisite[0]); // {0,1} : 0 <- 1 or 1 -> 0
             inDegree[prerequisite[0]]++; // in-degree of 0 increases
         }
 

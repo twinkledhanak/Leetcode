@@ -104,3 +104,37 @@ We have to do backtrack for both these
 // Time: O(n * 2^n)
 // Space: O(n)
 */
+
+// Feb 2026 solution
+
+public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    helper(nums, 0, new ArrayList<>(), result);
+    return result;
+}
+
+// Think of it like: Pre-order for generic trees, not just binary
+void helper(int[] nums, int start, List<Integer> path,List<List<Integer>> result) {
+
+    // PRE-ORDER: record current subset
+    result.add(new ArrayList<>(path)); // Visit node (Preorder equivalent: print node)
+    // Not result.add(path) - since path keeps mutating in entire recursion
+    // can use result.add(path) only when we are sure there are no modifications to path
+
+    // Here we have multiple children :) (Preorder equivalent: dfs(left) and dfs(right))
+    for (int i = start; i < nums.length; i++) { 
+        // choose
+        path.add(nums[i]);
+
+        // explore
+        helper(nums, i + 1, path, result);
+
+        // un-choose (backtracking)
+        path.remove(path.size() - 1);
+    }
+}
+
+// Time: O(n * 2^n)
+// Space: O(n)
+
+// why 2^n and not 3^n? We have two choices - select and unselect

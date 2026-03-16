@@ -64,3 +64,84 @@ Therefore, the time complexity does not depend on the number of gates and is O(m
 Space complexity : O(mn).
 The space complexity depends on the queue's size. We insert at most m×n points into the queue.
 */
+
+// Another way of writing the same above code, but in a way that - BFS grids - filter when enqueue, not pop
+
+class Solution {
+    public void wallsAndGates(int[][] rooms) {
+        // start with a gate
+        // find connected empty rooms
+        // fill them, if already filled - take minimum
+        // use BFS, queue all gates together
+
+        int row = rooms.length;
+        int col = rooms[0].length;
+        int INF = Integer.MAX_VALUE;
+        int distance = 1;
+        Queue<int[]> queue = new LinkedList<>();
+        int[][] directions = {{0,1},{1,0},{-1,0},{0,-1}};
+
+        // Enqueue all gates together
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                if(rooms[i][j] == 0) // gate
+                    queue.offer(new int[]{i,j});
+            }
+        }
+
+        // Starting one BFS from the gates
+        while(!queue.isEmpty()){
+            int[] cell = queue.poll();
+
+            for(int d[]: directions){
+                // Invalid positions wont have anything
+                int x = cell[0]+d[0];
+                int y = cell[1]+d[1];
+
+                // Enqueue only valid cells
+                // What are valid cells?
+                // Within boundaries and empty [==INF] condition
+                if(x>=0&&x<row&&y>=0&&y<col&&rooms[x][y]==INF){ // (*&^%$#@#$%^&*&^%$#@#$%^&*()(*&^%$#))
+                    rooms[x][y] = rooms[cell[0]][cell[1]] + 1; 
+                    queue.offer(new int[]{x,y});
+                }
+            }
+        }
+
+    }
+}
+
+
+/***
+1️⃣ When a variable should be global (or persistent across calls)
+	•	Purpose: You want to remember information across multiple calls or iterations.
+	•	Example: Cycle detection in DFS:
+Set<Integer> visited = new HashSet<>();
+Set<Integer> recursionStack = new HashSet<>();
+	visited keeps track of all nodes you’ve completely explored.
+	•	recursionStack keeps track of nodes currently in the path.
+	•	Both sets need to persist across all DFS calls, otherwise you lose track of nodes you’ve 
+    already processed → might detect false cycles or revisit nodes unnecessarily.
+
+Key rule: If the information represents “state of the entire search” and not just one path, 
+it should persist globally (or at least at the outer method level).
+
+2️⃣ When a variable should be local (or reset for each call)
+	•	Purpose: You want information that is specific to the current invocation or path, not shared globally.
+	•	Example: Distance in BFS on a grid:
+    distance is relative to the BFS traversal.
+	•	It should be calculated for each cell separately:
+rooms[nrr][ncc] = rooms[r][c] + 1;
+
+If you use a single global distance counter, it increments incorrectly because BFS visits cells in layers,
+not sequentially. The distance should flow with the BFS layers, not as a single global counter.
+
+Key rule: If the information is path-specific or incremental per node, it should be local or calculated 
+per node — otherwise it gets corrupted when multiple paths are explored in parallel (BFS) or recursively (DFS).
+
+Does the variable need to persist across multiple calls or iterations?
+	•	YES → global
+	•	NO → local
+
+
+*/

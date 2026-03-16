@@ -38,3 +38,34 @@ class Solution {
         return time;
     }
 }
+
+// Feb 2026 Solution
+// Found this solution more intuitive and easy
+// It is like filling the gap problem
+class Solution {
+    public int leastInterval(char[] tasks, int n) {
+        int[] counter = new int[26];
+        int maximum = 0;
+        int maxCount = 0;
+
+        // A,A,A,B,B,B,C,D
+        // get the most frequent task of all
+        // Eg. Maximum Frequency 3
+        for (char task : tasks) {
+            int idx = task - 'A';
+            counter[idx]++;
+            maximum = Math.max(maximum, counter[idx]);
+        }
+
+        // Count how many tasks have the same max freq
+        // exception case, both A:3 and B:3
+        // maxCount=2, meaning there are two characters who have maximum frequency of 3
+        for (int freq : counter) {
+            if (freq == maximum)
+                maxCount++;   
+        }
+
+        return Math.max(tasks.length, (maximum - 1) * (n + 1) + maxCount);
+
+    }
+}

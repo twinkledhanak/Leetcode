@@ -20,6 +20,7 @@ class Solution {
         if(p == null && q == null)
             return true;
 
+        // remember to write this condition
         if(p == null || q == null)
             return false;
 

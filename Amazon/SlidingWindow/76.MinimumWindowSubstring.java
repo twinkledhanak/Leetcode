@@ -130,3 +130,100 @@ class Solution {
         return minLen > s.length() ? "" : s.substring(subStr, subStr + minLen);
     }
 }
+
+// Feb 2026 solution
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s.length() == 0 || t.length() == 0) return "";
+
+        int[] tFreq = new int[128];       // frequency of chars in t
+        int[] windowFreq = new int[128];  // frequency of chars in current window
+        int required = 0;                 // number of unique chars to satisfy
+
+        // Build frequency array for t and count unique characters
+        for (char c : t.toCharArray()) {
+            if (tFreq[c] == 0) 
+                required++;  // first occurrence
+            tFreq[c]++;
+        }
+
+        int formed = 0;           // how many unique chars currently satisfy tFreq
+        int l = 0;                // left pointer
+        int[] ans = {Integer.MAX_VALUE, 0, 0}; // length, left, right
+
+        // Step 1: Grow the window using a for loop
+        for (int r = 0; r < s.length(); r++) {
+            char c = s.charAt(r);
+            windowFreq[c]++;
+
+            // For the current char, can we compare freq in both windows?
+            // Update invariant, when freq matches - we have collected all of given char
+            if (windowFreq[c] == tFreq[c]) 
+                formed++;
+
+            // Step 2: Shrink while invariant holds (window valid)
+            // we maintain two properties for every char
+            // the freq counter and formed variable
+            while (formed == required) {
+                // Step 3: Capture property
+                if (r - l + 1 < ans[0]) {
+                    ans[0] = r - l + 1;
+                    ans[1] = l;
+                    ans[2] = r;
+                }
+
+                // From regular template
+                char leftChar = s.charAt(l);
+                windowFreq[leftChar]--;
+
+                if (windowFreq[leftChar] < tFreq[leftChar]) {
+                    formed--; // invariant no longer holds
+                }
+
+                // From regular template
+                l++; // shrink left
+            }
+        }
+
+        return ans[0] == Integer.MAX_VALUE ? "" : s.substring(ans[1], ans[2] + 1);
+    }
+}
+
+/**
+if s < t
+    return null; not possible
+
+t will have an array to maintain freq
+
+valid length of s = all chars of t + k (some random chars)
+Min window size for s is going to be t.length()
+
+I think the invariant must be:
+We shrink the window on validity as any window we start
+with is still growing
+*/
+
+// SOME MORE IMPORTANT NOTES:
+From efficient computation pov, what all does this problem teach us?
+One way I can think is -
+In a similar leetcode problem - we just compare the both freq arrays one by one and return false if 
+they dont match for even one character. That is how we know they represent a valid window.
+In this case, instead of complete comparison of arrays - they are using required and formed counts.
+What does this tell us?
+
+1. When a state changes incrementally, never recompute global truth — track the delta.
+Naivve approach:
+After each change:
+    compare windowFreq[] vs tFreq[]
+
+Optimised approach:
+Update only what changed
+Track whether that change affects validity
+
+This exact idea appears in:
+	•	incremental compilers
+	•	database indexes
+	•	cache invalidation
+	•	event-driven systems
+
+If you find yourself repeatedly checking a condition from scratch, you are one invariant away from an O(1) solution.    

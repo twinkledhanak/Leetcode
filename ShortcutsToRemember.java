@@ -9,7 +9,7 @@
 // (double)(profit[i])/weight[i] -> 3.5 -> One of the operands must be typecast to double
 // Math.ceil((double) a / b) is used when we want to convert 5.854323456 to 6
 
-// (byte)(n%2) WORKS, but, (byte) n%2 will give error :/
+// (byte)(n%2) WORKS, but, (byte) n%2 will give error since it will try to get byte of n :/
 
 // Note that we must use ! .equals instead of !=
 // because we are comparing Integer, not int.
@@ -54,6 +54,23 @@ for (int user : userEvent) {
 // So we can do all types of array operations on it using Collections library
 int minFreq = Collections.min(adjMap.values());
 // ** Complexity of using .min() is O(n) as we internal traverse through entire array
+
+// Important points on Array
+// We create a list of list
+List<List<Integer>> result = new ArrayList<>();
+
+// We can add values in two ways -
+result.add(Arrays.asList(i,j,k));
+// Creates a static list over the result
+// WILL BREAK - if we have to modify the elements of the list
+
+// ORRRRRR
+
+result.add(new ArrayList<>(Arrays.asList(i,j,k)));
+// Creates our own copy of a list and add it to the result
+// We can modify the list (add/remove) elements as per logic
+// USE THIS or BACKTRACKING will break.
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +199,8 @@ List<Edge> graphEdges = new ArrayList<Edge>(
 2. Arrays.sort(nums); // ascending and then return nums[nums.length - k] - for kth element from the end
 3. Arrays.sort(nums, Collections.reverseOrder()); // descending
 4. We can have our won comparator, if we have a different object and not just self integer
+5. Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0])); [[a,b], [c,d]]
+
 */
 
 // To sort List
@@ -231,18 +250,36 @@ ALL POSSIBILITIES FOR STACKS AND QUEUES :
 Red-Black trees are used to implement these queues (esp. Priority queues)
 Rest use LinkedLists
 
-Stack<Integer> stack = new Stack<>();
-Stack<Integer> stack = new LinkedList<>(); // poll() works here
+Stack<Integer> stack = new Stack<>(); // Supports push(), pop(), peek().
+//Stack<Integer> stack = new LinkedList<>(); // INCORRECT
 
-**LinkedList<Integer> stack = new LinkedList<>(); // Only pollLast() works, since it is a list
-Deque<Integer> stack = new ArrayDeque<>(); // push(); pop() for the stack implementation
+**LinkedList<Integer> stack = new LinkedList<>(); 
+// Only pollLast() works for Stack behavior, since it is a list
+// The top of the stack is at the end of the list.
 
-Queue<Integer> queue = new LinkedList<>();
-Deque<Integer> queue = new ArrayDeque<>();
+
+
+Deque<Integer> stack = new ArrayDeque<>(); // push(); pop() for the stack implementation; addLast(), pollLast() — for deque
+// Recommended^^
+
+Queue<Integer> queue = new LinkedList<>(); // offer(), poll(), peek() ; addAll()
+Deque<Integer> queue = new ArrayDeque<>(); // offer(), poll(), and peek()
+
+**LinkedList<Integer> queue = new LinkedList<>();
+// Same linkedlist, but we need to use it as a queue.
+// The front of the queue is at the beginning of the list.
+// poll() or pollFirst() are the same methods
 
 PriorityQueue<Integer> pq = new PriorityQueue<>();
-**We can use LinkedList<Integer> priorityQueue = new LinkedList<>();
-// Any LinkedList can be modified to perform as a priority queue
+//**We cannot use LinkedList<Integer> priorityQueue = new LinkedList<>();
+// Any vanilla LinkedList can be modified to perform as a priority queue, ONLY if we implement the HEAP Behaviour
+
+
+| Case | Declaration                                        | Use                | Removal Method                |
+| ---- | -------------------------------------------------- | ------------------ | ----------------------------- |
+| A    | `Queue<TreeNode> queue = new LinkedList<>();`      | BFS                | `poll()`                      |
+| B    | `LinkedList<TreeNode> queue/stack = new LinkedList<>();` | DFS / Custom order | `pollLast()` or `pollFirst()` |
+
 // *************************************************************************************************************************
 
 // Stacks and Queues
@@ -265,7 +302,8 @@ Deque<Integer> stack = new ArrayDeque<>();
 
 // Stacks using LinkedLists, to be used by trees
 LinkedList<TreeNode> stack = new LinkedList<>();
-stack.pollLast();
+stack.pollLast(); // pollLast since we are using LL, it gives way too many options
+// LL -> Can serve as both Stacks or Queues, pollLast() or pollFirst() depends on us
 
 // Circular queues
 //In Java, a circular queue can be implemented using an array or a linked list.
@@ -370,6 +408,19 @@ If we try to convert int[] to list, we are just adding the complexity.
 In case of: FInd kth largest element, 
 1. Iterating over array and inserting -> O(nlogN) // 71ms
 2. Converting to list and doing addAll() -> O(nlogN) // 93ms
+
+The Stream is temporary — it doesn’t hold data permanently.
+Once a stream is consumed, you can’t reuse it again.
+when you do Arrays.stream(nums), you’re not converting the array into another container —
+you’re just creating a view/pipeline that can traverse the array’s elements in a streaming fashion.
+
+🔚 TL;DR Summary
+
+Arrays.stream(array) → turns fixed data into a data pipeline.
+Streams are lazy, stateless, and non-reusable.
+ArrayList is still a container, not a pipeline.
+The stream doesn’t store or add elements — it processes elements from a source (array, list, etc.).
+If you want continuous or dynamic addition, you need to create new streams or use reactive streams (like in Project Reactor / RxJava)
 // *************************************************************************************************************************
 
 PriorityQueue<int[]> maxHeap;
@@ -384,6 +435,29 @@ minHeap = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
 
 // to do so for max heap
 maxHeap = new PriorityQueue<>((a, b) -> Integer.compare(b[1], a[1])); // Negating the comparison for max heap
+
+// All Min heap implementations
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>((a, b) -> a.getValue() - b.getValue());
+PriorityQueue<MyPair> pq = new PriorityQueue<>((a,b) -> Double.compare(a.getSecondValue(), b.getSecondValue()));
+PriorityQueue<int[]> minHeap = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
+
+
+// All Max heap implementations
+PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());
+
+// Suppose if our pair has Double data type (a,b) -> (Integer,Double) -> (index,capacity)
+PriorityQueue<MyPair> pq = new PriorityQueue<>((a,b) -> Double.compare(b.getSecondValue(), a.getSecondValue()));
+PriorityQueue<int[]> maxHeap = new PriorityQueue<>((a, b) -> Integer.compare(b[1], a[1]));
+
+Heap Operations 
+
+| Operation                      | Approach           | Time Complexity | Why                                 |
+| ------------------------------ | ------------------ | --------------- | ----------------------------------- |
+| Insert one element             | Per insert         | O(log n)        | Bubble up along heap height         |
+| Insert n elements (one by one) | Sequential inserts | O(n log n)      | Each insert takes log k             |
+| Build heap from array          | Bottom-up heapify  | O(n)            | Efficient restructuring from leaves |
 
 // *************************************************************************************************************************
 // ArrayList
@@ -1470,3 +1544,12 @@ Repeat until there is only one component = the MST.
 | **Edge Coverage**         | Chinese Postman                       |
 | **Min Cut (randomized)**  | Karger’s                              |
 | **Graph Generation**      | Erdős–Rényi                           |
+
+
+Binary search!!!!!!
+
+It is very sneaky
+We have a range I have to search for - use BS 
+
+***If I have [exists, exists, exists, missing, missing, missing]
+BSearch can help to search a boundary where exists ends and missing val starts. Refer: Q=Count nodes in Complete tree

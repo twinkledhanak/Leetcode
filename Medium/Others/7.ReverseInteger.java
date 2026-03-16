@@ -8,12 +8,15 @@ class Solution {
             // rev = rev * 10 + lastDigit; -> Checking overflow for all components
             // we have 2 conds, > or == ; < or ==;
             // Checking for Max overflow , Integer.MAX_VALUE;  2147483647, rev is > 214748364 or rev is 2147483649 (lastDigit > 7)
+            // rev*10 + lastDigit > 2147483647
+            // rev*10 + lastDigit < -2147483648
+
             if (rev > Integer.MAX_VALUE / 10 || (rev == Integer.MAX_VALUE / 10 && lastDigit > 7)) 
                 return 0;
 
             // Checking for Min overflow , Integer.MIN_VALUE;  -2147483648
             if (rev < Integer.MIN_VALUE / 10 || (rev == Integer.MIN_VALUE / 10 && lastDigit < -8))
-                return 0;
+                return 0; // Note: Compare with -8
 
             rev = rev * 10 + lastDigit;
         }

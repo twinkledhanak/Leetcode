@@ -46,10 +46,19 @@ class Solution {
             
         }    
 
+        // Refer below to understand what is the need to reverse?
         Collections.reverse(output); // we reverse at last
         return output;
     }
 }
+
+/**
+    1
+2   3   4    
+output = [1, 4, 3, 2]
+But expected postorder = [2, 3, 4, 1] => If we do not reverse
+
+*/
 
 
 Time complexity: we visit each node exactly once, and for each visit, the complexity of the operation (i.e. appending the child

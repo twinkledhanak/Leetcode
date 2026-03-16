@@ -150,3 +150,96 @@ During the recursive calls of DFS() function, we would consume some space in the
 As a result, the overall space complexity of the algorithm is O(N).
 
 */
+
+SELF WRITTEN SOLUTION FOR THE WINNNNNN:
+
+class Solution {
+    public void solve(char[][] board) {
+        int row = board.length;
+        int col = board[0].length;
+        int i=0, j=0;
+        Queue<int[]> queue = new LinkedList<>();
+        int[][] directions = {{0,1},{1,0},{0,-1},{-1,0}};
+
+        // While enqueueing itself, we mark values of O as # for border cells
+        // X X X
+        // X X X
+        // X # X
+
+
+        for(j=0; j<col; j++){
+            if(board[0][j] == 'O'){
+                queue.offer(new int[]{i,j});
+                board[0][j] = '#';
+            }
+                
+            if(board[row-1][j] == 'O'){
+                queue.offer(new int[]{row-1,j});    
+                board[row-1][j] = '#';
+            }
+                
+        }
+
+        for(i=0; i<row; i++){
+            if(board[i][0] == 'O'){
+                queue.offer(new int[]{i,0});
+                board[i][0] = '#';
+            }
+                
+            if(board[i][col-1] == 'O'){
+                queue.offer(new int[]{i,col-1}); 
+                board[i][col-1] = '#';
+            }   
+                
+        }
+
+        // All Enqueuing complete, border o marked as #
+        // Time for BFS, mark all connected as #
+
+        while(!queue.isEmpty()){
+            int[] pos = queue.poll();
+            int x = pos[0], y = pos[1];
+
+            // FILTERING TO HAPPEN WHEN WE ENQUEUE, NOT WHEN POPPING
+
+            // Explore all directions of given co-ordinate
+            // if(x<0||x>=row||y<0||y>=col|| board[x][y] == 'X' || board[x][y] != 'O')
+            //     continue;
+
+            //board[x][y] = '#';
+
+
+            // Note the change in how condition is written
+            for(int d[]: directions){
+                if(x+d[0]>=0 && x+d[0]<row && y+d[1]>=0 && y+d[1]<col && board[x+d[0]][y+d[1]] == 'O'){
+                    // We mark connected O as #
+                    board[x+d[0]][y+d[1]] = '#';
+                    queue.offer(new int[]{x+d[0], y+d[1]});  
+                }
+                    
+            }
+              
+        }
+
+        // Revert back all 0 to x
+        for(i=0; i<row; i++){
+            for(j=0; j<col; j++){
+                if(board[i][j] == 'O')
+                    board[i][j] = 'X';
+            }
+        }
+
+        // Revert back all # to O
+        for(i=0; i<row; i++){
+            for(j=0; j<col; j++){
+                if(board[i][j] == '#')
+                    board[i][j] = 'O';
+            }
+        }
+
+
+    }
+}
+
+Time: O(m*n)
+Space: O(m*n)

@@ -34,7 +34,7 @@ class Solution {
         if(root == null)
             return output;
 
-        stack.push(root);
+        stack.push(root); // push, not add
 
         while(!stack.isEmpty()){
             Node node = stack.pollLast();
@@ -44,6 +44,9 @@ class Solution {
             // In trees, we did reverse for Postorder
             Collections.reverse(node.children); // we reverse at intermediate level only, we cannot control the left and right order
             // just like we did in stacks; For binary tree, we just have two nodes - we dont have a list to reverse
+            // If the tree has nodes 2-3-4, when pushing in stack -> [2,3,4 (top)] -> we process first elem out of stack
+            // we process 1 (root) and then 4 -> Which is incorrect
+            // So we have to reverse it
             
             // Instead of left and right, we just add all nodes in the list
             // We have to add them in given order

@@ -1,3 +1,64 @@
+// Using Maps for implementation
+
+import java.util.*;
+
+class TrieNode {
+    Map<Character, TrieNode> children = new HashMap<>();
+    boolean isEndOfWord;
+}
+
+class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Insert a word
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node = node.children.computeIfAbsent(c, k -> new TrieNode());
+        }
+        node.isEndOfWord = true;
+    }
+
+    // Search exact word
+    public boolean search(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node = node.children.get(c); // check if given char is present in children map of node
+            if (node == null) return false;
+        }
+        return node.isEndOfWord; // to confirm it is marked as end of word
+    }
+
+    // Search by prefix
+    public boolean startsWith(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            node = node.children.get(c);
+            if (node == null) return false;
+        }
+        return true;
+    }
+}
+
+| Operation                         | Time Complexity | Space Complexity | Notes                           |
+| --------------------------------- | --------------- | ---------------- | ------------------------------- |
+| **Create empty Trie**             | O(1)            | O(1)             | Just initializing root node     |
+| **Insert a word of length `L`**   | O(L)            | O(L)             | Create new nodes only as needed |
+| **Search a word of length `L`**   | O(L)            | O(1)             | Only traverse existing nodes    |
+| **Search a prefix of length `L`** | O(L)            | O(1)             | Same as above                   |
+
+
+| Step                                    | Time Complexity (S-based) | Time Complexity (n/m-based) | Space Complexity | Notes                                  |
+| --------------------------------------- | ------------------------- | --------------------------- | ---------------- | -------------------------------------- |
+| **Build Trie (insert all words)**       | O(S)                      | O(n × m)                    | O(S)             | Each char inserted once                |
+| **Find LCP (traverse only-child path)** | O(m)                      | O(m)                        | O(1)             | At most traverse length of first word  |
+| **Total**                               | O(S)                      | O(n × m)                    | O(S)             | Building dominates; traversal is small |
+
+
 /** This implementation uses arrays, instead of maps */
 /** m = length of keys */
 class TrieNode {

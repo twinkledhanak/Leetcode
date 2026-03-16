@@ -81,7 +81,7 @@ class Solution {
                             complement
                         );
                         Collections.sort(triplet);
-                        res.add(triplet);
+                        res.add(triplet); // when we sort a list of triplets and add a set, we can track unique ones
                     }
                     seen.put(nums[j], i); // storing a prev result, so nums[j] when j=1. Later when we are at j=2, we can check prev 
                     // if a complement was present and it was for what value of i
@@ -144,5 +144,52 @@ class Solution {
         }
 
         return new ArrayList<>(result);
+    }
+}
+
+Latest Feb 2026 solution I understand:
+// core idea is still same: fix one element and apply TS for remaining array
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        // Sorting is imp, refer above
+        Arrays.sort(nums);
+        int sum = 0;
+        int i=0;
+        List<List<Integer>> result = new ArrayList<>();
+
+        // there might be a case where i,j,k are in order. If k is n, i must be n-2
+        for(i=0; i<nums.length-2; i++){ // **REVISE
+                // 1. Skip duplicates for i
+                if (i > 0 && nums[i] == nums[i - 1]) // **REVISE
+                    continue;
+
+                // after fixing i - our range to explore is [i+1,n-1]    
+                int j=i+1, k=nums.length-1;// **REVISE
+                while(j<k){ // **REVISE
+                    // We have all 3 values here, so why go into all nonsense of (a) = - (b+c)
+                    sum = nums[i] + nums[j] + nums[k];
+                    if(sum == 0){
+                        // This will also work since we dont have to modify the list later
+                        //result.add(Arrays.asList(nums[i], nums[j], nums[k]));
+                        result.add(new ArrayList<>(Arrays.asList(nums[i], nums[j], nums[k])));
+
+                        // Skip duplicates for j and k
+                        // [i, .... 3,3,3] k is repeating
+                        // [i, ..., 1,1,1, ....] j is repeating
+                        while (j < k && nums[j] == nums[j + 1]) j++; // **REVISE - Check bounds of J and k
+                        while (j < k && nums[k] == nums[k - 1]) k--; // **REVISE - Check bounds of J and k
+
+                        j++;
+                        k--;
+                    } // **REVISE - if condition ends here
+                    else if(sum > 0)
+                        k-=1; // **REVISE - if condition ends here
+                    else
+                        j+=1;    
+
+                }
+            
+        }
+        return result;
     }
 }

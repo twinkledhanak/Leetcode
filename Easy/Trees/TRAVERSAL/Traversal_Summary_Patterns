@@ -1,0 +1,292 @@
+This file has two parts:
+1. Traversals
+2. Patterns (MOST IMPORTANT)
+
+//////////////////////////////////////////////////////////////////////////////////////////
+TRAVERSALS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+      1
+    /   \
+    2   3   
+  /  \
+ 4    5
+
+Inorder: 4,2,5,1,3 // Only inorder of BST will give sorted array
+Preordr: 1,2,4,5,3 (another variant of DFS) +ab
+Postord: 4,5,2,3,1
+BFStrav: 1,2,3,4,5 (level order), different from Preorder
+
+Types of Traversal:
+
+1. Inorder (Some distant variant of DFS as I cannot write it using BFS)
+2. Preorder (Variant of DFS traversal)
+3. Postorder (Some distant variant of DFS as I cannot write it using BFS)
+4. Level order (Strictly BFS)
+
+Inorder traversal is not a unique identifier of BST. At the same time, both preorder and postorder traversals are unique identifiers of BST. But in Tree serialization problems -
+Using Preorder + inorder; Postorder+inorder OR level order OR any other combination -
+does not guarantee a unique traversal
+There is an example where Preorder+postorder might not also work uniquely when there are duplicate nodes.
+https://leetcode.com/problems/subtree-of-another-tree/editorial/
+
+Hence, in case of Tree Serialization problems - we use:
+Preorder Traversal (or postorder traversal) with markers for null node unique determines Binary Tree
+But, even more efficient is KMP (Knuth-Morris-Pratt)
+
+
+Ways to write a traversal code:
+1. Iterative (Time Efficient, we use stacks to store full context)
+2. Recursive (Intuitive and Easy)
+3. Morris (Space Efficient, we just use right node values to store location of next parent node (not our own parent) we have to go )
+
+4. Just traversing as needed (without stacks or queues)
+
+So when does iterative actually win?
+1. Deep trees / avoiding stack overflow
+This is the only real efficiency argument. For a skewed tree with 10^5 nodes, recursion will stack overflow. An explicit stack on the heap won't.
+2. Iterative post-order is a good example
+Post-order recursively is clean. Iteratively, you have to fake the return-from-recursion state, which is exactly the state management overhead you're describing.
+3. Morris Traversal — this is where you get genuine O(1) space by threading the tree itself, no stack at all. Thats a real efficiency win over both.
+
+
+
+Ways to traverse a Binary tree:
+-------------------------------------------------------------------------------------------------
+Iterative                                   Iterative                               Recursive
+(Using DFS)                                 (Using BFS)
+-------------------------------------------------------------------------------------------------
+Inorder(Stack)(Y)                            -                                        Inorder(Y)
+Preorder(LL,plast)(Y)                        -                                        Preorder(Y)
+Postorder(LL,plast)(Y)                       -                                        Postorder(Y)
+    -                                        LevelOrder(Y)                            LevelOrder(Y)(Sim to RHS view)
+
+
+ONLY Postorder uses reverse(), in pre - we ourselves reverse it 
+
+Ways to traverse a N-ary tree:
+-------------------------------------------------------------------------------------------------
+Iterative                       Iterative                               Recursive
+(Using DFS)                     (Using BFS)
+-------------------------------------------------------------------------------------------------
+Inorder                         Level Order (Queue using LL,poll)(Y)
+Preorder(LL)(Y)(*)                
+Postorder(LL)(Y)(*)
+
+
+* Both uses Collections.reverse() but their order is different
+* They both use LL, so we have pollLast()
+
+// POST-ORDER TRAVERSAL CODE THAT MIGHT NOT LOOK LIKE POST-ORDER
+
+WE ARE USED TO SEEING IT AS: AB+
+PROCESSING THE LEFT, THE RIGHT AND THEN DOING SOMETHING WITH THE NODE
+
+BUT,
+WE CAN ALSO HAVE EXAMPLE OF FUNCTIONAL POST ORDER TRAVERSAL
+
+REFER TO THIS QUESTION:
+MAXIMUM PATH SUM IN A TREE (SIMILAR TO KADANE BUT TO BE APPLIED ON A TREE)
+
+
+
+
+
+Balanced trees are usually balanced in two areas - 
+
+Height-balanced
+For each node in the tree, the difference in height between its left and right subtrees is no more than one. The height of an empty subtree is -1. The height difference is calculated by subtracting the absolute value of the left subtree from the absolute value of the right subtree, or vice versa. 
+
+
+Weight-balanced
+For each node in the tree, the difference in the number of inner nodes in its left and right subtrees is no more than one.
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+PATTERNS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+1. Picking only adjacent nodes for traversal
+Traversing a Tree but only considering adjacent nodes (siblings are not considered adjacent nodes)
+adjacent nodes are linked directly, so consider more like: Grandparent -> Parent -> Child
+
+helper(root,true); // Always start exploration by setting root  state to true
+
+public int helper(TreeNode node, boolean canPick){
+  if(root==null)
+    return;
+
+  if(canPick){
+    // Allowed to pick, perform all actions
+    // Set the canPick for next node as false. Since parent (current) is explored, child cannot
+  }
+  else{
+    // Current node is not picked
+    // Set canPick for next node as true. Since parent (current) is skipped, child can be explored
+  }
+
+}
+
+2. Understanding upward and downward traversal
+
+1. Understanding upward and downward paths
+2. How to obtain them
+3. Which traversal
+4. confusion on how to -
+- pass information from parent to child with examples
+- pass information from child to parent with examples
+
+how to know if children want to pass to parent?
+
+////////////////////////////////////////////////////////////////
+1. TOP - DOWN
+////////////////////////////////////////////////////////////////
+-- PREORDER
+
+Parent GIVES information to children via parameters
+                    ↓
+void helper(TreeNode root, int somethingFromParent)
+                                        ↑
+                            this is what flows top to bottom 
+
+
+void helper(TreeNode root, int valueFromParent) {
+    // 1. BASE CASE
+    if (root == null) return;
+    
+    // 2. PROCESS current node FIRST (using what parent gave us)
+    int newValue = valueFromParent + root.val;  // or any computation
+    
+    // 3. CHECK if we reached answer (usually at leaf or any node)
+    if (weFoundAnswer) {
+        // record or return
+    }
+    
+    // 4. PASS updated value DOWN to children
+    helper(root.left,  newValue);
+    helper(root.right, newValue);
+}
+
+Eg. Path Sum 1
+
+////////////////////////////////////////////////////////////////
+2. DOWN to TOP
+////////////////////////////////////////////////////////////////
+
+-- POSTORDER
+
+Children pass information to parents
+
+int helper(TreeNode root) {
+    // 1. BASE CASE
+    if (root == null) return 0;  // or MIN_VALUE depending on problem
+    
+    // 2. RECURSE into children FIRST (get info from below)
+    int left  = helper(root.left);
+    int right = helper(root.right);
+    
+    // 3. PROCESS current node USING children's results
+    int result = Math.max(left, right) + root.val;  // or any computation
+    
+    // 4. RETURN result UP to parent
+    return result;
+}
+
+Eg. Max Depth
+
+ONE trick is to follow the direction of recursion until the end
+Now assume the role of node at the end
+
+Top-down (preorder)         Bottom-up (postorder)
+─────────────────────────────────────────────────
+info flows DOWN             info flows UP
+via PARAMETERS              via RETURN VALUE
+parent gives to children    children give to parent
+process root FIRST          process root LAST
+void or bool return         always returns a value
+```
+
+////////////////////////////////////////////////////////////////
+3. LCA
+////////////////////////////////////////////////////////////////
+
+Children compute their best path UP to current node (bottom-up)
+Current node JOINS left and right to form the full path (the twist)
+But can only send ONE side back UP to its parent
+
+int helper(TreeNode root) {
+    // 1. BASE CASE
+    if (root == null) return 0;  // or MIN_VALUE depending on problem
+    
+    // 2. RECURSE into children FIRST
+    int left  = helper(root.left);
+    int right = helper(root.right);
+    
+    // 3. JOINING POINT — use BOTH sides (this node is the LCA)
+    globalMax = Math.max(globalMax, left + right + root.val);
+    
+    // 4. RETURN only ONE side UP to parent
+    return Math.max(left, right) + root.val;
+}
+```
+
+---
+
+## The 4 parts always appear in this order:
+```
+1. null check         → base case
+2. recurse left       → get best path from left subtree
+3. recurse right      → get best path from right subtree
+4. JOIN at current    → combine left + root + right for globalMax
+   RETURN one side UP → parent can only extend in ONE direction
+```
+
+---
+
+## Why you can only return ONE side up:
+```
+        1
+       / \
+      2   3
+     / \
+    4   5
+
+At node 2:
+  left  = 4
+  right = 5
+
+Path 4→2→5 is valid HERE at node 2.
+But if node 2 sends BOTH sides up to node 1:
+  1 would try to make path: 4→2→1→3
+  That means going DOWN to 4, back UP to 2, UP to 1, DOWN to 3
+  A node (2) appears twice — INVALID!
+
+So node 2 can only send its BEST single side up:
+  max(4, 5) + 2 = 7   ← only one direction
+
+Children send best SINGLE path UP
+Parent JOINS both sides for globalMax
+Parent sends best SINGLE side further UP
+```
+
+---
+
+## All three path types side by side:
+```
+Top-down          Bottom-up         Node-to-node (LCA)
+────────────────────────────────────────────────────────
+preorder          postorder         postorder + global tracker
+info via params   info via return   info via return + joined at LCA
+parent → child    child → parent    child → parent, joined at LCA
+no global needed  no global needed  NEEDS global variable
+void/bool         returns value     returns ONE side, tracks BOTH
+```
+
+---
+
+## One line to remember:
+```
+LCA path → postorder → children send ONE side up
+         → current node JOINS both sides for the answer
+         → but can only PASS one side further up

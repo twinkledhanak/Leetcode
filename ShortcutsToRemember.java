@@ -317,6 +317,19 @@ size() - Returns the number of elements currently in the circular queue.
 
 queue.peek() actually gives first element of the queue
 
+/////////////////////////////////////////////////////////////
+// MARCH 2026
+// Major learning: poll() and pollFirst() are synonyms, NOT poll() and pollLast() 
+
+Method       Removesfrom     Available on
+poll()       front (head)    Queue, Deque, LinkedList
+pollFirst()  front (head)    Deque, LinkedList only
+pollLast()   back (tail)     Deque, LinkedList only
+
+
+//////////////////////////////////////////////////////////////
+
+
 // Suppose we have a Stack, a number is inside that stack as [1 2 -> 2 is at the top of the stack
 // How do we convert the number inside stack to 12?
 int base = 1;
@@ -1553,3 +1566,97 @@ We have a range I have to search for - use BS
 
 ***If I have [exists, exists, exists, missing, missing, missing]
 BSearch can help to search a boundary where exists ends and missing val starts. Refer: Q=Count nodes in Complete tree
+
+
+// Concise Summary for all Comparators for HEAP
+// If nothing else, Integer.compare(,) ; Double.compare(,)
+
+
+// Integer
+Heap	    Comparator	                                                Note
+min	        new PriorityQueue<>()	                                    Default. Smallest at top.
+max	        new PriorityQueue<>(Collections.reverseOrder())	            Largest at top.
+max	        new PriorityQueue<>(Comparator.reverseOrder())	            Same as above. Java 8+ style.
+min	        new PriorityQueue<>((a,b) -> Integer.compare(a,b))	        Explicit. Avoid a-b subtraction.
+max	        new PriorityQueue<>((a,b) -> Integer.compare(b,a))	        Flip a,b for max.
+
+// Double/Float
+Heap	    Comparator	                    Note
+min	        (a,b) -> Double.compare(a,b)	Always use Double.compare for doubles.
+max	        (a,b) -> Double.compare(b,a)	Flip b,a for max.
+
+
+// String
+Heap	    Comparator	                                        Note
+min	        new PriorityQueue<>()	                            Lexicographic ascending (a before z).
+max	        new PriorityQueue<>(Collections.reverseOrder())	    Lexicographic descending.
+min	        (a,b) -> a.compareTo(b)	                            Explicit lexicographic.
+min	        (a,b) -> a.length() - b.length()	                By length, shortest first. Safe for int lengths.
+max	        (a,b) -> b.length() - a.length()	                By length, longest first.
+
+
+// Map.Entry<Integer, Integer>
+Heap	    Comparator	                                            Note
+min	        (a,b) -> a.getValue() - b.getValue()	                Safe only if values are small ints (no overflow).
+max	        (a,b) -> b.getValue() - a.getValue()	                Flip for max. Same overflow caveat.
+min	        (a,b) -> Integer.compare(a.getValue(), b.getValue())	Safest. No overflow risk.
+max	        (a,b) -> Integer.compare(b.getValue(), a.getValue())	Flip b,a for max.
+
+//int[] array as element (e.g. [value, weight])
+Heap	    Comparator	                            Note
+min	        Comparator.comparingInt(a -> a[1])	    By index [1]. Clean and readable.
+max	        (a,b) -> Integer.compare(b[1], a[1])	Flip b,a for max. comparingInt has no reverse.
+min	        (a,b) -> Integer.compare(a[0], b[0])	By index [0] instead.
+
+//MyPair (custom class with int fields)
+Heap	    Comparator	                                                Note
+min	        (a,b) -> Integer.compare(a.getSecond(), b.getSecond())	    By second field, ascending.
+max	        (a,b) -> Integer.compare(b.getSecond(), a.getSecond())	    Flip b,a for max.
+min	        Comparator.comparingInt(MyPair::getSecond)	                Method reference. Cleanest style.
+max	        Comparator.comparingInt(MyPair::getSecond).reversed()	    .reversed() flips to max heap.
+
+
+//MyPair (custom class with double fields)
+Heap	    Comparator	                                            Note
+min	        (a,b) -> Double.compare(a.getSecond(), b.getSecond())	Must use Double.compare. Never subtract.
+max	        (a,b) -> Double.compare(b.getSecond(), a.getSecond())	Flip b,a for max.
+
+
+// TreeMap facts
+
+A Map implemented using a Red-Black Tree (self-balancing BST)
+Keys are always stored in SORTED order (natural or custom)
+
+HashMap   → O(1) get/put, NO ordering
+TreeMap   → O(log n) get/put, SORTED ordering
+
+floorKey(k)      → largest key <= k
+ceilingKey(k)    → smallest key >= k
+lowerKey(k)      → largest key strictly < k
+higherKey(k)     → smallest key strictly > k
+
+floorEntry(k)    → same as above but returns Map.Entry (key + value)
+ceilingEntry(k)  → same
+lowerEntry(k)    → same
+higherEntry(k)   → same
+
+firstKey()       → smallest key in map
+lastKey()        → largest key in map
+firstEntry()     → entry with smallest key
+lastEntry()      → entry with largest key
+
+// Reverse order TreeMap
+TreeMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
+TreeMap<Integer, Integer> map = new TreeMap<>(Comparator.reverseOrder());
+
+// Custom comparator
+TreeMap<String, Integer> map = new TreeMap<>((a, b) -> a.length() - b.length());
+
+// I dont know why this exists:
+// Expected Return type: int[][]
+List<int[]> result = new ArrayList<>();
+
+// Options:
+result.toArray()                    // returns Object[] ← won't compile as int[][]
+result.toArray(new int[0][])        // also valid — Java resizes automatically
+result.toArray(new int[result.size()][])  // pre-sized — marginally more efficient

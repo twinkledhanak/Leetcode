@@ -176,7 +176,8 @@ Eg. Path Sum 1
 
 -- POSTORDER
 
-Children pass information to parents
+Children pass information to parents.
+Problem? We start with root node, so we have to first traverse to leaf nodes from parent 
 
 int helper(TreeNode root) {
     // 1. BASE CASE
@@ -189,7 +190,7 @@ int helper(TreeNode root) {
     // 3. PROCESS current node USING children's results
     int result = Math.max(left, right) + root.val;  // or any computation
     
-    // 4. RETURN result UP to parent
+    // 4. RETURN result UP to parent. 
     return result;
 }
 
@@ -224,6 +225,7 @@ int helper(TreeNode root) {
     int right = helper(root.right);
     
     // 3. JOINING POINT — use BOTH sides (this node is the LCA)
+    // Join? Combine values of node and children - all of them
     globalMax = Math.max(globalMax, left + right + root.val);
     
     // 4. RETURN only ONE side UP to parent

@@ -63,7 +63,7 @@ public class Solution {
         while (fast != null && fast.next != null && slow != null) {
             slow = slow.next;
             fast = fast.next.next;
-            if (slow == fast) {
+            if (slow == fast) { // Reaching the same node counts as cycle, duplicate values may still exist
                 return true;
             }
         }

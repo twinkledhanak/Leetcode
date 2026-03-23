@@ -1630,6 +1630,17 @@ Keys are always stored in SORTED order (natural or custom)
 HashMap   → O(1) get/put, NO ordering
 TreeMap   → O(log n) get/put, SORTED ordering
 
+How many started ≤ 7? [1,3,4] = 3 ← upperBound 
+How many ended < 7? [6] = 1 ← lowerBound
+
+********************************************************************************
+treeMap.floorKey(7)   →  gives you the KEY 4  (largest key ≤ 7)
+TreeMap does NOT give the count of elements ≤ 7
+TreeMap stores the unique integers only as keys. So if our array has duplicate values, 
+it will be lost
+********************************************************************************
+
+
 floorKey(k)      → largest key <= k
 ceilingKey(k)    → smallest key >= k
 lowerKey(k)      → largest key strictly < k
@@ -1660,3 +1671,7 @@ List<int[]> result = new ArrayList<>();
 result.toArray()                    // returns Object[] ← won't compile as int[][]
 result.toArray(new int[0][])        // also valid — Java resizes automatically
 result.toArray(new int[result.size()][])  // pre-sized — marginally more efficient
+
+// Convert List to Array
+List<Integer> list = new ArrayList<>();
+return list.stream().mapToInt(Integer::intValue).toArray();

@@ -72,3 +72,19 @@ class Solution {
 }
 
 // Time: O(n) ; Space: O(1)
+ListNode con = prev, tail = ptr;
+
+Before reversal:
+1 -> 2 -> 3 -> 4 -> 5 -> null
+          ↑
+        tail (saved here, never moves)
+
+After reversal:
+1 -> 2    5 -> 4 -> 3    null
+     ↑    ↑         ↑
+    con  ptr       prev
+
+Three broken connections to fix:
+  con.next  →  should point to prev (new head of reversed = 5)
+  tail.next →  should point to ptr  (node after reversed = null)
+  head      →  if con is null, head itself needs updating

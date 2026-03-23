@@ -38,9 +38,7 @@ class Solution {
 }
 
 
-
-
-
+// Mar 2026 Solution
 
 class Solution {
   public boolean isBalanced(TreeNode root) {
@@ -89,3 +87,5 @@ class Solution {
 // Time: O(n) - we are traversing all n nodes. If it is balanced, h=logN. Can be both.
 // It is recursion within recursion, so for every node we are calling height
 // O(n * logN)
+
+// But there is a problem here - we have O(n2) complexity as every recursion call invokes height

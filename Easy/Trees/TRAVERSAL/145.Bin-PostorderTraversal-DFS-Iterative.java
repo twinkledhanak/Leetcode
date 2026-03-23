@@ -39,6 +39,7 @@ class Solution {
 
 
      // ab+
+     // Stack looks like: [a b (top) which will be b,a when read. it is already reversed
 
       if (node.left != null) {
         stack.add(node.left); // Since add works, offer() will also work

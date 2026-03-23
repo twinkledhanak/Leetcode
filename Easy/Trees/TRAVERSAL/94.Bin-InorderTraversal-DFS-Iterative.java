@@ -9,7 +9,7 @@ public class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
-        TreeNode curr = root;
+        TreeNode curr = root; // Think more like saving current root reference
 
         while (curr != null || !stack.isEmpty()) { // Uses ORRRRRRRRRRR
             while (curr != null) {

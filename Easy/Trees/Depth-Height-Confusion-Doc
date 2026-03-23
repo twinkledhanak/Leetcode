@@ -1,6 +1,18 @@
 /**
 Height and Depth can be measured as - no of nodes // no of edges
 
+Usually, Leetcode problems use No of nodes for height (trees have preference for nodes)
+Height(leaf node) = 0
+Height(Empty tree) = -1
+Depth(Root node) = 0 - YES, BUT IN PROBLEMS => ROOT NODE ITSELF IS CONSIDERED 1
+THEN, CALCULATE DISTANCE OF OTHER NODES TO DEPTH 
+I KNOW IT IS CONFUSING, BUT JUST THINK ALWAYS IN TERMS OF NO OF NODE
+IF WE HAVE A TREE ONLY WITH ROOT NODE, (NO LEFT OR RIGHT),
+HOW MANY NODES ARE IN THE TREE THAT WE ARE CONSIDERING? 1. IT IS NOT 0
+
+edges = nodes - 1 for trees
+
+
 Time complexity: We see how many nodes we traverse for the entire tree, so, O(n) = n => no of nodes
 
 For remaining cases, 

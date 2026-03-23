@@ -25,6 +25,22 @@ class Solution {
         }
     }
 
+// Another variant could be where helper is returning an arraylist
+// This is just the pre-order variant
+    public List<Integer> helper(TreeNode root, List<Integer> result){
+        // This is mandatory, otherwise - we might get an NPE for leaf nodes during recursion
+        if(root == null)
+            return null;
+
+        result.add(root.val);
+        helper(root.left,result);
+        helper(root.right,result);
+
+        return result;
+    }
+
+
+
 // postorder -> ab+
     public void helper(TreeNode root, List<Integer> res) {
             if (root != null) {

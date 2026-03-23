@@ -5,116 +5,79 @@
 // select a connected min edge
 
 // Refer to Algo excel sheet for complexities
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.PriorityQueue;
+class Solution {
+    public int[] primMST(int n, int[][] edges) {
 
-public class Main {
+        // 1. Build the graph — same as before
+        Map<Integer, List<int[]>> adjMap = new HashMap<>();
+        for (int[] edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            adjMap.computeIfAbsent(u, k -> new ArrayList<>()).add(new int[]{v, w});
+            adjMap.computeIfAbsent(v, k -> new ArrayList<>()).add(new int[]{u, w});
+        }
+
+        // 2. Setup — same spirit as BFS setup
+        int[] parent = new int[n];      // which node connected us to MST
+        int[] key    = new int[n];      // cheapest edge cost to reach this node
+        boolean[] inMST = new boolean[n];
+
+        Arrays.fill(parent, -1);
+        Arrays.fill(key, Integer.MAX_VALUE);
+
+        // MinHeap instead of Queue — int[]{node, cost}
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+
+        // 3. Seed the starting node — same as seeding solar panels in BFS
+        key[0] = 0;
+        minHeap.offer(new int[]{0, 0});
+
+        // 4. Prim's traversal — same structure as BFS while loop
+        while (!minHeap.isEmpty()) {
+            int u = minHeap.poll()[0];  // pick cheapest node (like polling queue in BFS)
+
+            if (inMST[u]) continue;     // skip if already visited (replaces visited set)
+            inMST[u] = true;
+
+            for (int[] neighbour : adjMap.getOrDefault(u, new ArrayList<>())) {
+                int v = neighbour[0];
+                int w = neighbour[1];
+
+                // same as: if (!visited.contains(neighbour)) in BFS
+                if (!inMST[v] && w < key[v]) {
+                    parent[v] = u;      // track which node pulled v into MST
+                    key[v] = w;         // update cheapest edge cost
+                    minHeap.offer(new int[]{v, w});
+                }
+            }
+        }
+
+        return parent;
+    }
 
     public static void main(String[] args) {
-		int V = 9;
-		Graph graph = new Graph(V);
-		graph.addEdge(0, 1, 4);
-		graph.addEdge(0, 7, 8);
-		graph.addEdge(1, 2, 8);
-		graph.addEdge(1, 7, 11);
-		graph.addEdge(2, 3, 7);
-		graph.addEdge(2, 8, 2);
-		graph.addEdge(2, 5, 4);
-		graph.addEdge(3, 4, 9);
-		graph.addEdge(3, 5, 14);
-		graph.addEdge(4, 5, 10);
-		graph.addEdge(5, 6, 2);
-		graph.addEdge(6, 7, 1);
-		graph.addEdge(6, 8, 6);
-		graph.addEdge(7, 8, 7);
-
-		graph.primMST();
-	}
-
-
-	static class Graph {
-		int V;
-		ArrayList<ArrayList<Node>> adj;
-
-		// Inner class to represent an edge (destination and weight)
-		static class Node {
-			int dest;
-			int weight;
-
-			Node(int dest, int weight) {
-				this.dest = dest;
-				this.weight = weight;
-			}
-		}
-
-		Graph(int V) {
-			this.V = V;
-			adj = new ArrayList<>(V);
-			for (int i = 0; i < V; i++)
-				adj.add(new ArrayList<>());
-		}
-
-		// Function to add an undirected edge between two vertices with given weight
-		void addEdge(int src, int dest, int weight) {
-			adj.get(src).add(new Node(dest, weight));
-			adj.get(dest).add(new Node(src, weight));
-		}
-
-
-
-// We're working with adjList, visited, Min Heap
-// We have MST -> parent[], key[]
-		// Function to find the Minimum Spanning Tree using Prim's algorithm
-		void primMST() {
-			int[] parent = new int[V];
-			int[] key = new int[V];
-			boolean[] inMST = new boolean[V];
-
-			for (int i = 0; i < V; i++) {
-				parent[i] = -1;		 // Array to store the parent node of each vertex in the MST
-				key[i] = Integer.MAX_VALUE; // Array to store the minimum key value for each vertex
-				inMST[i] = false;	 // Array to track if the vertex is in the MST or not
-			}
-
-			PriorityQueue<Node> minHeap = new PriorityQueue<>((a, b) -> a.weight - b.weight);
-
-			key[0] = 0;					 // Start the MST from vertex 0
-			minHeap.add(new Node(0, key[0]));
-
-			// 	SELECT MIN
-			while (!minHeap.isEmpty()) {
-				Node u = minHeap.poll(); // Extract the node with the minimum key value
-				int uVertex = u.dest;
-				inMST[uVertex] = true;
-
-				// SELECTED CONNECTED
-				// Traverse through all adjacent vertices of u (the extracted vertex) and update their key values
-				for (Node v : adj.get(uVertex)) {
-					int vVertex = v.dest;
-					int weight = v.weight;
-
-					// If v is not yet included in MST and weight of u-v is less than key value of v, 
-					// then update key value and parent of v
-					if (!inMST[vVertex] && weight < key[vVertex]) { // assuming the weights from 0 to vVertex
-						parent[vVertex] = uVertex;
-						key[vVertex] = weight;
-						minHeap.add(new Node(vVertex, key[vVertex]));
-					}
-				}
-			}
-
-			printMST(parent);
-		}
-
-		// Function to print the edges of the Minimum Spanning Tree
-		void printMST(int[] parent) {
-			System.out.println("Edges of Minimum Spanning Tree:");
-			for (int i = 1; i < V; i++) {
-				System.out.println(parent[i] + " - " + i);
-			}
-		}
-	}
-
-	
+        Solution sol = new Solution();
+        int[][] edges = {
+            {0,1,4}, {0,7,8}, {1,2,8}, {1,7,11},
+            {2,3,7}, {2,8,2}, {2,5,4}, {3,4,9},
+            {3,5,14},{4,5,10},{5,6,2}, {6,7,1},
+            {6,8,6}, {7,8,7}
+        };
+        int[] parent = sol.primMST(9, edges);
+        System.out.println("Edges of MST:");
+        for (int i = 1; i < parent.length; i++)
+            System.out.println(parent[i] + " - " + i);
+    }
 }
+```
+
+## How it maps to our BFS pattern
+```
+BFS (solar panels)          Prim's MST
+──────────────────────────────────────────────────
+Queue                   →   PriorityQueue (MinHeap)
+visited set             →   inMST[] boolean array
+seed sources            →   seed node 0
+distance[v]=distance[u]+1  →   key[v] = edge weight
+re-queue neighbour      →   minHeap.offer(neighbour)

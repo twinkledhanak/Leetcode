@@ -88,39 +88,40 @@ public int[] findOrder(int numCourses, int[][] prerequisites) {
             graph.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
         }
 
-        Set<Integer> parentSet = new HashSet<>();
+        Set<Integer> cycle = new HashSet<>();
         Set<Integer> visitedSet = new HashSet<>();
         List<Integer> path = new ArrayList<>();
 
         for(int i=0; i< numCourses; i++){
-            if(doesCycleExists(i,graph,parentSet,visitedSet,path))
+            if(doesCycleExists(i,graph,cycle,visitedSet,path))
                 return new int[]{}; // cycle exists, return nothing
 
         }
 
+        // Path returned from DFS is reverse. Hence, we have to reverse it again.
         Collections.reverse(path); // #$%^&*(*&^%$#$%^&*(*&^%$#$%^&*(O*^%$#$%^&*())))
         return path.stream()
                 .mapToInt(Integer::intValue)
                 .toArray();
     }
 
-boolean doesCycleExists(int course, Map<Integer,List<Integer>> graph, Set<Integer> parentSet, Set<Integer> visitedSet, List<Integer> path){
+boolean doesCycleExists(int course, Map<Integer,List<Integer>> graph, Set<Integer> cycle, Set<Integer> visitedSet, List<Integer> path){
 
-        if(parentSet.contains(course))
+        if(cycle.contains(course))
             return true; // has cycle  
         
         if(visitedSet.contains(course))
             return false; // already processed
 
-        parentSet.add(course);
+        cycle.add(course);
         for(int neigh: graph.getOrDefault(course, new ArrayList<>())){
-            if(doesCycleExists(neigh,graph,parentSet,visitedSet,path))
+            if(doesCycleExists(neigh,graph,cycle,visitedSet,path))
                 return true;
         }
 
-        parentSet.remove(course);
-        path.add(course);
+        cycle.remove(course);
         visitedSet.add(course);
+        path.add(course);
         
         return false;
     }

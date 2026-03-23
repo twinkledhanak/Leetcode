@@ -72,6 +72,8 @@ class Solution {
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
         // Build the adjacency list
+        // [a,b]; b -> a; b must be completed first
+        // List is built as b->a
         Map<Integer, List<Integer>> adjMap = new HashMap<>();
         for (int[] pre : prerequisites) {
             adjMap.computeIfAbsent(pre[1], k -> new ArrayList<>()).add(pre[0]); // Directed edge: pre[1] → pre[0]
@@ -108,6 +110,7 @@ class Solution {
         }
 
         cycle.remove(node);    // done exploring this path @#$%^&*(OP)OIUYTR$E#@#$%^&*()(*&^%$#)
+        ////// Now, process the node (Postorder behavior)
         visited.add(node);     // mark as completely explored, no need to remove anything from visited. visited does not go through BTracking
 
         return false; // no cycle found from this node

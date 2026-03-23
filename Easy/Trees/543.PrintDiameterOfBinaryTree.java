@@ -1,4 +1,50 @@
 private int diameter = 0;
+private List<Integer> diameterPath = new ArrayList<>();
+
+public int diameterOfBinaryTree(TreeNode root) {
+    dfs(root);
+    System.out.println(diameterPath);
+    return diameter;
+}
+
+// returns the path from this node down to its deepest leaf
+private List<Integer> dfs(TreeNode node) {
+    if (node == null) return new ArrayList<>();
+
+    List<Integer> left  = dfs(node.left);
+    List<Integer> right = dfs(node.right);
+
+    // update diameter and path if we found a longer one
+    if (left.size() + right.size() > diameter) {
+        diameter = left.size() + right.size();
+
+        // path = leftArm (reversed, so leaf→node) + node + rightArm (node→leaf)
+        List<Integer> path = new ArrayList<>();
+        List<Integer> leftReversed = new ArrayList<>(left);
+        Collections.reverse(leftReversed);
+        path.addAll(leftReversed);
+        path.add(node.val);
+        path.addAll(right);
+
+        diameterPath = path;
+    }
+
+    // return the longer arm, with current node prepended
+    List<Integer> longer = left.size() >= right.size() ? left : right;
+    List<Integer> arm = new ArrayList<>();
+    arm.add(node.val);
+    arm.addAll(longer);
+    return arm;
+}
+
+
+
+
+
+
+// OLD CODE, Not to refer
+
+private int diameter = 0;
 private List<List<Integer>> diameterPaths = new ArrayList<>();
 
 public int diameterOfBinaryTree(TreeNode root) {

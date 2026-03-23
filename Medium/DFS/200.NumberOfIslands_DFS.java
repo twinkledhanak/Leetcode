@@ -104,6 +104,11 @@ Space: O(m*n) as the DFS stack will make m*n number of calls (stack depth)
 CASE 2: WHEN WE CANNOT MODIFY THE INPUT GRID
 */
 
+boolean[][] - Grid / matrix problems (preferred)
+Set<Integer> - When grid size unknown or sparse
+
+
+// Last, least preferred option is to use a set of strings
 class Solution{
     public int numIslands(char[][] grid) {    
 

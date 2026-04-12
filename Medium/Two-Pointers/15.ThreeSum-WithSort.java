@@ -160,6 +160,9 @@ class Solution {
         // there might be a case where i,j,k are in order. If k is n, i must be n-2
         for(i=0; i<nums.length-2; i++){ // **REVISE
                 // 1. Skip duplicates for i
+                // We use if.. and not while(..) to skip duplicates for i, like we do for j,k
+                // i is the anchor. If we have [-1,-1,-1,...] => we might miss out on positions 1 and 2
+                // IDEA: Find the first of the duplicates, discard the rest
                 if (i > 0 && nums[i] == nums[i - 1]) // **REVISE
                     continue;
 

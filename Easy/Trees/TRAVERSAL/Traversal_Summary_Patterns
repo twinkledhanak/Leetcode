@@ -24,6 +24,7 @@ Types of Traversal:
 2. Preorder (Variant of DFS traversal)
 3. Postorder (Some distant variant of DFS as I cannot write it using BFS)
 4. Level order (Strictly BFS)
+5. Iterative Descent or Pointer Chasing [ONLY for BST]
 
 Inorder traversal is not a unique identifier of BST. At the same time, both preorder and postorder traversals are unique identifiers of BST. But in Tree serialization problems -
 Using Preorder + inorder; Postorder+inorder OR level order OR any other combination -
@@ -178,6 +179,9 @@ Eg. Path Sum 1
 
 Children pass information to parents.
 Problem? We start with root node, so we have to first traverse to leaf nodes from parent 
+Always ask what parent needs? That answer is our return type.
+Eg. Parent needs info on identity/structure presence => return node/null
+Info on some numeric aggregation => return numeric info 
 
 int helper(TreeNode root) {
     // 1. BASE CASE
@@ -207,6 +211,13 @@ parent gives to children    children give to parent
 process root FIRST          process root LAST
 void or bool return         always returns a value
 ```
+It is not necessary that in either approaches, answer will be stored in top or in bottom.
+These two just give the direction of flow.
+
+Answer can be stored in multiple ways and is INDEPENDENT of the traversal.
+1. Global variable (most common in top-down)
+2. Answer checked at every node (not just leaves)
+3. Answer passed back up via return value (hybrid)
 
 ////////////////////////////////////////////////////////////////
 3. LCA
@@ -226,9 +237,12 @@ int helper(TreeNode root) {
     
     // 3. JOINING POINT — use BOTH sides (this node is the LCA)
     // Join? Combine values of node and children - all of them
+    // This is for maintaining a global answer
     globalMax = Math.max(globalMax, left + right + root.val);
     
     // 4. RETURN only ONE side UP to parent
+    // This return statement will still be present, as info has to flow from bottom to TOP
+    // How will the parent get information? From return value from the children 
     return Math.max(left, right) + root.val;
 }
 ```
@@ -285,6 +299,18 @@ no global needed  no global needed  NEEDS global variable
 void/bool         returns value     returns ONE side, tracks BOTH
 ```
 
+The main difference between Bottom UP and LCA is that LCA needs global variable.
+Why?
+Depends, if the answer gets lost while propogatin from bottom to top - we need a global variable => LCA
+if answer can be propogated correctly from bottom to top - without getting lost => Postorder bottom-up
+Postorder — each node receives results from children and combines them to produce its own result, 
+which gets passed up unchanged in meaning
+
+                              Postorder                                   LCA
+Question each node asks   "What is the result for my subtree?"  "What did you find below you?"
+Meaning of return value       Same throughout the tree              Changes depending on the node position
+How children results combine  Symmetric (and, +, max)      Asymmetric — depends on what both children return
+Answer location               Answer can be anywhere in the tree    Answer can be anywhere in the tree
 ---
 
 ## One line to remember:
@@ -292,3 +318,56 @@ void/bool         returns value     returns ONE side, tracks BOTH
 LCA path → postorder → children send ONE side up
          → current node JOINS both sides for the answer
          → but can only PASS one side further up
+
+Types of variable we calculate for LCA:
+1. Diameter: 
+diameter = Math.max(diameter, left+right); // counting only the edges
+diameter = Math.max(diameter, left+right + 1); // counting current node as well
+
+2. globalMax
+globalMax = Math.max(globalMax, left+right+root.val); // Here, it doesnt depend on no of nodes/edges
+// We calculate something else 
+
+
+--------------------------------------------------------------------------------------------------------
+/////////////////////////////////////////////////////////
+4. Iterative Descent or Pointer Chasing for BST 
+/////////////////////////////////////////////////////////
+
+No stack, no queue — just a single pointer that moves down the tree one step at a time following a rule.
+
+General tree traversal needs a stack. That is because in a general tree you need to remember which nodes 
+to come back to — you go left, then need to backtrack and go right.
+But this problem is a BST with a very specific property. At every node you know with 100% certainty which
+direction to go. You never need to backtrack. You never need to remember anything.
+
+Because you never backtrack, you need zero memory of previous nodes. The pointer just falls down the tree 
+like a marble rolling downhill.
+
+A stack is needed when the path forward is ambiguous — you might need to explore multiple directions. 
+Pointer chasing works when the path forward is deterministic — exactly one correct direction at every step.
+
+
+/////////////////////////////////////////////////////////
+5. Preserve Tree but modify only one node
+/////////////////////////////////////////////////////////
+
+Eg. Insert into BST, Delete from BST, Trim Tree, etc 
+Keep entire tree same, but modify only one node 
+Core idea: Attach something new to existing tree
+
+TreeNode helper(TreeNode node, ...) {
+    if (node == null) {
+        // base: create/return something
+        return NEW_NODE_OR_NULL;
+    }
+
+    if (goLeft) {
+        node.left = helper(node.left, ...);
+    } else {
+        node.right = helper(node.right, ...);
+    }
+
+    // optionally update node (rare for BST insert)
+    return node;  // return SAME node (structure preserved)
+}

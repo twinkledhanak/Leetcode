@@ -1,0 +1,70 @@
+******************************************************************************************************************************
+Challenge 1: Too many concurrent users
+******************************************************************************************************************************
+
+I use a global + local load balancer combination. Global for geographic routing — sends users to nearest data center. 
+Local for distributing within that data center across servers. The tradeoff is added latency at the routing layer,
+but the availability gain outweighs that for large scale systems. The risk is the load balancer itself becoming a single point 
+of failure — which you solve with redundant LBs in active-passive configuration.
+
+******************************************************************************************************************************
+Challenge 2: Too many writes
+******************************************************************************************************************************
+
+Use Buffer of Message queues
+
+
+General things to know:
+1. Monolithic vs Microservices architecture
+2. Vertical scaling 
+3. Horizontal scaling
+4. Sharding/ partitioning
+5. Separate Read/Write systems (Social media: Read heavy, IoT system: Write heavy)
+6. Use relational databases when consistency is critical. Financial transactions, inventory management, and user account systems 
+require accurate, structured data. NoSQL offers flexibility. Relational databases offer guarantees.
+7. Use NoSQL when data structure varies by record
+8. Caching => LRU, LFU, TTL for expiration [Longer TTL means stale data but less database load. Shorter TTL means fresher data but more database hits.]
+9. CDNs for static assets: images, videos, CSS, JavaScript files
+10. Messaging Queues for: Communication between components; Storage/Processing of messages; Retry failed messages 
+=> Tibco, ActiveMQ, RabbitMQ, Kafka, AWS SQS 
+11. API Gateway => For Authentication, Rate limiting 
+
+******************************************************************************************************************************
+Use of Caching is more preferred for READ flows, than write.
+******************************************************************************************************************************
+
+Why Write Flow Skips Cache
+Write flow reality:
+User shortens a URL → maybe never visits it again
+User shortens a URL → shares it → visited 1000x tomorrow
+
+You dont know which one it is at write time.
+So if you cache on every write:
+1 Million URLs created today
+→ Cache all 1 million immediately
+→ 80% never get clicked
+→ Cache full of useless entries
+→ Actually popular URLs get evicted
+→ Cache miss rate goes UP not down
+You have wasted cache space on URLs nobody visits.
+
+The Better Strategy — Lazy Population
+Write  → DB only (always happens)
+First read → cache miss → DB → populate cache
+Second read → cache hit (now it earned its place)
+Cache only fills with URLs people actually visit. This is called lazy loading or read-through caching.
+Popular URL  → gets cached naturally after first read
+               → all subsequent reads served from cache ✅
+
+Unpopular URL → sits in DB only
+               → never wastes cache space ✅
+
+The One Exception
+Pre-warming the cache.
+If you KNOW a URL will go viral immediately —
+marketing campaign, product launch, Super Bowl ad —
+you can manually write to cache at creation time.
+
+tiny.url/superbowl → cache immediately on write
+But this is a special case, not the default flow.
+

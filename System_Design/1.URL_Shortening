@@ -1,0 +1,154 @@
+Base2 => Only two digits (0,1) to represent a number (0-9)
+Base10 => Only 10 digits (0,9) to represent a number (0-9)
+Base64 => Only 64 digits (0,63) to represent a number (0-9)
+
+Base 10 ID:   1000000
+Base 62 ID:   4c92
+
+Base 62 is not encoding or hashing, it is just a different representation of numbers 
+Why not hashing? It can give collisions
+
+Step 1: Clarify (2 minutes)
+Say this out loud:
+
+Are we designing both shortening and redirection? Should I include analytics? 
+What's the scale — DAU, read/write ratio? Any latency requirements?"
+
+Expected answers based on the article:
+100M DAU
+Read:Write = 100:1
+5 year data retention
+Low latency redirection
+
+Step 2: Core Concept First (The "How Does It Actually Work" Part)
+This is what you wanted to understand. Here's the simple mental model:
+User gives you:  https://www.google.com/very/long/url
+You give back:   tiny.url/a1B2c3
+
+The magic:
+1. Generate a unique integer ID     → 123456
+2. Encode that ID in Base62         → "a1B2c3"
+3. Store the mapping in DB          → "a1B2c3" : "https://google.com/..."
+4. When someone visits tiny.url/a1B2c3
+   → look up "a1B2c3" in DB
+   → redirect to original URL
+
+Step 3: Functional Requirements (1 minute)
+
+"The system needs to do three things:
+
+Shorten a long URL → return short URL
+Redirect short URL → back to original
+Track analytics → count clicks per URL"
+
+
+
+Step 4: Non Functional Requirements (1 minute)
+
+"It needs to be highly available, low latency on redirects — ideally milliseconds — durable so URLs don't disappear, 
+and unique so no two long URLs map to the same short URL."
+
+
+Step 5: Data Model (2 minutes)
+Two tables. That's it.
+URLMapping:
+  short_url   → Primary key (e.g. "a1B2c3")
+  original_url → The destination
+  created_at  → Timestamp
+
+Analytics:
+  short_url   → Foreign key to URLMapping
+  click_count → Integer counter
+  last_accessed → Timestamp
+
+Step 6: API Design (1 minute)
+POST /api/urls/shorten
+  Input:  { longUrl: "https://..." }
+  Output: { shortUrl: "tiny.url/a1B2c3" }
+
+GET /api/urls/{shortUrl}
+  Input:  shortUrl
+  Output: 302 redirect to original URL
+
+Step 7: HLD — Data Flow (This Is The Core)
+Draw this left to right. Talk through each arrow.
+If Machine ID is A1 and Sequence Number is 0001, the ID could be A10001.
+WRITE FLOW (Shortening):
+Client → API Gateway → URL Shortening Service → ID Generator → DB
+                                ↓
+                         Returns short URL to client
+
+READ FLOW (Redirection):
+Client → API Gateway → Redirection Handler → Redis Cache
+                                               ↓ (cache miss only)
+                                              DB
+                                ↓
+                         302 redirect to original URL
+
+ANALYTICS FLOW:
+Every GET request → Analytics Service → Redis Counter
+                                         ↓ (periodic flush)
+                                        DB
+Say this for each component:
+API Gateway:
+
+"Routes POST to shortening service, GET to redirection handler. Single entry point."
+
+ID Generator:
+
+"Each machine has a unique prefix — Machine A, B, C. Increments its own sequence number. 
+Guarantees uniqueness without coordination between machines."
+
+Redis Cache:
+
+"Read/write ratio is 100:1 so reads dominate. Cache the URL mappings in Redis. Cache miss goes to DB and populates cache — 
+read-through pattern."
+
+Analytics Redis Counter:
+
+"Instead of hitting DB on every click, increment a Redis counter. Periodically flush to DB. Handles high write volume without 
+DB overload."
+
+
+Step 8: Deep Dive — Scaling (When They Ask "How Do You Scale This?")
+This is where you close with a number and a tradeoff:
+
+"For scaling I'd shard the database using the Machine ID prefix as the shard key. Machine A writes to Shard A, Machine B to Shard B. 
+When reading, I extract the prefix from the short URL — 'a1B2c3' starts with 'a' so it routes to Shard A. 
+This gives us independent write paths with zero coordination overhead. The tradeoff is that adding new shards requires 
+assigning new machine IDs, so I'd use consistent hashing to minimize remapping when shards are added."
+
+
+Step 9: Tradeoffs To Know Cold
+These are the three they'll probe on:
+301 vs 302 redirect:
+301 = Permanent → browser caches it → less server load
+                → but can't track analytics (browser skips us)
+302 = Temporary → browser always hits us → we can track clicks
+                → more server load
+
+Answer: Use 302 because we need analytics
+SQL vs NoSQL:
+NoSQL (DynamoDB/Cassandra) because:
+- Simple key-value lookups (short_url → original_url)
+- Need horizontal sharding
+- No complex joins needed
+- High write throughput
+Cache eviction policy:
+LRU (Least Recently Used)
+20% of URLs get 80% of traffic
+Cache those 20%, evict the rest
+
+The One Sentence Closing Move
+At the end of your answer say:
+
+"So to summarize — Base62 encoding of Machine ID + Sequence numbers gives us unique short URLs. Redis cache handles the 100:1 read ratio. Sharding by machine prefix gives us horizontal write scaling. And 302 redirects let us track analytics. Any area you'd like me to go deeper on?"
+
+
+What To Actually Memorize Tonight
+Not the whole thing. Just these five anchors:
+1. Machine ID + Sequence → Base62 → short URL
+2. Read flow: Client → Cache → DB (on miss only)
+3. Write flow: Client → ID Generator → DB
+4. Scale: Shard by machine prefix
+5. 302 not 301 → because analytics

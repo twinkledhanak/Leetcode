@@ -1,0 +1,160 @@
+https://systemdesignschool.io/primer#core-design-challenges
+
+
+******************************************************************************************************************************
+For any tool you mention in an interview — know exactly these four things:
+******************************************************************************************************************************
+1. What problem does it solve?
+2. How does it solve it? (one sentence mechanism)
+3. What's the tradeoff vs the obvious alternative?
+4. What breaks it? (the edge case / limitation)
+
+
+******************************************************************************************************************************
+Load Balancer:
+******************************************************************************************************************************
+Problem:  Single server becomes bottleneck
+Mechanism: Distributes requests across server pool
+vs Alternative (DNS round robin): LB is health-aware,
+              DNS is blind. Use LB when you need 
+              failover and session persistence.
+What breaks it: LB itself becomes single point of failure
+                → solution: redundant LBs (which you mentioned!)
+
+******************************************************************************************************************************
+Kafka:
+******************************************************************************************************************************
+Problem:  High throughput async message passing
+Mechanism: Append-only log, consumers track their own offset, pub-sub architecture, publish message to topic, consumer reads
+vs Alternative (RabbitMQ): Kafka retains messages after consume,
+              RabbitMQ deletes. Use Kafka when multiple 
+              consumers need same data or replay is needed.
+What breaks it: Not designed for small fast messages 
+                needing immediate response → use Redis pub/sub
+
+******************************************************************************************************************************        
+Redis:
+******************************************************************************************************************************
+Problem:  Database too slow for repeated reads
+Mechanism: In-memory key-value store, microsecond reads
+vs Alternative (Memcached): Redis supports richer data 
+              structures and persistence. Use Redis when
+              you need sorted sets, pub/sub, or durability.
+What breaks it: Memory is expensive, can't store everything
+                → cache eviction policy matters (LRU)
+
+******************************************************************************************************************************
+Database Replicas:
+******************************************************************************************************************************
+Problem:  Single DB can't handle read volume
+Mechanism: Primary handles writes, replicas serve reads
+vs Alternative (sharding): Replicas = copies of same data,
+              sharding = split data. Use replicas for 
+              read-heavy workload, sharding for write-heavy.
+What breaks it: Replication lag → reads can be stale
+                → eventual consistency tradeoff
+
+Your hot-cold two database approach is correct for too many reads. Sharding is for too much data to fit anywhere.
+
+
+
+1. Rate Limiting (Token Bucket)
+Fixed tokens refill at constant rate
+Request costs one token
+No token → request rejected
+Used in: Rate Limiter, API design
+
+
+2. Pub/Sub Pattern
+Publishers emit events to a topic
+Subscribers listen to topics they care about
+Decouples sender from receiver completely
+Used in: Notifications, News feed, Analytics
+
+
+3. Fan-out
+One event → written to many places
+Push fan-out: write to each follower's feed on post
+Pull fan-out: follower fetches feed on login
+Used in: News feed, Notifications
+
+
+
+4. HyperLogLog
+Probabilistic data structure
+Counts unique items with ~1% error
+Uses tiny memory vs storing every unique ID
+Used in: Unique visitor counter, Analytics
+
+
+5. Write-Ahead Log (WAL)
+Every write logged before applying
+On crash → replay log to recover
+Used in: Data replication, Time series DB, KV store
+
+
+6. Consistent Hashing
+Nodes on a ring
+Adding/removing node → only neighbor keys move
+Used in: KV store, Load balancer, DB cluster
+
+
+7. Consensus (Raft/Paxos) — just the concept
+Multiple nodes must agree before write commits
+Leader elected → coordinates writes
+Used in: Distributed KV store, DB replication
+
+
+8. LSM Tree vs B-Tree
+LSM:    Fast writes, slower reads → time series DB
+B-Tree: Fast reads, slower writes → traditional DB
+Used in: Time series DB, KV store, DB cluster
+
+
+9. Chunking + Checksums
+Split large files into chunks
+Each chunk has a checksum for integrity
+Only sync changed chunks not whole file
+Used in: Dropbox, Collaborative editing
+
+
+10. Operational Transformation / CRDTs — just the concept
+OT:    Transform conflicting edits based on position
+CRDT:  Data structure that merges automatically
+Both:  Resolve concurrent edits without conflict
+Used in: Collaborative editing only
+
+Mapped To Your Questions
+QuestionCore Concepts NeededRate LimiterToken bucket + Redis counterBlogging APIREST design + SQL + cacheReal-time notificationsPub/Sub + WebSockets + fan-outNews feedFan-out + cache + paginationUnique visitor counterHyperLogLog + RedisReal-time analyticsPub/Sub + stream processing + RedisDistributed KV storeConsistent hashing + WAL + RaftData replicationWAL + leader/follower + eventual consistencyDB clusterSharding + consistent hashing + replicationTime series DBLSM tree + chunking + compressionLoad balancerConsistent hashing + health checksDropboxChunking + checksums + S3 + syncAdvertising systemPub/Sub + targeting + rate limitingCollaborative editingCRDTs or OT + WebSockets
+
+The 30 Minute Plan
+Min 0-3:   Token bucket → Rate limiter
+Min 3-6:   Pub/Sub + Fan-out → Notifications + Feed
+Min 6-9:   HyperLogLog → Unique counter + Analytics
+Min 9-12:  Consistent hashing → KV store + Load balancer
+Min 12-15: WAL + Replication → DB replication + Cluster
+Min 15-18: LSM tree → Time series DB
+Min 18-21: Chunking + checksums → Dropbox
+Min 21-24: CRDTs concept only → Collaborative editing
+Min 24-27: Review the mapping table above
+Min 27-30: Close laptop. Rest.
+
+The One Sentence Per Concept To Memorize
+Token bucket:        "Tokens refill at fixed rate, no token = rejected"
+Pub/Sub:             "Decouple publishers from subscribers via topics"
+Fan-out:             "One write fans out to many readers"
+HyperLogLog:         "Probabilistic unique counter, tiny memory, ~1% error"
+WAL:                 "Log before applying, replay on crash"
+Consistent hashing:  "Ring topology, minimize remapping when nodes change"
+Raft/Paxos:          "Nodes elect a leader who coordinates all writes"
+LSM tree:            "Optimized for writes, used in time series"
+Chunking:            "Split files, sync only changed chunks"
+CRDTs:               "Data structures that auto-merge concurrent edits"
+
+
+Step 3: Functional Requirements (1 minute)
+Step 4: Non Functional Requirements (1 minute)
+Step 5: Data Model (2 minutes)
+Step 6: API Design (1 minute)
+Step 7: HLD — Data Flow
+Step 8: Deep Dive — Scaling 

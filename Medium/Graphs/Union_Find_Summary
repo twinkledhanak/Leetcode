@@ -1,0 +1,76 @@
+Every single Union Find problem ever written has exactly this:
+******************************************************************************************************
+// 1. initialization - always same
+// Each node is a parent of itself
+class UnionFind {
+    int[] parent;
+
+    UnionFind(int n) {
+        parent = new int[n];
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    // 2. find - always same logic
+    // More like - Finding the parent of x
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]); // Y : X, Y is new parent of x. But ? : Y, who is parent of Y?
+        return parent[x];
+    }
+
+    // 3. union - core logic always same
+    void union(int x, int y) {
+        int px = find(x);
+        int py = find(y);
+        if (px == py) 
+            return; // Parents same? already connected (((**)))
+        parent[px] = py;      // merge
+        // ** Possible code for rank optimisation **
+    }
+
+    // WHY to have a separate function to check connectivity? Can't we just use union? (((**)))
+    // connected()  =  looking at a map to check if two cities are connected
+    // union()      =  actually building a road between two cities; IT will modify the data structure
+    // Below is a more Read-Only approach
+    boolean connected(int x, int y) {
+        return find(x) == find(y);
+    }
+}
+******************************************************************************************************
+
+What CHANGES between problems — just 3 things
+-------------------------------------------------------------------
+1. Return type of union()
+-------------------------------------------------------------------
+Return boolean only when you need to detect cycles or new connections. Otherwise void is fine.
+
+-------------------------------------------------------------------
+2. Rank Optimisation:
+-------------------------------------------------------------------
+// Without rank (simpler, slightly slower). Rank just keeps the tree balanced.
+parent[px] = py; // just pick one
+
+// With rank (faster, union by rank)
+if (rank[px] < rank[py])      
+    parent[px] = py;
+else if (rank[px] > rank[py]) 
+    parent[py] = px;
+else{ 
+    // Make x new parent and increment its rank
+    parent[py] = px; 
+    rank[px]++; 
+}
+
+-------------------------------------------------------------------
+3. Parent Node type:
+-------------------------------------------------------------------
+// Integer nodes (most problems)
+int[] parent = new int[n];
+
+// String nodes (Accounts Merge)
+Map<String, String> parent = new HashMap<>();
+
+-------------------------------------------------------------------
+4. Do I need component count?  → add a size/count variable
+-------------------------------------------------------------------

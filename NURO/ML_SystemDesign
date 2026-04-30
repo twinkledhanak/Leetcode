@@ -1,0 +1,15 @@
+| Aspect                 | Batch Learning (Offline)              | Online Learning                          |
+|------------------------|---------------------------------------|------------------------------------------|
+| Basic idea             | Train model on full dataset at once   | Train model step-by-step as data comes   |
+| Data input             | Whole dataset (stored data)           | Continuous data stream                   |
+| Model updates          | Rare (daily/weekly retrain)           | Continuous (per data or small batch)     |
+| Training style         | Train → deploy → wait → retrain       | Train + update happens continuously      |
+| Model state            | Frozen after training                 | Always evolving                          |
+| New data handling      | Used only during next retrain         | Used immediately                         |
+| Speed of adaptation    | Slow                                  | Fast                                     |
+| Resource usage         | High at training time                 | Spread over time (lighter per step)      |
+| Accuracy               | Often high (sees all data together)   | Can vary (depends on incoming data)      |
+| Concept drift handling | Poor (needs retraining)               | Good (adapts automatically)              |
+| Implementation         | Easier                                | More complex                             |
+| Example use case       | Spam detection retrained daily        | Stock prediction, ads ranking            |
+| Failure risk           | Model becomes outdated                | May overfit noisy/biased data            |

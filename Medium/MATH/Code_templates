@@ -1,0 +1,27 @@
+Step 1 — TRANSLATE the visual into algebra
+  "symmetry" → reflection formula: reflected = 2*axis - x
+  "closest"  → distance formula
+  "angle"    → atan2
+  "overlap"  → bounding box intersection
+  "collinear"→ cross product = 0
+
+Step 2 — AVOID floating point wherever possible
+  Instead of axis = (a+b)/2.0, use axisSum = a+b
+  Instead of dist = sqrt(dx²+dy²), compare dist² = dx²+dy²
+  When you must use doubles, never use ==, use Math.abs(a-b) < 1e-9
+
+Step 3 — HANDLE overflow proactively
+  Coordinates up to 10^8
+  dx*dx can reach 10^16 → use long, not int
+  Always cast before multiplying: (long)dx * dx
+
+Step 4 — ENCODE cleverly for O(1) lookup
+  Store points as "x,y" strings in a HashSet
+  Store slopes as "dy/gcd,dx/gcd" strings to avoid float comparison
+  Store angles as sorted doubles in a List
+
+Step 5 — HANDLE edge cases specific to geometry
+  Points at the same location (duplicates)
+  Points ON the axis/line itself
+  Single point
+  All points collinear

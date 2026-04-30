@@ -1,0 +1,105 @@
+/**
+long, long[]: Parameters
+double, double[]: Return type
+
+Line parallel to Y-axis is of the form x=a
+*/
+
+// 1. Distance between two points
+double dist(int x1, int y1, int x2, int y2) {
+    long dx = x2 - x1, dy = y2 - y1;
+    return Math.sqrt(dx*dx + dy*dy);
+}
+
+/**
+Midpoint between TWO SPECIFIC points:
+→ When you know which two points must mirror each other
+→ Example: "do these two points reflect across the same axis?"
+→ Use: midpoint(p1, p2)
+
+Midpoint between EXTREME points (min and max):
+→ When you're trying to FIND the axis itself
+→ The axis must be equidistant from the leftmost and rightmost points
+→ Therefore axis = (xMin + xMax) / 2
+→ Example: Line Reflection — find IF an axis exists
+
+If you have a seesaw and want to find the balance point, you don't average all the children's positions. 
+You find the leftmost and rightmost position and the balance point is halfway between them.
+*/
+// 2. Midpoint
+double[] midpoint(int x1, int y1, int x2, int y2) {
+    return new double[]{(x1 + x2) / 2.0, (y1 + y2) / 2.0}; // *** IMP: Use 2.0 not 2 ***
+}
+
+// 3. Reflect point across vertical line x = a
+// reflected point = (2*a - x, y)
+// To avoid floats when a = (xMin+xMax)/2, use axisSum = xMin+xMax
+// reflected = (axisSum - x, y)
+/**
+"Vertical axis of symmetry"
+        ↓
+If axis is x = a, then for every point (x, y)
+there must exist point (2a - x, y) => Along a, (x,y) and (2a-x,y) form a pair of reflected points
+To get value of a, we need find min and max x per y-group
+The axis a = (xMin + xMax) / 2 for each row
+        ↓
+Code: find min and max x per y-group,
+compute (min+max) as integer axis representation,
+verify every point has its mirror
+
+Original: (x,y) ; reflected: (2a-x,y) ; a = (xMin + xMax)/2
+For every original (x,y), we just calculate the reflected co-ordinate
+reflected = (2a-x,y)
+        = (2 * (xMin+xMax) - x, y)
+                 /2
+        = ((xMin+xMax) - x, y)      [Both 2's cancel each other out]
+
+*/
+int reflectX(int x, int axisSum) {
+    return axisSum - x;
+}
+
+
+Step 1 — TRANSLATE the visual into algebra
+  "symmetry" → reflection formula: reflected = 2*axis - x
+  "closest"  → distance formula
+  "angle"    → atan2
+  "overlap"  → bounding box intersection
+  "collinear"→ cross product = 0
+
+// Working with 2D points and rotations 
+Rotation + visibility + 2D points
+        ↓
+Convert to 1D angles using atan2
+        ↓
+Sort + duplicate for wraparound
+        ↓
+Sliding window for max coverage
+
+
+// 4. Angle from location to point (for visible points problem)
+double angle(int fromX, int fromY, int toX, int toY) {
+    return Math.toDegrees(Math.atan2(toY - fromY, toX - fromX));
+}
+
+// 5. Cross product — sign tells you turn direction
+// positive = left turn, negative = right turn, zero = collinear
+long cross(int ax, int ay, int bx, int by, int cx, int cy) {
+    return (long)(bx-ax)*(cy-ay) - (long)(by-ay)*(cx-ax);
+}
+
+// 6. Area of triangle from 3 points (0 = collinear)
+double area(int x1, int y1, int x2, int y2, int x3, int y3) {
+    return Math.abs((x2-x1)*(y3-y1) - (x3-x1)*(y2-y1)) / 2.0;
+}
+
+// 7. Manhattan distance
+int manhattan(int x1, int y1, int x2, int y2) {
+    return Math.abs(x2-x1) + Math.abs(y2-y1);
+}
+
+// 8. Check if point (px,py) is inside rectangle
+boolean inRect(int px, int py, int x1, int y1, int x2, int y2) {
+    return px >= x1 && px <= x2 && py >= y1 && py <= y2;
+}
+

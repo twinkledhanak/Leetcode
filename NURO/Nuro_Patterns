@@ -1,0 +1,291 @@
+"What is this problem actually doing?"
+
+Counting things in a range?     → Sliding window
+Finding if a partner exists?    → HashSet verification  
+Navigating with constraints?    → BFS on state space
+Building from relationships?    → Graph BFS/DFS
+Combining two sequences?        → 2D DP
+Processing sequential conflicts?→ Stack simulation
+Prefix matching?                → Trie
+Ordering dependencies?          → Topological sort
+Overlapping ranges?             → Interval sort + merge
+
+//////////////////////////////////////////////////////////////////////////////
+1. BFS on State Space
+//////////////////////////////////////////////////////////////////////////////
+
+Q. 1197 => Minimum Knight moves
+
+Things to remember:
+0. Two cardinal and one orthogonal space: int[][] directions = {{-2,-1},{-2,1},{2,-1},{2,1},{-1,-2},{1,-2},{-1,2},{1,2}};
+1. If the board space is infinite, we calculate R or C as per constraints below.
+2. If this is a BFS on grid, we filter when enque. But, only consider the visited set bounds.
+Eg. if(nx>=0&&nx<R && ny>=0&&ny<C && !visited.contains(nx+","+ny)) is not needed. 
+Just: if(!visited.contains(nx+","+ny)){...}
+3. There is a TLE possibility using string comparison for visited set check. Use boolean matrix instead.
+visited[row][col] = true  means "I have been here"
+visited[row][col] = false means "not visited yet"
+
+int CONSTRAINT = 300;
+int OFFSET = 2;
+int array_size = 2*CONSTRAINT + OFFSET;
+boolean[][] visited = new boolean[array_size][array_size];
+
+for(int d[]: directions){
+    int nx = d[0]+pos[0], ny = d[1]+pos[1];
+
+    // base condition
+    if(nx==x && ny==y)
+        return level+1; 
+
+    int shiftedX = nx + CONSTRAINT + OFFSET;
+    int shiftedY = ny + CONSTRAINT + OFFSET;
+
+    if (shiftedX >= 0 && shiftedX < array_size && shiftedY >= 0 && shiftedY < array_size && !visited[shiftedX][shiftedY]) {
+        visited[shiftedX][shiftedY] = true;
+        queue.addLast(new int[]{nx, ny});
+    }
+
+}
+
+------------------------------------------------------------------------------------------------------------
+
+Q. 1306. Jump Game 3
+
+Things to remember:
+1. Start position is given, we have choices on HOW to reach the end position
+2. These choices can be either generated via some dynamic way or HARDCODED 
+3. This problem specifically has graph style movement on an array
+
+
+Q. 1293. shortest-path-in-a-grid-with-obstacles-elimination
+
+Things to remember:
+1. In normal BFS, we only track position in queue, Deque<int[]> with i,j
+2. If we have obstacles, we track the state as follows: Deque<int[]> with i,j,k where k: remaining count 
+3. Important point, if Deque tracks state using three variables, visited must also track all three variables
+
+Variant 1: For normal BFS, we mark the visited=3 in the grid itself.
+Variant 2: For normal BFS, we mark the visited=true in another boolean grid.
+
+We can do the same for obstacle problem as well, mark visited separately.
+Changing input grid is never permitted, if we have to keep track of such obstacle state.
+
+Even if we manage to track visited separately, the core problem of this Q.1293 is different.
+There can be two valid path that reaches an obstacle and we cannot mark an obstacle as visited.
+Each of these paths can have a different value of k and can work differently around that obstacle.
+
+Changing input grid - NO
+Tracking visited separately - Also, NO [Cant distinguish between "visited with k=0 remaining" and "visited with k=1 remaining]
+Tracking visited separately WITH obstacle count - YES (same state variables as the queue)
+
+
+In standard BFS:
+  State = (row, col)
+  Visited = boolean[R][C]
+  Same cell visited twice = redundant, block it
+
+In constrained BFS:
+  State = (row, col, k)
+  Visited = boolean[R][C][k+1]
+  Same cell visited twice WITH SAME K = redundant, block it
+  Same cell visited twice WITH DIFFERENT K = different state, allow it
+  k is part of input variable state, overriding the input matrix can cause issues.
+  What about walls and gates? => 
+  Yes, we mark grid values as visited. Even when there are obstacles.
+    The FIRST time BFS reaches any cell is ALWAYS the minimum distance.
+    Therefore writing that distance and blocking future visits is correct.
+    Second visit would only bring equal or larger distance — useless.
+
+
+  But, if it had constraints on obstacle removal - it will work same as Obstacle elimination
+  You can no longer use the grid value as visited marker because the same cell can be reached with different k values — exactly the same reason as Obstacles Elimination.  
+  Why this guarantee BREAKS when you add obstacle removal:
+  With k obstacle removals, two paths can reach the same cell with the same distance but different k remaining
+
+
+Grid-as-visited = safe when state has NO extra dimensions
+Separate visited array = required when state has ANY extra dimensions
+
+Shortcut check: count your state tuple dimensions
+(row, col)      → 2D state → grid marking safe
+(row, col, k)   → 3D state → need boolean[R][C][k+1]
+(row, col, k, t)→ 4D state → need boolean[R][C][k+1][t+1]
+
+The grid marking trick is an optimization that only works for the simplest case. The moment your problem adds any constraint that changes what you can do from a position — that optimization breaks and you need the full visited array.
+------------------------------------------------------------------------------------------------------------
+
+My Weakness from this style of problems:
+
+Not checking for simple base cases.
+if(x==0 && y==0)
+    return 0;
+
+if(arr[start] == 0)
+    return true;    
+
+//////////////////////////////////////////////////////////////////////////////
+2. Sliding Window on Sorted/Circular Datacore pattern
+//////////////////////////////////////////////////////////////////////////////
+
+
+// Template 1 — MAX LENGTH (return type = int length)
+Map<Integer, Integer> map = new HashMap<>();
+map.put(0, -1);                          // seed: sum=0 at index -1
+int sum = 0, maxLen = 0;
+for (int i = 0; i < n; i++) {
+    sum += nums[i];                      // or transform: 0→-1 first
+    if (map.containsKey(sum - k))
+        maxLen = Math.max(maxLen, i - map.get(sum - k));
+    if (!map.containsKey(sum))           // only first occurrence
+        map.put(sum, i);
+}
+
+
+// Template 2 — COUNT subarrays (return type = int count)
+Map<Integer, Integer> map = new HashMap<>();
+map.put(0, 1);                           // seed: sum=0 occurred once
+int sum = 0, count = 0;
+for (int i = 0; i < n; i++) {
+    sum += nums[i];
+    count += map.getOrDefault(sum - k, 0);  // add ALL occurrences
+    map.put(sum, map.getOrDefault(sum, 0) + 1);  // store frequency
+}
+
+
+// Template 3 — EXISTS / find pair (return type = boolean or indices)
+Map<Integer, Integer> map = new HashMap<>();
+for (int i = 0; i < n; i++) {
+    int complement = target - nums[i];
+    if (map.containsKey(complement))
+        return new int[]{map.get(complement), i};
+    map.put(nums[i], i);                 // store index
+}
+
+//////////////////////////////////////////////////////////////////////////////
+3. Binary Search pattern
+//////////////////////////////////////////////////////////////////////////////
+// Regular binary search
+// When I care for the insertion position and I know element also exists
+
+int low=0, high=nums.length-1;
+while(low <= high){
+	int mid = low + (high-low)/2;
+	if(nums[mid] == target)
+		return mid;
+	else if(nums[mid] > target)
+		high = mid-1;
+	else 
+		low = mid+1;		
+}
+
+// if mid was returned => position of element
+// low = insertion position of the element
+
+------------------------------------------------------------------------------------------------
+// Searching for boundary, the pivot point where array state transitions
+
+int low=0, high=nums.length-1;
+while(low <= high){
+	int mid = low + (high-low)/2;
+	if(nums[mid] > nums[n-1])
+		low = mid+1; // low pivot is on right side
+	else
+		high = mid-1;	
+}
+
+// Nothing to do with mid
+// low = point of transition, pivot, array state changed here
+// nums[low] = minimum element of the array
+// nums[n-1] OR nums[low-1] will have the max element
+
+------------------------------------------------------------------------------------------------
+// Search for Upper and lower bounds of a target
+// When I care more on the insertion position for element that may not exist
+
+int low=0, high=nums.length;
+while(low < high){ // *** not <= ***
+	int mid = lo + (hi - lo) / 2;
+	if (arr[mid] ### target)  <= Upper bound ; < lower bound
+            lo = mid + 1;
+        else 
+            hi = mid;  
+	}
+    return lo;
+
+upperBound condition: arr[mid] <= target → lo = mid+1
+Meaning: "mid is still within the valid zone, keep going right"
+Result: lo lands on FIRST element STRICTLY GREATER than target
+
+lowerBound condition: arr[mid] < target → lo = mid+1
+Meaning: "mid is strictly less, keep going right"
+Result: lo lands on FIRST element GREATER THAN OR EQUAL to target
+
+Visually:
+arr = [1, 2, 3, 3, 3, 5, 6], target=3
+
+lowerBound: first position where arr[i] >= 3
+            [1, 2, | 3, 3, 3, 5, 6]
+                     ↑ index 2
+
+upperBound: first position where arr[i] > 3
+            [1, 2, 3, 3, 3, | 5, 6]
+                               ↑ index 5
+
+upperBound index - lowerBound index = array size of all 3's = 5 - 2 = 3 = count of 3s in array
+    
+//////////////////////////////////////////////////////////////////////////////
+4. Working with geometry, circular data and overlaps
+//////////////////////////////////////////////////////////////////////////////
+Q. Maximum number of visible points
+
+
+Circular structure breaks this property:
+
+“There is a clear start → end ordering.”
+We don’t always need to linearize circular data.
+But to use linear techniques like sliding window or binary search, we have to.
+Think of it as - straightening a circle in a linear line from point 0 to 360.
+
+Circular structure can bring overlap. Which is the biggest problem.
+
+
+🔵 Pattern 1: Duplicate (Unroll the circle)
+❓ “Do I need a continuous window?”
+Use when:
+
+* range/window problems
+* need ordering
+
+for (int i = 0; i < n; i++) {
+    arr.add(arr.get(i) + offset); // or just arr[i]
+}
+
+✔️ Used in:
+
+* angle problems
+* circular subarray windows
+
+---------------------------------------------------------------------------------------------------------
+
+🔵 Pattern 2: Modulo indexing
+❓ “Am I just traversing cyclically?”
+Use when:
+
+* traversal continues cyclically
+
+arr[i % n]
+
+✔️ Used in:
+
+* next greater element
+* circular loops
+
+---------------------------------------------------------------------------------------------------------
+🟡 Pattern 3: Break into cases
+❓ “Is wrap vs non-wrap a decision?”
+Use when:
+
+* answer may wrap or not wrap
+max circular subarray =
+max(normal subarray, total - min subarray)

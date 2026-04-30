@@ -71,6 +71,8 @@ result.add(new ArrayList<>(Arrays.asList(i,j,k)));
 // We can modify the list (add/remove) elements as per logic
 // USE THIS or BACKTRACKING will break.
 
+// We do some similar in De-serialization of tree
+Deque<String> queue = new ArrayDeque<>(Arrays.asList(tokens.split(",")));
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -244,41 +246,6 @@ public String sort(String s) {
 int[] dist = new int[V];
 Arrays.fill(dist, Integer.MAX_VALUE);
 
-// *************************************************************************************************************************
-ALL POSSIBILITIES FOR STACKS AND QUEUES :
-
-Red-Black trees are used to implement these queues (esp. Priority queues)
-Rest use LinkedLists
-
-Stack<Integer> stack = new Stack<>(); // Supports push(), pop(), peek().
-//Stack<Integer> stack = new LinkedList<>(); // INCORRECT
-
-**LinkedList<Integer> stack = new LinkedList<>(); 
-// Only pollLast() works for Stack behavior, since it is a list
-// The top of the stack is at the end of the list.
-
-
-
-Deque<Integer> stack = new ArrayDeque<>(); // push(); pop() for the stack implementation; addLast(), pollLast() — for deque
-// Recommended^^
-
-Queue<Integer> queue = new LinkedList<>(); // offer(), poll(), peek() ; addAll()
-Deque<Integer> queue = new ArrayDeque<>(); // offer(), poll(), and peek()
-
-**LinkedList<Integer> queue = new LinkedList<>();
-// Same linkedlist, but we need to use it as a queue.
-// The front of the queue is at the beginning of the list.
-// poll() or pollFirst() are the same methods
-
-PriorityQueue<Integer> pq = new PriorityQueue<>();
-//**We cannot use LinkedList<Integer> priorityQueue = new LinkedList<>();
-// Any vanilla LinkedList can be modified to perform as a priority queue, ONLY if we implement the HEAP Behaviour
-
-
-| Case | Declaration                                        | Use                | Removal Method                |
-| ---- | -------------------------------------------------- | ------------------ | ----------------------------- |
-| A    | `Queue<TreeNode> queue = new LinkedList<>();`      | BFS                | `poll()`                      |
-| B    | `LinkedList<TreeNode> queue/stack = new LinkedList<>();` | DFS / Custom order | `pollLast()` or `pollFirst()` |
 
 // *************************************************************************************************************************
 
@@ -600,6 +567,9 @@ visited.add(i + "," + j); // Mark (i, j) as visited
 if (visited.contains(i + "," + j)) {
     // Already visited
 }
+// This is the slowest approach. Complexity increases if we have to maintain 3 states => (i,j) and some obstacle count k
+// Another way is to have a int[][] matrix to maintain values for all visited.
+// Third way is row-flattening.
 
 // IF we have a question - where we must know the count of 1's that were untouched at the end of matrix traversal, we must return -1
 // So instead of traversing at the end of solution, why not get the count when we are traversing the matrix to enqueue all 2
@@ -642,6 +612,12 @@ colum-order = [a d b e c f]
 In row-major order, the element at (r, c) would end up at index r * nc + c
 int row = id / nc; 
 int col = id % nc;
+
+Better way to write it is:
+int key = (i*C) + j;
+i = key / C;
+j = key % C;
+// This is the row flattening version, we have another version for column flattening as well 
 
 Refer to number of islands problem using BFS
 
@@ -806,6 +782,11 @@ So just detecting cycles is not enough — you need to check for odd cycles spec
 Bipartite check ≠ plain cycle detection.
 Bipartite check ≈ “check for odd-length cycle.”
 BFS is often preferred because it makes odd/even levels explicit.
+
+
+Refer to Q.785 - Is Graph Bipartite? 
+Very simple BFS/DFS Traversal. Main logic is to start colouring root node with one colour, flip the colour for children.
+If matching colour found => return false;  
 
 // *************************************************************************************************************************
 
@@ -1622,6 +1603,12 @@ min	        (a,b) -> Double.compare(a.getSecond(), b.getSecond())	Must use Doubl
 max	        (a,b) -> Double.compare(b.getSecond(), a.getSecond())	Flip b,a for max.
 
 
+If we have a Priority Map already given to us => {a:1, b:2, c:3}, etc.
+To have a PriorityQueue hold a Pair<String,Integer> is too much hassle sometimes. 
+max	        (a,b) -> Integer.compare(map.get(b), map.get(a)) works easily 
+
+
+
 // TreeMap facts
 
 A Map implemented using a Red-Black Tree (self-balancing BST)
@@ -1663,11 +1650,12 @@ TreeMap<Integer, Integer> map = new TreeMap<>(Comparator.reverseOrder());
 // Custom comparator
 TreeMap<String, Integer> map = new TreeMap<>((a, b) -> a.length() - b.length());
 
-// I dont know why this exists:
+// I dont know why this exists: This is usually for Merge Interval kind of problems
 // Expected Return type: int[][]
 List<int[]> result = new ArrayList<>();
 
 // Options:
+// Expected result: Converting given List to Matrix
 result.toArray()                    // returns Object[] ← won't compile as int[][]
 result.toArray(new int[0][])        // also valid — Java resizes automatically
 result.toArray(new int[result.size()][])  // pre-sized — marginally more efficient
@@ -1675,3 +1663,82 @@ result.toArray(new int[result.size()][])  // pre-sized — marginally more effic
 // Convert List to Array
 List<Integer> list = new ArrayList<>();
 return list.stream().mapToInt(Integer::intValue).toArray();
+
+// For LinkedList and ArrayDeque, use this same set of methods:
+add to front	addFirst(e)
+add to back	    addLast(e)
+peek front	    peekFirst()
+peek back	    peekLast()
+remove front	pollFirst()
+remove back	    pollLast()
+size	        size()
+is empty	    isEmpty()
+
+//poll vs remove — the confusion
+returns null if empty	    pollFirst() / pollLast()        — use in interviews
+throws exception if empty	removeFirst() / removeLast()    — ***risky
+
+as a stack (LIFO)	        addFirst() + pollFirst()
+as a queue (FIFO)	        addLast() + pollFirst()
+as a deque (both ends)	    addFirst/addLast + pollFirst/pollLast
+sliding window max/min	    deque pattern — pollFirst + pollLast
+
+Spend some time to learn about implementation difference in Deque vs LinkedLists
+
+
+// *************************************************************************************************************************
+ALL POSSIBILITIES FOR STACKS AND QUEUES :
+
+Red-Black trees are used to implement these queues (esp. Priority queues)
+Rest use LinkedLists
+
+Stack<Integer> stack = new Stack<>(); // Supports push(), pop(), peek().
+//Stack<Integer> stack = new LinkedList<>(); // INCORRECT
+
+**LinkedList<Integer> stack = new LinkedList<>(); 
+// Only pollLast() works for Stack behavior, since it is a list
+// The top of the stack is at the end of the list.
+
+
+
+Deque<Integer> stack = new ArrayDeque<>(); // push(); pop() for the stack implementation; addLast(), pollLast() — for deque
+// Recommended^^
+
+Queue<Integer> queue = new LinkedList<>(); // offer(), poll(), peek() ; addAll()
+Deque<Integer> queue = new ArrayDeque<>(); // offer(), poll(), and peek()
+
+**LinkedList<Integer> queue = new LinkedList<>();
+// Same linkedlist, but we need to use it as a queue.
+// The front of the queue is at the beginning of the list.
+// poll() or pollFirst() are the same methods
+// offer() and offerLast() are the same methods
+
+//Short form      Same as         Where
+offer(e)        offerLast(e)    adds to back
+poll()          pollFirst()     removes from front
+peek()          peekFirst()     looks at front
+push(e)         addFirst(e)     adds to front
+pop()           removeFirst()   removes from front (throws if empty)
+
+PriorityQueue<Integer> pq = new PriorityQueue<>();
+//**We cannot use LinkedList<Integer> priorityQueue = new LinkedList<>();
+// Any vanilla LinkedList can be modified to perform as a priority queue, ONLY if we implement the HEAP Behaviour
+
+
+| Case | Declaration                                        | Use                | Removal Method                |
+| ---- | -------------------------------------------------- | ------------------ | ----------------------------- |
+| A    | `Queue<TreeNode> queue = new LinkedList<>();`      | BFS                | `poll()`                      |
+| B    | `LinkedList<TreeNode> queue/stack = new LinkedList<>();` | DFS / Custom order | `pollLast()` or `pollFirst()` |
+
+
+1. Do I know how many times I will iterate?
+   YES → for loop (input drives it)
+   NO  → while loop (work drives it)
+
+2. Am I exploring unknown territory?
+   YES → BFS/DFS (queue or recursion)
+   NO  → Linear scan or nested loops
+
+3. Do I need two things moving at once?
+   YES → Two pointers or parallel tracking
+   NO  → Single iteration

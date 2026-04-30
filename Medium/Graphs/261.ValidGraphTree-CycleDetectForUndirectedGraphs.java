@@ -44,3 +44,6 @@ class Solution {
     }
 
 }
+
+// set cycle, set visited, int node, graph
+// int parent  , set visited, int node, graph

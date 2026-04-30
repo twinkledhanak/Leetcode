@@ -1,3 +1,81 @@
+Depth — distance from root TO node (top down)
+Height — distance from node TO leaf (bottom up)
+For the whole tree: max depth == max height, same value, different perspectives
+Remember that: Leaf nodes have zero height
+
+1. Max Depth — Number of Nodes
+public int maxDepth_Nodes(TreeNode root) {
+    if (root == null) return 0;
+    int left = maxDepth_Nodes(root.left);
+    int right = maxDepth_Nodes(root.right);
+    return Math.max(left, right) + 1;  // +1 counts current node
+}
+
+2. Max Depth — Number of Edges
+public int maxDepth_Edges(TreeNode root) {
+    if (root == null) return -1;  // -1 because root has 0 edges above it
+    int left = maxDepth_Edges(root.left);
+    int right = maxDepth_Edges(root.right);
+    return Math.max(left, right) + 1;
+}
+
+----------------------------------------------------------------------------------------------------------
+
+3. Max Height — Number of Nodes
+javapublic int maxHeight_Nodes(TreeNode root) {
+    if (root == null) return 0;
+    int left = maxHeight_Nodes(root.left);
+    int right = maxHeight_Nodes(root.right);
+    return Math.max(left, right) + 1;  // +1 counts current node
+}
+// Identical to maxDepth_Nodes — same computation, different perspective
+
+4. Max Height — Number of Edges
+javapublic int maxHeight_Edges(TreeNode root) {
+    if (root == null) return -1;  // -1 cancels one +1
+    int left = maxHeight_Edges(root.left);
+    int right = maxHeight_Edges(root.right);
+    return Math.max(left, right) + 1;
+}
+// Identical to maxDepth_Edges — same computation, different perspective
+
+----------------------------------------------------------------------------------------------------------
+
+5. Diameter — Number of Nodes
+int result = 0;
+public int diameter_Nodes(TreeNode root) {
+    helper_Nodes(root);
+    return result;
+}
+public int helper_Nodes(TreeNode root) {
+    if (root == null) return 0;
+    int left = helper_Nodes(root.left);
+    int right = helper_Nodes(root.right);
+    result = Math.max(result, left + right + 1);  // +1 counts bridge node
+    return Math.max(left, right) + 1;             // height in nodes
+}
+
+6. Diameter — Number of Edges
+int result = 0;
+public int diameter_Edges(TreeNode root) {
+    helper_Edges(root);
+    return result;
+}
+public int helper_Edges(TreeNode root) {
+    if (root == null) return 0;
+    int left = helper_Edges(root.left);
+    int right = helper_Edges(root.right);
+    result = Math.max(result, left + right);  // NO +1, edges dont count bridge
+    return Math.max(left, right) + 1;         // height still in nodes internally
+}
+
+
+                            Base Case       result line     return line
+Depth/Height Nodes          return 0             N/A         max(l,r) + 1    
+Depth/Height Edges          return -1            N/A         max(l,r) + 1
+Diameter Nodes              return 0            l + r + 1    max(l,r) + 1
+Diameter Edges              return 0            l + r        max(l,r) + 1
+
 /**
 Height and Depth can be measured as - no of nodes // no of edges
 

@@ -25,53 +25,49 @@ BACKTRACK 11 --> 5 --> 2
 
 2 is the node where we have left = True and right = True and hence it is the lowest common ancestor.
 
-    */
+This is LCA type question.
+What Should a Node Report to Its Parent?
+When a node is processing, it can be in one of these situations:
+1. I found p below me (or I am p)
+2. I found q below me (or I am q)
+3. I found nothing
+4. I found BOTH p and q below me
+Given these four situations — what should each node return to its parent?
+Think about it this way:
 
-    private TreeNode ans;
+If you're a node and your left child says "I found p" and your right child says "I found q" —
+what does that mean about YOU?
+The node is the lca
+The question is to be answered at a parent node, on basis of what has been the response 
+from child level nodes.
 
-    public Solution() {
-        // Variable to store LCA node.
-        this.ans = null;
+My initial attempt (Broken, just for intuition):
+    public TreeNode lca(TreeNode root){
+        if(root == null)
+            return null;
+        int left = lca(root.left, p, q); // 0,1
+        int right = lca(root.right, p, q); // 0,1
+        if(left+right == 2) // both nodes found
+            return root;
+        if(p != null && root.val == p.val) ? return 1 : return 0;
+        if(q != null && root.val == q.val) ? return 1 : return 0;                    
     }
+*/
 
+class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        // Traverse the tree
-        this.recurseTree(root, p, q);
-        return this.ans;
-    }
+        
+        if (root == null) 
+            return null;
+        if (root == p || root == q) 
+            return root;  // found one, report up
 
-    private boolean recurseTree(TreeNode currentNode, TreeNode p, TreeNode q) {
+        TreeNode left  = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
 
-        // If reached the end of a branch, return false.
-        if (currentNode == null) {
-            return false;
-        }
-
-        // MARKING EACH PARENT WITH SOMETHING
-        // Instead of focussing on individual elems, we focus on setting a common property at every node
-        // We dont store the list of parents
-        // While traversing, we just assign some values to nodes (runtime) so they can be used again when that node is revisited
-
-        // Left Recursion. If left recursion returns true, set left = 1 else 0
-        int left = this.recurseTree(currentNode.left, p, q) ? 1 : 0; 
-        // when left = 1, it means either p, q were found in this node's lst
-
-        // Right Recursion
-        int right = this.recurseTree(currentNode.right, p, q) ? 1 : 0;
-        // when right = 1, it means either p, q were found in this node's rst
-
-        // If the current node is one of p or q
-        int mid = (currentNode == p || currentNode == q) ? 1 : 0;
-
-
-        // If any two of the flags left, right or mid become True
-        if (mid + left + right >= 2) {
-            this.ans = currentNode;
-        }
-
-        // Return true if any one of the three bool values is True.
-        return (mid + left + right > 0);
+        if (left != null && right != null)        // your left+right==2
+            return root;
+        
+        return left != null ? left : right;       // pass up whoever was found
     }
 }
-
-// Time: O(n) and Space: O(n)

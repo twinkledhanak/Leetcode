@@ -1,0 +1,20 @@
+// *************************************************************************************************************************
+Problem Classification correctly:
+A. Graph (dependencies / relationships / ordering)
+B. DP (overlapping subproblems + optimal substructure)
+C. Greedy (local choice is safe)
+D. BFS/DFS state search (transformations / steps)
+E. Math / bit / counting (representation matters more than process) / Greedy with constraint compression
+F. Simulation (no optimization needed, just follow rules)   
+   
+Compression Thinking:
+- Can I ignore order?
+- Can I ignore positions?
+- Can I reduce to counts?
+- Can I reduce to graph?
+- Can I reduce to state transitions?   
+   
+Separate these three steps:
+- representation (what is the state?)
+- Operation / process (what happens each step?)
+- objective (what are we optimizing?)

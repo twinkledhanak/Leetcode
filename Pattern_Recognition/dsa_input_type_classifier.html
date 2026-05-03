@@ -1,0 +1,396 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.search-bar{width:100%;padding:8px 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);margin-bottom:12px}
+.search-bar:focus{outline:none;border-color:var(--color-border-primary)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filter-btn{font-size:11px;padding:3px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.filter-btn.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary)}
+.intro{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:16px;max-width:900px}
+.input-block{margin-bottom:8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.input-header{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--color-background-primary);transition:background .15s}
+.input-header:hover{background:var(--color-background-secondary)}
+.input-type-name{font-size:13px;font-weight:600;color:var(--color-text-primary);flex:1}
+.pattern-count{font-size:11px;color:var(--color-text-tertiary);font-weight:400}
+.chevron{font-size:10px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0}
+.chevron.open{transform:rotate(90deg)}
+.body{border-top:0.5px solid var(--color-border-tertiary);display:none}
+.body.open{display:block}
+.pattern-section{border-bottom:0.5px solid var(--color-border-tertiary)}
+.pattern-section:last-child{border-bottom:none}
+.pattern-title{padding:8px 14px 6px;font-size:12px;font-weight:600;color:var(--color-text-primary);background:var(--color-background-secondary)}
+.sub-row{padding:7px 14px 7px 22px;border-top:0.5px solid var(--color-border-tertiary);display:grid;grid-template-columns:minmax(140px,200px) minmax(0,1fr) minmax(160px,240px);gap:8px 12px;align-items:start}
+@media(max-width:720px){.sub-row{grid-template-columns:1fr;}}
+.lc-example{font-size:11px;font-weight:500;color:var(--color-text-tertiary);line-height:1.45;justify-self:end;text-align:right}
+.sub-name{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:200px;flex-shrink:0}
+.sub-signal{font-size:11px;color:var(--color-text-secondary);line-height:1.5;flex:1}
+.ptag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:500;margin-left:6px}
+.hidden{display:none}
+</style>
+
+<div style="padding:1rem 0">
+<h2 class="sr-only">DSA reference — organized by input type, each listing applicable patterns and sub-patterns</h2>
+<p class="intro">Pick your <strong>input shape</strong> first (array, string, tree, …). Expand a row to see every <strong>pattern family</strong> that commonly applies to that input. Each <strong>sub-pattern</strong> row lists a signal plus one <strong>LeetCode example</strong> (right column).</p>
+<input class="search-bar" type="text" placeholder="Search input type, pattern, sub-pattern, examples, or signals..." id="search" oninput="filterAll()">
+<div class="filter-row" id="filters"></div>
+<div id="list"></div>
+</div>
+
+<script>
+/** Same tag styling as pattern-first file; keys are input-type ids. */
+const TAGS={
+  arr:{label:"Array",bg:"#E6F1FB",color:"#0C447C"},
+  str:{label:"String",bg:"#EEEDFE",color:"#3C3489"},
+  mat:{label:"Matrix",bg:"#E1F5EE",color:"#085041"},
+  tree:{label:"Tree",bg:"#FAEEDA",color:"#633806"},
+  graph:{label:"Graph",bg:"#FCEBEB",color:"#791F1F"},
+  int:{label:"Integer",bg:"#EAF3DE",color:"#27500A"},
+  bits:{label:"Bits",bg:"#FBEAF0",color:"#72243E"},
+  ll:{label:"LinkedList",bg:"#F1EFE8",color:"#444441"},
+  design:{label:"Design",bg:"#E6F1FB",color:"#0C447C"}
+};
+
+/**
+ * Pattern-first taxonomy (aligned with dsa_pattern_classifier.html).
+ * `inputs` lists which input-type rows should list this pattern.
+ * Tree is attached to Stack / Graph / DP-1D where those templates routinely apply to trees.
+ */
+const DATA=[
+{name:"Two Pointer",inputs:["arr","str"],subs:[
+  {name:"Opposite ends → single pass",example:"LeetCode #167 — Two Sum II - Input Array Is Sorted",signal:"sorted array, find pair with sum/difference, container with most water, trapping rain water"},
+  {name:"Same direction (fast/slow)",example:"LeetCode #283 — Move Zeroes",signal:"remove duplicates in-place, move zeros, partition array, cycle detection in linked list"},
+  {name:"Three pointer / partition",example:"LeetCode #75 — Sort Colors",signal:"Dutch national flag, sort colors, 3Sum → fix one pointer, two pointer for rest"},
+  {name:"Two pointer on two arrays",example:"LeetCode #88 — Merge Sorted Array",signal:"merge sorted arrays, compare strings with backspace, intersection of arrays"},
+  {name:"Palindrome check",example:"LeetCode #125 — Valid Palindrome",signal:"check if string is palindrome, valid palindrome with deletions → expand or contract"}
+]},
+{name:"Sliding Window",inputs:["arr","str"],subs:[
+  {name:"Fixed size window",example:"LeetCode #643 — Maximum Average Subarray I",signal:"max sum of subarray of size k, average of all subarrays of size k → window size never changes"},
+  {name:"Dynamic window — expand/contract",example:"LeetCode #3 — Longest Substring Without Repeating Characters",signal:"longest substring without repeating, minimum window substring → right expands, left contracts when invalid"},
+  {name:"Dynamic with HashMap/frequency map",example:"LeetCode #438 — Find All Anagrams in a String",signal:"anagram in string, permutation in string, at most k distinct characters → need count of elements in window"},
+  {name:"Dynamic with negative numbers → indices",example:"LeetCode #53 — Maximum Subarray",signal:"max sum subarray (Kadane's), longest subarray with sum ≤ k when negatives present → track indices not values"},
+  {name:"Monotonic deque window",example:"LeetCode #239 — Sliding Window Maximum",signal:"sliding window maximum/minimum → need max/min of current window in O(1) → use deque"}
+]},
+{name:"Prefix Sum",inputs:["arr","mat","str"],subs:[
+  {name:"1D prefix sum",example:"LeetCode #303 — Range Sum Query - Immutable",signal:"range sum queries, subarray sum equals k → precompute cumulative sums"},
+  {name:"Prefix sum + HashMap (max length)",example:"LeetCode #325 — Maximum Size Subarray Sum Equals k",signal:"maximum size subarray sum equals k → store first occurrence index of each prefix sum"},
+  {name:"Prefix sum + HashMap (count)",example:"LeetCode #560 — Subarray Sum Equals K",signal:"count subarrays with sum k → store frequency of each prefix sum"},
+  {name:"2D prefix sum",example:"LeetCode #304 — Range Sum Query 2D - Immutable",signal:"sum of rectangle in matrix, count 1s in matrix region → precompute 2D cumulative grid"},
+  {name:"Prefix XOR",example:"LeetCode #1310 — XOR Queries of a Subarray",signal:"count subarrays with even/odd XOR → XOR prefix array + HashMap"},
+  {name:"Running difference",example:"LeetCode #853 — Car Fleet",signal:"car fleet, find pivot index → sum from left equals sum from right"}
+]},
+{name:"Stack",inputs:["arr","str","tree"],subs:[
+  {name:"Monotonic increasing stack",example:"LeetCode #901 — Online Stock Span",signal:"next smaller element, stock span problem → pop when current is smaller than top"},
+  {name:"Monotonic decreasing stack",example:"LeetCode #739 — Daily Temperatures",signal:"next greater element, daily temperatures, largest rectangle in histogram → pop when current is greater than top"},
+  {name:"Balanced parentheses",example:"LeetCode #20 — Valid Parentheses",signal:"valid parentheses, decode string, evaluate expression → push open, pop on close"},
+  {name:"Stack simulation",example:"LeetCode #735 — Asteroid Collision",signal:"asteroid collision, robot instructions, evaluate RPN → push and resolve conflicts in while loop"},
+  {name:"Stack for iterative tree traversal",example:"LeetCode #144 — Binary Tree Preorder Traversal",signal:"preorder/inorder/postorder without recursion → simulate call stack manually"},
+  {name:"Min/Max stack",example:"LeetCode #155 — Min Stack",signal:"design stack with getMin/getMax in O(1) → maintain second stack of running min/max"}
+]},
+{name:"Queue / Deque",inputs:["arr","graph","mat","tree"],subs:[
+  {name:"BFS queue (single source)",example:"LeetCode #102 — Binary Tree Level Order Traversal",signal:"shortest path in graph/grid, level order traversal → FIFO processes nodes level by level"},
+  {name:"BFS queue (multi source)",example:"LeetCode #994 — Rotting Oranges",signal:"rotten oranges, walls and gates → add ALL sources before BFS starts"},
+  {name:"Deque for sliding window",example:"LeetCode #1438 — Longest Continuous Subarray With Absolute Diff ≤ Limit",signal:"sliding window max/min → addLast for new, pollFirst if out of window, pollLast if worse than current"},
+  {name:"Monotonic deque (decreasing)",example:"LeetCode #239 — Sliding Window Maximum",signal:"maximum in window → front always holds max, pop back when new element is larger"},
+  {name:"Circular queue design",example:"LeetCode #622 — Design Circular Queue",signal:"design circular queue, hit counter → fixed size buffer with head/tail pointers"}
+]},
+{name:"Heap / Priority Queue",inputs:["arr","graph","tree"],subs:[
+  {name:"Top K elements (MaxHeap)",example:"LeetCode #215 — Kth Largest Element in an Array",signal:"k largest elements → MaxHeap of size k, or sort descending take k"},
+  {name:"Top K elements (MinHeap of size k)",example:"LeetCode #703 — Kth Largest Element in a Stream",signal:"k smallest elements → MinHeap size k, pop when size exceeds k, top is kth largest"},
+  {name:"K-way merge",example:"LeetCode #23 — Merge k Sorted Lists",signal:"merge k sorted lists/arrays → MinHeap always holds one element from each list"},
+  {name:"Intervals with heap",example:"LeetCode #253 — Meeting Rooms II",signal:"meeting rooms II, task scheduler → MinHeap tracks end times, size = concurrent meetings"},
+  {name:"Dijkstra shortest path",example:"LeetCode #743 — Network Delay Time",signal:"weighted graph shortest path → MinHeap of (distance, node), relax edges"},
+  {name:"Median of stream",example:"LeetCode #295 — Find Median from Data Stream",signal:"find median from data stream → MaxHeap for lower half, MinHeap for upper half, balance sizes"},
+  {name:"Priority scheduling",example:"LeetCode #630 — Course Schedule III",signal:"Nuro bot routing, job scheduling with priority → Kahn's algorithm + MaxHeap by priority"}
+]},
+{name:"Intervals",inputs:["arr"],subs:[
+  {name:"Sort + merge overlapping",example:"LeetCode #56 — Merge Intervals",signal:"merge intervals, insert interval → sort by start, merge when current.start ≤ last.end"},
+  {name:"Sort + count overlaps (heap)",example:"LeetCode #253 — Meeting Rooms II",signal:"meeting rooms II → sort by start, MinHeap of end times, heap size = rooms needed"},
+  {name:"Two pointer on two interval lists",example:"LeetCode #986 — Interval List Intersections",signal:"interval list intersections → advance pointer with smaller end time"},
+  {name:"Greedy interval selection",example:"LeetCode #435 — Non-overlapping Intervals",signal:"non-overlapping intervals, minimum arrows to burst balloons → sort by end time, greedily select"},
+  {name:"Sweep line",example:"LeetCode #1094 — Car Pooling",signal:"employee free time, calendar conflicts → convert to events (start +1, end -1), sweep and count"}
+]},
+{name:"Binary Search",inputs:["arr","int"],subs:[
+  {name:"Find exact element",example:"LeetCode #704 — Binary Search",signal:"classic binary search → lo<=hi, return mid when found, return -1 at end"},
+  {name:"Find insertion position",example:"LeetCode #35 — Search Insert Position",signal:"search insert position, lower bound → lo<=hi, return lo when loop ends"},
+  {name:"Find boundary (first true)",example:"LeetCode #278 — First Bad Version",signal:"rotated sorted array pivot, first bad version → lo<hi, hi=mid not mid-1, return lo"},
+  {name:"Find upper bound",example:"LeetCode #34 — Find First and Last Position of Element in Sorted Array",signal:"last position of element, rightmost index → condition arr[mid]<=target, lo=mid+1"},
+  {name:"Find lower bound",example:"LeetCode #34 — Find First and Last Position of Element in Sorted Array",signal:"first position of element, leftmost index → condition arr[mid]<target, lo=mid+1"},
+  {name:"Binary search on answer",example:"LeetCode #875 — Koko Eating Bananas",signal:"koko eating bananas, capacity to ship packages → binary search on the RESULT not array index"},
+  {name:"Binary search on sorted but rotated",example:"LeetCode #33 — Search in Rotated Sorted Array",signal:"find element in rotated sorted array → determine which half is sorted, binary search that half"},
+  {name:"Binary search on window boundary",example:"LeetCode #658 — Find K Closest Elements",signal:"k closest elements → binary search on left edge of window of size k"}
+]},
+{name:"Sorting",inputs:["arr","str"],subs:[
+  {name:"Sort + greedy",example:"LeetCode #455 — Assign Cookies",signal:"assign cookies, jump game → sort first, then greedy scan"},
+  {name:"Custom comparator sort",example:"LeetCode #179 — Largest Number",signal:"largest number, task scheduler → define what 'larger' means for the problem"},
+  {name:"Counting sort / bucket sort",example:"LeetCode #451 — Sort Characters By Frequency",signal:"sort characters in string by frequency, top k frequent → when range is bounded"},
+  {name:"Cyclic sort",example:"LeetCode #41 — First Missing Positive",signal:"missing number, find all duplicates → each number belongs at index nums[i]-1, swap to correct position"},
+  {name:"Sort as preprocessing",example:"LeetCode #15 — 3Sum",signal:"two sum on sorted array, 3Sum, interval problems → sort first unlocks two pointer or greedy"}
+]},
+{name:"HashMap / HashSet",inputs:["arr","str","tree"],subs:[
+  {name:"Two sum pattern",example:"LeetCode #1 — Two Sum",signal:"find pair with target sum → store complement, check if complement exists"},
+  {name:"Frequency counting",example:"LeetCode #242 — Valid Anagram",signal:"valid anagram, group anagrams, ransom note → count chars, compare counts"},
+  {name:"First unique / duplicate",example:"LeetCode #387 — First Unique Character in a String",signal:"first unique character, find duplicate → frequency map, scan for count == 1"},
+  {name:"HashSet for visited",example:"LeetCode #128 — Longest Consecutive Sequence",signal:"longest consecutive sequence, contains duplicate → O(1) membership check"},
+  {name:"HashSet verification (geometry)",example:"LeetCode #36 — Valid Sudoku",signal:"line reflection, valid sudoku → compute what partner SHOULD be, check if exists"},
+  {name:"Group by key",example:"LeetCode #49 — Group Anagrams",signal:"group anagrams, isomorphic strings → HashMap groups elements with same signature"}
+]},
+{name:"Greedy",inputs:["arr","str","int"],subs:[
+  {name:"Activity selection",example:"LeetCode #435 — Non-overlapping Intervals",signal:"non-overlapping intervals, minimum meetings → sort by end, greedily pick non-overlapping"},
+  {name:"Jump game",example:"LeetCode #55 — Jump Game",signal:"can reach end, minimum jumps → track maximum reachable index"},
+  {name:"Gas station / circular",example:"LeetCode #134 — Gas Station",signal:"circular array problems → track running sum, reset when negative"},
+  {name:"Assign resources",example:"LeetCode #881 — Boats to Save People",signal:"assign cookies, boats to save people → sort both, two pointer greedy match"},
+  {name:"String construction",example:"LeetCode #402 — Remove K Digits",signal:"remove k digits, largest number after operations → monotonic stack + greedy"},
+  {name:"Interval covering",example:"LeetCode #452 — Minimum Number of Arrows to Burst Balloons",signal:"minimum number of arrows, video stitching → sort by start, greedily extend coverage"}
+]},
+{name:"Dynamic Programming — 1D",inputs:["arr","str","int","tree"],subs:[
+  {name:"Linear scan DP",example:"LeetCode #198 — House Robber",signal:"house robber, climbing stairs, min cost climbing → dp[i] depends on dp[i-1] or dp[i-2]"},
+  {name:"Kadane's (max subarray)",example:"LeetCode #53 — Maximum Subarray",signal:"maximum subarray sum → dp[i] = max(nums[i], dp[i-1]+nums[i]), reset when negative"},
+  {name:"Knapsack 0/1",example:"LeetCode #416 — Partition Equal Subset Sum",signal:"partition equal subset sum, target sum → for each item decide include or exclude"},
+  {name:"Knapsack unbounded",example:"LeetCode #322 — Coin Change",signal:"coin change, coin change 2 → item can be used multiple times"},
+  {name:"Longest increasing subsequence",example:"LeetCode #300 — Longest Increasing Subsequence",signal:"LIS, number of LIS → dp[i] = max dp[j]+1 for all j<i where nums[j]<nums[i]"},
+  {name:"State machine DP",example:"LeetCode #309 — Best Time to Buy and Sell Stock with Cooldown",signal:"best time to buy/sell stock with cooldown/fee → states are hold/sold/rest, transitions between"},
+  {name:"Digit DP",example:"LeetCode #233 — Number of Digit One",signal:"count numbers with property in range → build digit by digit, track constraints"}
+]},
+{name:"Dynamic Programming — 2D",inputs:["arr","str","mat"],subs:[
+  {name:"Grid path counting",example:"LeetCode #62 — Unique Paths",signal:"unique paths, unique paths with obstacles → dp[i][j] = dp[i-1][j] + dp[i][j-1]"},
+  {name:"Grid minimum path",example:"LeetCode #64 — Minimum Path Sum",signal:"minimum path sum, dungeon game → dp[i][j] = min(top, left) + grid[i][j]"},
+  {name:"String matching — LCS",example:"LeetCode #1143 — Longest Common Subsequence",signal:"longest common subsequence, edit distance, delete operations → dp[i][j] on two strings"},
+  {name:"String matching — palindrome",example:"LeetCode #516 — Longest Palindromic Subsequence",signal:"longest palindromic subsequence → LCS(s, reverse(s)), longest palindromic substring → diagonal DP"},
+  {name:"Interleaving",example:"LeetCode #97 — Interleaving String",signal:"interleaving string → dp[i][j] = can form s3[0..i+j] from s1[0..i] and s2[0..j]"},
+  {name:"Matrix chain / interval DP",example:"LeetCode #312 — Burst Balloons",signal:"burst balloons, strange printer → dp[i][j] over all intervals, try all split points"},
+  {name:"Maximal square/rectangle",example:"LeetCode #221 — Maximal Square",signal:"maximal square of 1s → dp[i][j] = min(top, left, diagonal)+1"},
+  {name:"2D knapsack",example:"LeetCode #474 — Ones and Zeroes",signal:"two constraints → dp[i][w][v] two-dimensional capacity tracking"}
+]},
+{name:"BFS / DFS on Graph",inputs:["graph","mat","tree"],subs:[
+  {name:"Single source BFS — shortest path",example:"LeetCode #127 — Word Ladder",signal:"word ladder, min knight moves → unweighted graph, BFS level = distance"},
+  {name:"Multi source BFS",example:"LeetCode #994 — Rotting Oranges",signal:"rotten oranges, walls and gates → add ALL sources first, BFS spreads outward"},
+  {name:"BFS with constraint state",example:"LeetCode #1293 — Shortest Path in a Grid with Obstacles Elimination",signal:"shortest path with obstacles → state=(row,col,k), visited[R][C][k+1]"},
+  {name:"DFS — connected components",example:"LeetCode #200 — Number of Islands",signal:"number of islands, count provinces → DFS marks entire component, count starts"},
+  {name:"DFS — path existence",example:"LeetCode #79 — Word Search",signal:"can reach from source to target → return true when target found"},
+  {name:"DFS — path collection",example:"LeetCode #113 — Path Sum II",signal:"all paths from source to target, binary tree paths → collect path, backtrack"},
+  {name:"Flood fill",example:"LeetCode #733 — Flood Fill",signal:"paint fill, surrounded regions → DFS/BFS from boundary or target cell"},
+  {name:"Topological sort (Kahn's)",example:"LeetCode #207 — Course Schedule",signal:"course schedule, task ordering, dependencies → indegree map + queue"},
+  {name:"Topological sort + priority",example:"LeetCode #630 — Course Schedule III",signal:"Nuro bot routing → Kahn's + MaxHeap for priority among ready nodes"},
+  {name:"Cycle detection directed",example:"LeetCode #207 — Course Schedule",signal:"course schedule detect cycle → DFS with three states: unvisited/visiting/visited"},
+  {name:"Cycle detection undirected",example:"LeetCode #684 — Redundant Connection",signal:"redundant connection → DFS with parent tracking or Union Find"},
+  {name:"Bipartite check",example:"LeetCode #785 — Is Graph Bipartite?",signal:"is graph bipartite, possible bipartition → 2-color BFS/DFS, conflict = not bipartite"},
+  {name:"Weighted shortest path (Dijkstra)",example:"LeetCode #743 — Network Delay Time",signal:"network delay time, path with min effort → MinHeap of (cost, node), relax edges"}
+]},
+{name:"Tree Traversals",inputs:["tree"],subs:[
+  {name:"Preorder (root → left → right)",example:"LeetCode #144 — Binary Tree Preorder Traversal",signal:"serialize tree, construct from preorder → process node before children"},
+  {name:"Inorder (left → root → right)",example:"LeetCode #94 — Binary Tree Inorder Traversal",signal:"BST → sorted order, validate BST → inorder gives sorted sequence"},
+  {name:"Postorder (left → right → root)",example:"LeetCode #145 — Binary Tree Postorder Traversal",signal:"delete tree, evaluate expression tree → process children before node"},
+  {name:"Level order BFS",example:"LeetCode #102 — Binary Tree Level Order Traversal",signal:"level averages, zigzag traversal, right side view → queue + level size pattern"},
+  {name:"Top-down DFS (pass state down)",example:"LeetCode #112 — Path Sum",signal:"path sum, max depth, good nodes → pass running state from parent to children"},
+  {name:"Bottom-up DFS (return value up)",example:"LeetCode #543 — Diameter of Binary Tree",signal:"diameter, max path sum, balanced tree → compute at leaves, return to parent"},
+  {name:"LCA pattern",example:"LeetCode #236 — Lowest Common Ancestor of a Binary Tree",signal:"lowest common ancestor, distance between nodes → find split point where paths diverge"},
+  {name:"Iterative traversal with stack",example:"LeetCode #144 — Binary Tree Preorder Traversal",signal:"any traversal without recursion → simulate call stack explicitly"},
+  {name:"BST operations",example:"LeetCode #700 — Search in a Binary Search Tree",signal:"search/insert/delete in BST, validate BST → use BST property left<root<right"},
+  {name:"Morris traversal",example:"LeetCode #99 — Recover Binary Search Tree",signal:"inorder traversal O(1) space → use threaded binary tree, modify and restore pointers"},
+  {name:"DP on tree",example:"LeetCode #337 — House Robber III",signal:"house robber III, binary tree cameras → at each node make decision, propagate result up"},
+  {name:"Serialize / deserialize",example:"LeetCode #297 — Serialize and Deserialize Binary Tree",signal:"encode/decode tree structure → preorder + null markers, or BFS level order"},
+  {name:"N-ary tree",example:"LeetCode #589 — N-ary Tree Preorder Traversal",signal:"same traversals but iterate children list instead of left/right → generalized DFS/BFS"}
+]},
+{name:"Trie",inputs:["str"],subs:[
+  {name:"Basic insert / search",example:"LeetCode #208 — Implement Trie (Prefix Tree)",signal:"implement trie, word search → TrieNode with children[26] + isEnd flag"},
+  {name:"Prefix matching / autocomplete",example:"LeetCode #1268 — Search Suggestions System",signal:"search suggestions system, longest word in dictionary → traverse to prefix node, DFS for completions"},
+  {name:"Wildcard search",example:"LeetCode #211 — Design Add and Search Words - Data Structure",signal:"design add and search words → DFS with '.' matching any character"},
+  {name:"Word board search",example:"LeetCode #212 — Word Search II",signal:"word search II → Trie + DFS on grid, prune when prefix not in trie"},
+  {name:"XOR trie (maximum XOR)",example:"LeetCode #421 — Maximum XOR of Two Numbers in an Array",signal:"maximum XOR of two numbers → insert binary digits, greedily pick opposite bit"}
+]},
+{name:"Union Find",inputs:["graph","arr"],subs:[
+  {name:"Connected components",example:"LeetCode #547 — Number of Provinces",signal:"number of provinces, friend circles → union edges, count distinct roots"},
+  {name:"Cycle detection (undirected)",example:"LeetCode #684 — Redundant Connection",signal:"redundant connection → union edge, if already connected = cycle"},
+  {name:"Dynamic connectivity",example:"LeetCode #721 — Accounts Merge",signal:"accounts merge, most stones removed → group elements that share a property"},
+  {name:"Kruskal's MST",example:"LeetCode #1135 — Connecting Cities With Minimum Cost",signal:"minimum spanning tree, min cost to connect all points → sort edges, union if no cycle"}
+]},
+{name:"Backtracking",inputs:["arr","str"],subs:[
+  {name:"Subsets",example:"LeetCode #78 — Subsets",signal:"all subsets, power set → at each element choose include or exclude"},
+  {name:"Permutations",example:"LeetCode #46 — Permutations",signal:"all permutations → choose unused element at each position, mark used"},
+  {name:"Combinations",example:"LeetCode #39 — Combination Sum",signal:"combination sum, combinations of k → choose from remaining elements, no repeat"},
+  {name:"Constraint satisfaction",example:"LeetCode #51 — N-Queens",signal:"N-Queens, sudoku solver → place element, check validity, backtrack if invalid"},
+  {name:"Word break / path",example:"LeetCode #131 — Palindrome Partitioning",signal:"word break II, palindrome partitioning → cut string at valid positions, recurse on rest"}
+]},
+{name:"Linked List",inputs:["ll"],subs:[
+  {name:"Fast and slow pointer",example:"LeetCode #141 — Linked List Cycle",signal:"detect cycle, find middle, nth from end → fast moves 2x, slow moves 1x"},
+  {name:"Reverse linked list",example:"LeetCode #206 — Reverse Linked List",signal:"reverse entire list or sublist → iterative with prev/curr/next pointers"},
+  {name:"Merge sorted lists",example:"LeetCode #21 — Merge Two Sorted Lists",signal:"merge two sorted lists, merge k sorted lists → compare heads, advance smaller"},
+  {name:"Remove / modify nodes",example:"LeetCode #19 — Remove Nth Node From End of List",signal:"remove nth from end, remove duplicates → dummy head + two pointer"},
+  {name:"Reorder list",example:"LeetCode #143 — Reorder List",signal:"reorder list, odd even linked list → find middle, reverse second half, merge"}
+]},
+{name:"Bit Manipulation",inputs:["bits","int","arr"],subs:[
+  {name:"Check power of 2",example:"LeetCode #231 — Power of Two",signal:"is power of two → n>0 && (n&(n-1))==0, single 1-bit means power of 2"},
+  {name:"Count set bits (popcount)",example:"LeetCode #191 — Number of 1 Bits",signal:"number of 1 bits, counting bits → n&1 gets last bit, n>>=1 shifts right"},
+  {name:"XOR for finding unique",example:"LeetCode #136 — Single Number",signal:"single number, missing number → a^a=0, a^0=a, XOR all numbers"},
+  {name:"Clear lowest set bit",example:"LeetCode #231 — Power of Two",signal:"n&(n-1) removes lowest 1-bit → count bits, check power of 2"},
+  {name:"Get lowest set bit",example:"LeetCode #307 — Range Sum Query - Mutable (Fenwick)",signal:"n&(-n) isolates lowest 1-bit → used in Fenwick tree, bit tricks"},
+  {name:"Bit masking for subsets",example:"LeetCode #78 — Subsets",signal:"enumerate all subsets → 0 to 2^n-1, bit i set means include element i"},
+  {name:"Bit DP",example:"LeetCode #1125 — Smallest Sufficient Team",signal:"minimum XOR partition, traveling salesman → dp[mask] represents state of subset"},
+  {name:"Operations reducing to zero",example:"LeetCode #1611 — Minimum One Bit Operations to Make Integers Zero",signal:"min ops to reach 0 using powers of 2 → BFS on state OR bit carry trick for consecutive 1s"}
+]},
+{name:"Math / Number Theory",inputs:["int","arr"],subs:[
+  {name:"GCD / LCM",example:"LeetCode #365 — Water and Jug Problem",signal:"simplify fractions, water jug problem → Euclidean algorithm gcd(a,b)=gcd(b,a%b)"},
+  {name:"Prime sieve",example:"LeetCode #204 — Count Primes",signal:"count primes → Sieve of Eratosthenes, mark multiples as composite"},
+  {name:"Modular arithmetic",example:"LeetCode #372 — Super Pow",signal:"large number problems, combinations mod 10^9+7 → (a*b)%m, avoid overflow"},
+  {name:"Fast exponentiation",example:"LeetCode #50 — Pow(x, n)",signal:"pow(x,n) → square and halve exponent, O(log n) not O(n)"},
+  {name:"Digit manipulation",example:"LeetCode #7 — Reverse Integer",signal:"reverse integer, palindrome number → extract digits with %10 and /10"},
+  {name:"Pigeonhole / counting argument",example:"LeetCode #287 — Find the Duplicate Number",signal:"find duplicate in array of n+1 integers 1..n → must exist by pigeonhole"}
+]},
+{name:"System Design (OOD)",inputs:["design"],subs:[
+  {name:"LRU Cache",example:"LeetCode #146 — LRU Cache",signal:"get/put O(1) with eviction → HashMap + DoublyLinkedList, move to front on access"},
+  {name:"LFU Cache",example:"LeetCode #460 — LFU Cache",signal:"evict least frequently used → HashMap + frequency buckets (each bucket is LinkedHashSet)"},
+  {name:"Rate Limiter",example:"LeetCode #359 — Logger Rate Limiter",signal:"allow N requests per window → token bucket or sliding window counter"},
+  {name:"Connection Pool",example:"LC / system design — Connection pool (interview)",signal:"reuse connections, block when full → BlockingQueue of connections"},
+  {name:"Thread Pool",example:"LC / system design — Thread pool (classic interview)",signal:"fixed workers process tasks → BlockingQueue of tasks + N worker threads"},
+  {name:"Consistent Hashing",example:"LC / system design — Consistent hashing (interview)",signal:"distribute load with minimal remapping → sorted ring of virtual nodes"},
+  {name:"Pub/Sub",example:"LC / system design — Pub/Sub (interview)",signal:"decouple producers and consumers → HashMap of topic → list of subscriber handlers"},
+  {name:"Iterator design",example:"LeetCode #341 — Flatten Nested List Iterator",signal:"flatten nested list, design iterator → stack-based lazy evaluation"}
+]}
+];
+
+/** Display order for top-level rows (every key used in DATA appears). */
+const INPUT_ORDER=["arr","str","mat","tree","graph","int","bits","ll","design"];
+
+let activePatternFilter="all";
+
+/** inputKey -> array of pattern objects (same references as DATA) */
+function transposeByInput(){
+  const map={};
+  DATA.forEach(p=>{
+    p.inputs.forEach(inp=>{
+      if(!map[inp])map[inp]=[];
+      map[inp].push(p);
+    });
+  });
+  return map;
+}
+
+const BY_INPUT=transposeByInput();
+
+function buildFilters(){
+  const row=document.getElementById("filters");
+  const all=document.createElement("button");
+  all.className="filter-btn active";
+  all.textContent="All patterns";
+  all.onclick=()=>setPatternFilter("all",all);
+  row.appendChild(all);
+  DATA.forEach(p=>{
+    const b=document.createElement("button");
+    b.className="filter-btn";
+    b.textContent=p.name;
+    b.onclick=()=>setPatternFilter(p.name,b);
+    row.appendChild(b);
+  });
+}
+
+function setPatternFilter(name,btn){
+  activePatternFilter=name;
+  document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  filterAll();
+}
+
+function buildList(){
+  const list=document.getElementById("list");
+  list.innerHTML="";
+  const keys=[...INPUT_ORDER];
+  Object.keys(BY_INPUT).forEach(k=>{if(!keys.includes(k))keys.push(k);});
+  keys.forEach((inputKey,idx)=>{
+    const patterns=BY_INPUT[inputKey];
+    if(!patterns||!patterns.length)return;
+    const tag=TAGS[inputKey];
+    if(!tag)return;
+    const block=document.createElement("div");
+    block.className="input-block";
+    block.dataset.inputKey=inputKey;
+    block.dataset.idx=String(idx);
+    const header=document.createElement("div");
+    header.className="input-header";
+    const badgeStyle=`background:${tag.bg};color:${tag.color}`;
+    header.innerHTML=`<span class="input-type-name"><span class="ptag" style="${badgeStyle}">${tag.label}</span></span><span class="pattern-count">${patterns.length} pattern famil${patterns.length===1?"y":"ies"}</span><span class="chevron">▶</span>`;
+    const body=document.createElement("div");
+    body.className="body";
+    patterns.forEach(p=>{
+      const sec=document.createElement("div");
+      sec.className="pattern-section";
+      const title=document.createElement("div");
+      title.className="pattern-title";
+      title.textContent=p.name;
+      sec.appendChild(title);
+      p.subs.forEach(s=>{
+        const row=document.createElement("div");
+        row.className="sub-row";
+        const sn=document.createElement("span");
+        sn.className="sub-name";
+        sn.textContent=s.name;
+        const sg=document.createElement("span");
+        sg.className="sub-signal";
+        sg.textContent=s.signal;
+        row.appendChild(sn);
+        row.appendChild(sg);
+        if(s.example){
+          const ex=document.createElement("span");
+          ex.className="lc-example";
+          ex.textContent=s.example;
+          row.appendChild(ex);
+        }
+        sec.appendChild(row);
+      });
+      body.appendChild(sec);
+    });
+    header.onclick=()=>{
+      body.classList.toggle("open");
+      header.querySelector(".chevron").classList.toggle("open");
+    };
+    block.appendChild(header);
+    block.appendChild(body);
+    list.appendChild(block);
+  });
+}
+
+function filterAll(){
+  const q=document.getElementById("search").value.toLowerCase().trim();
+  document.querySelectorAll(".input-block").forEach(block=>{
+    const inputKey=block.dataset.inputKey;
+    const tag=TAGS[inputKey];
+    const patterns=BY_INPUT[inputKey]||[];
+    const tagMatch=tag.label.toLowerCase().includes(q);
+    let anyPatternVisible=false;
+    patterns.forEach((p,secIndex)=>{
+      const patternNameHit=p.name.toLowerCase().includes(q);
+      const patternFilterOk=activePatternFilter==="all"||p.name===activePatternFilter;
+      const subHit=p.subs.some(s=>{
+        const ex=(s.example||"").toLowerCase();
+        return s.name.toLowerCase().includes(q)||s.signal.toLowerCase().includes(q)||ex.includes(q);
+      });
+      const patternRelevantForSearch=q===""||patternNameHit||subHit;
+      const showPattern=patternFilterOk&&patternRelevantForSearch;
+      const sec=block.querySelectorAll(".pattern-section")[secIndex];
+      if(sec){
+        sec.classList.toggle("hidden",!showPattern);
+        if(showPattern)anyPatternVisible=true;
+        sec.querySelectorAll(".sub-row").forEach((row,ri)=>{
+          const s=p.subs[ri];
+          if(!s)return;
+          const ex=(s.example||"").toLowerCase();
+          const rowShow=q===""||patternNameHit||(s.name.toLowerCase().includes(q)||s.signal.toLowerCase().includes(q)||ex.includes(q));
+          row.classList.toggle("hidden",!rowShow);
+        });
+      }
+    });
+    const blockVisible=(activePatternFilter==="all"||patterns.some(p=>p.name===activePatternFilter))&&(q===""||tagMatch||anyPatternVisible||patterns.some(p=>{
+      if(p.name.toLowerCase().includes(q))return true;
+      return p.subs.some(s=>s.name.toLowerCase().includes(q)||s.signal.toLowerCase().includes(q)||(s.example||"").toLowerCase().includes(q));
+    }));
+    block.classList.toggle("hidden",!blockVisible);
+    if(q&&blockVisible&&!tagMatch){
+      block.querySelector(".body").classList.add("open");
+      block.querySelector(".chevron").classList.add("open");
+    }
+  });
+}
+
+buildFilters();
+buildList();
+</script>

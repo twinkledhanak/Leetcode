@@ -1,0 +1,314 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.search-bar{width:100%;padding:8px 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);margin-bottom:16px}
+.search-bar:focus{outline:none;border-color:var(--color-border-primary)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.filter-btn{font-size:11px;padding:3px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.filter-btn.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary)}
+.pattern-block{margin-bottom:8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.pattern-header{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--color-background-primary);transition:background .15s}
+.pattern-header:hover{background:var(--color-background-secondary)}
+.pattern-name{font-size:13px;font-weight:500;color:var(--color-text-primary);flex:1}
+.input-tags{display:flex;gap:4px;flex-wrap:wrap}
+.itag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:500}
+.chevron{font-size:10px;color:var(--color-text-tertiary);transition:transform .2s}
+.chevron.open{transform:rotate(90deg)}
+.subpattern-list{border-top:0.5px solid var(--color-border-tertiary);display:none}
+.subpattern-list.open{display:block}
+.sub-row{padding:7px 14px 7px 28px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:8px}
+.sub-row:last-child{border-bottom:none}
+.sub-name{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:200px;flex-shrink:0}
+.sub-signal{font-size:11px;color:var(--color-text-secondary);line-height:1.5;flex:1}
+.badge{font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px;white-space:nowrap}
+.hidden{display:none}
+</style>
+
+<div style="padding:1rem 0">
+<h2 class="sr-only">DSA Pattern Classification Reference — organized by input type and pattern</h2>
+<input class="search-bar" type="text" placeholder="Search patterns, subpatterns, or signals..." id="search" oninput="filterAll()">
+<div class="filter-row" id="filters"></div>
+<div id="list"></div>
+</div>
+
+<script>
+const TAGS={
+  arr:{label:"Array",bg:"#E6F1FB",color:"#0C447C"},
+  str:{label:"String",bg:"#EEEDFE",color:"#3C3489"},
+  mat:{label:"Matrix",bg:"#E1F5EE",color:"#085041"},
+  tree:{label:"Tree",bg:"#FAEEDA",color:"#633806"},
+  graph:{label:"Graph",bg:"#FCEBEB",color:"#791F1F"},
+  int:{label:"Integer",bg:"#EAF3DE",color:"#27500A"},
+  bits:{label:"Bits",bg:"#FBEAF0",color:"#72243E"},
+  ll:{label:"LinkedList",bg:"#F1EFE8",color:"#444441"},
+  design:{label:"Design",bg:"#E6F1FB",color:"#0C447C"}
+};
+
+const DATA=[
+{name:"Two Pointer",inputs:["arr","str"],subs:[
+  {name:"Opposite ends → single pass",signal:"sorted array, find pair with sum/difference, container with most water, trapping rain water"},
+  {name:"Same direction (fast/slow)",signal:"remove duplicates in-place, move zeros, partition array, cycle detection in linked list"},
+  {name:"Three pointer / partition",signal:"Dutch national flag, sort colors, 3Sum → fix one pointer, two pointer for rest"},
+  {name:"Two pointer on two arrays",signal:"merge sorted arrays, compare strings with backspace, intersection of arrays"},
+  {name:"Palindrome check",signal:"check if string is palindrome, valid palindrome with deletions → expand or contract"}
+]},
+{name:"Sliding Window",inputs:["arr","str"],subs:[
+  {name:"Fixed size window",signal:"max sum of subarray of size k, average of all subarrays of size k → window size never changes"},
+  {name:"Dynamic window — expand/contract",signal:"longest substring without repeating, minimum window substring → right expands, left contracts when invalid"},
+  {name:"Dynamic with HashMap/frequency map",signal:"anagram in string, permutation in string, at most k distinct characters → need count of elements in window"},
+  {name:"Dynamic with negative numbers → indices",signal:"max sum subarray (Kadane's), longest subarray with sum ≤ k when negatives present → track indices not values"},
+  {name:"Monotonic deque window",signal:"sliding window maximum/minimum → need max/min of current window in O(1) → use deque"}
+]},
+{name:"Prefix Sum",inputs:["arr","mat","str"],subs:[
+  {name:"1D prefix sum",signal:"range sum queries, subarray sum equals k → precompute cumulative sums"},
+  {name:"Prefix sum + HashMap (max length)",signal:"maximum size subarray sum equals k → store first occurrence index of each prefix sum"},
+  {name:"Prefix sum + HashMap (count)",signal:"count subarrays with sum k → store frequency of each prefix sum"},
+  {name:"2D prefix sum",signal:"sum of rectangle in matrix, count 1s in matrix region → precompute 2D cumulative grid"},
+  {name:"Prefix XOR",signal:"count subarrays with even/odd XOR → XOR prefix array + HashMap"},
+  {name:"Running difference",signal:"car fleet, find pivot index → sum from left equals sum from right"}
+]},
+{name:"Stack",inputs:["arr","str"],subs:[
+  {name:"Monotonic increasing stack",signal:"next smaller element, stock span problem → pop when current is smaller than top"},
+  {name:"Monotonic decreasing stack",signal:"next greater element, daily temperatures, largest rectangle in histogram → pop when current is greater than top"},
+  {name:"Balanced parentheses",signal:"valid parentheses, decode string, evaluate expression → push open, pop on close"},
+  {name:"Stack simulation",signal:"asteroid collision, robot instructions, evaluate RPN → push and resolve conflicts in while loop"},
+  {name:"Stack for iterative tree traversal",signal:"preorder/inorder/postorder without recursion → simulate call stack manually"},
+  {name:"Min/Max stack",signal:"design stack with getMin/getMax in O(1) → maintain second stack of running min/max"}
+]},
+{name:"Queue / Deque",inputs:["arr","graph","mat"],subs:[
+  {name:"BFS queue (single source)",signal:"shortest path in graph/grid, level order traversal → FIFO processes nodes level by level"},
+  {name:"BFS queue (multi source)",signal:"rotten oranges, walls and gates → add ALL sources before BFS starts"},
+  {name:"Deque for sliding window",signal:"sliding window max/min → addLast for new, pollFirst if out of window, pollLast if worse than current"},
+  {name:"Monotonic deque (decreasing)",signal:"maximum in window → front always holds max, pop back when new element is larger"},
+  {name:"Circular queue design",signal:"design circular queue, hit counter → fixed size buffer with head/tail pointers"}
+]},
+{name:"Heap / Priority Queue",inputs:["arr","graph"],subs:[
+  {name:"Top K elements (MaxHeap)",signal:"k largest elements → MaxHeap of size k, or sort descending take k"},
+  {name:"Top K elements (MinHeap of size k)",signal:"k smallest elements → MinHeap size k, pop when size exceeds k, top is kth largest"},
+  {name:"K-way merge",signal:"merge k sorted lists/arrays → MinHeap always holds one element from each list"},
+  {name:"Intervals with heap",signal:"meeting rooms II, task scheduler → MinHeap tracks end times, size = concurrent meetings"},
+  {name:"Dijkstra shortest path",signal:"weighted graph shortest path → MinHeap of (distance, node), relax edges"},
+  {name:"Median of stream",signal:"find median from data stream → MaxHeap for lower half, MinHeap for upper half, balance sizes"},
+  {name:"Priority scheduling",signal:"Nuro bot routing, job scheduling with priority → Kahn's algorithm + MaxHeap by priority"}
+]},
+{name:"Intervals",inputs:["arr"],subs:[
+  {name:"Sort + merge overlapping",signal:"merge intervals, insert interval → sort by start, merge when current.start ≤ last.end"},
+  {name:"Sort + count overlaps (heap)",signal:"meeting rooms II → sort by start, MinHeap of end times, heap size = rooms needed"},
+  {name:"Two pointer on two interval lists",signal:"interval list intersections → advance pointer with smaller end time"},
+  {name:"Greedy interval selection",signal:"non-overlapping intervals, minimum arrows to burst balloons → sort by end time, greedily select"},
+  {name:"Sweep line",signal:"employee free time, calendar conflicts → convert to events (start +1, end -1), sweep and count"}
+]},
+{name:"Binary Search",inputs:["arr","int"],subs:[
+  {name:"Find exact element",signal:"classic binary search → lo<=hi, return mid when found, return -1 at end"},
+  {name:"Find insertion position",signal:"search insert position, lower bound → lo<=hi, return lo when loop ends"},
+  {name:"Find boundary (first true)",signal:"rotated sorted array pivot, first bad version → lo<hi, hi=mid not mid-1, return lo"},
+  {name:"Find upper bound",signal:"last position of element, rightmost index → condition arr[mid]<=target, lo=mid+1"},
+  {name:"Find lower bound",signal:"first position of element, leftmost index → condition arr[mid]<target, lo=mid+1"},
+  {name:"Binary search on answer",signal:"koko eating bananas, capacity to ship packages → binary search on the RESULT not array index"},
+  {name:"Binary search on sorted but rotated",signal:"find element in rotated sorted array → determine which half is sorted, binary search that half"},
+  {name:"Binary search on window boundary",signal:"k closest elements → binary search on left edge of window of size k"}
+]},
+{name:"Sorting",inputs:["arr","str"],subs:[
+  {name:"Sort + greedy",signal:"assign cookies, jump game → sort first, then greedy scan"},
+  {name:"Custom comparator sort",signal:"largest number, task scheduler → define what 'larger' means for the problem"},
+  {name:"Counting sort / bucket sort",signal:"sort characters in string by frequency, top k frequent → when range is bounded"},
+  {name:"Cyclic sort",signal:"missing number, find all duplicates → each number belongs at index nums[i]-1, swap to correct position"},
+  {name:"Sort as preprocessing",signal:"two sum on sorted array, 3Sum, interval problems → sort first unlocks two pointer or greedy"}
+]},
+{name:"HashMap / HashSet",inputs:["arr","str"],subs:[
+  {name:"Two sum pattern",signal:"find pair with target sum → store complement, check if complement exists"},
+  {name:"Frequency counting",signal:"valid anagram, group anagrams, ransom note → count chars, compare counts"},
+  {name:"First unique / duplicate",signal:"first unique character, find duplicate → frequency map, scan for count == 1"},
+  {name:"HashSet for visited",signal:"longest consecutive sequence, contains duplicate → O(1) membership check"},
+  {name:"HashSet verification (geometry)",signal:"line reflection, valid sudoku → compute what partner SHOULD be, check if exists"},
+  {name:"Group by key",signal:"group anagrams, isomorphic strings → HashMap groups elements with same signature"}
+]},
+{name:"Greedy",inputs:["arr","str","int"],subs:[
+  {name:"Activity selection",signal:"non-overlapping intervals, minimum meetings → sort by end, greedily pick non-overlapping"},
+  {name:"Jump game",signal:"can reach end, minimum jumps → track maximum reachable index"},
+  {name:"Gas station / circular",signal:"circular array problems → track running sum, reset when negative"},
+  {name:"Assign resources",signal:"assign cookies, boats to save people → sort both, two pointer greedy match"},
+  {name:"String construction",signal:"remove k digits, largest number after operations → monotonic stack + greedy"},
+  {name:"Interval covering",signal:"minimum number of arrows, video stitching → sort by start, greedily extend coverage"}
+]},
+{name:"Dynamic Programming — 1D",inputs:["arr","str","int"],subs:[
+  {name:"Linear scan DP",signal:"house robber, climbing stairs, min cost climbing → dp[i] depends on dp[i-1] or dp[i-2]"},
+  {name:"Kadane's (max subarray)",signal:"maximum subarray sum → dp[i] = max(nums[i], dp[i-1]+nums[i]), reset when negative"},
+  {name:"Knapsack 0/1",signal:"partition equal subset sum, target sum → for each item decide include or exclude"},
+  {name:"Knapsack unbounded",signal:"coin change, coin change 2 → item can be used multiple times"},
+  {name:"Longest increasing subsequence",signal:"LIS, number of LIS → dp[i] = max dp[j]+1 for all j<i where nums[j]<nums[i]"},
+  {name:"State machine DP",signal:"best time to buy/sell stock with cooldown/fee → states are hold/sold/rest, transitions between"},
+  {name:"Digit DP",signal:"count numbers with property in range → build digit by digit, track constraints"}
+]},
+{name:"Dynamic Programming — 2D",inputs:["arr","str","mat"],subs:[
+  {name:"Grid path counting",signal:"unique paths, unique paths with obstacles → dp[i][j] = dp[i-1][j] + dp[i][j-1]"},
+  {name:"Grid minimum path",signal:"minimum path sum, dungeon game → dp[i][j] = min(top, left) + grid[i][j]"},
+  {name:"String matching — LCS",signal:"longest common subsequence, edit distance, delete operations → dp[i][j] on two strings"},
+  {name:"String matching — palindrome",signal:"longest palindromic subsequence → LCS(s, reverse(s)), longest palindromic substring → diagonal DP"},
+  {name:"Interleaving",signal:"interleaving string → dp[i][j] = can form s3[0..i+j] from s1[0..i] and s2[0..j]"},
+  {name:"Matrix chain / interval DP",signal:"burst balloons, strange printer → dp[i][j] over all intervals, try all split points"},
+  {name:"Maximal square/rectangle",signal:"maximal square of 1s → dp[i][j] = min(top, left, diagonal)+1"},
+  {name:"2D knapsack",signal:"two constraints → dp[i][w][v] two-dimensional capacity tracking"}
+]},
+{name:"BFS / DFS on Graph",inputs:["graph","mat"],subs:[
+  {name:"Single source BFS — shortest path",signal:"word ladder, min knight moves → unweighted graph, BFS level = distance"},
+  {name:"Multi source BFS",signal:"rotten oranges, walls and gates → add ALL sources first, BFS spreads outward"},
+  {name:"BFS with constraint state",signal:"shortest path with obstacles → state=(row,col,k), visited[R][C][k+1]"},
+  {name:"DFS — connected components",signal:"number of islands, count provinces → DFS marks entire component, count starts"},
+  {name:"DFS — path existence",signal:"can reach from source to target → return true when target found"},
+  {name:"DFS — path collection",signal:"all paths from source to target, binary tree paths → collect path, backtrack"},
+  {name:"Flood fill",signal:"paint fill, surrounded regions → DFS/BFS from boundary or target cell"},
+  {name:"Topological sort (Kahn's)",signal:"course schedule, task ordering, dependencies → indegree map + queue"},
+  {name:"Topological sort + priority",signal:"Nuro bot routing → Kahn's + MaxHeap for priority among ready nodes"},
+  {name:"Cycle detection directed",signal:"course schedule detect cycle → DFS with three states: unvisited/visiting/visited"},
+  {name:"Cycle detection undirected",signal:"redundant connection → DFS with parent tracking or Union Find"},
+  {name:"Bipartite check",signal:"is graph bipartite, possible bipartition → 2-color BFS/DFS, conflict = not bipartite"},
+  {name:"Weighted shortest path (Dijkstra)",signal:"network delay time, path with min effort → MinHeap of (cost, node), relax edges"}
+]},
+{name:"Tree Traversals",inputs:["tree"],subs:[
+  {name:"Preorder (root → left → right)",signal:"serialize tree, construct from preorder → process node before children"},
+  {name:"Inorder (left → root → right)",signal:"BST → sorted order, validate BST → inorder gives sorted sequence"},
+  {name:"Postorder (left → right → root)",signal:"delete tree, evaluate expression tree → process children before node"},
+  {name:"Level order BFS",signal:"level averages, zigzag traversal, right side view → queue + level size pattern"},
+  {name:"Top-down DFS (pass state down)",signal:"path sum, max depth, good nodes → pass running state from parent to children"},
+  {name:"Bottom-up DFS (return value up)",signal:"diameter, max path sum, balanced tree → compute at leaves, return to parent"},
+  {name:"LCA pattern",signal:"lowest common ancestor, distance between nodes → find split point where paths diverge"},
+  {name:"Iterative traversal with stack",signal:"any traversal without recursion → simulate call stack explicitly"},
+  {name:"BST operations",signal:"search/insert/delete in BST, validate BST → use BST property left<root<right"},
+  {name:"Morris traversal",signal:"inorder traversal O(1) space → use threaded binary tree, modify and restore pointers"},
+  {name:"DP on tree",signal:"house robber III, binary tree cameras → at each node make decision, propagate result up"},
+  {name:"Serialize / deserialize",signal:"encode/decode tree structure → preorder + null markers, or BFS level order"},
+  {name:"N-ary tree",signal:"same traversals but iterate children list instead of left/right → generalized DFS/BFS"}
+]},
+{name:"Trie",inputs:["str"],subs:[
+  {name:"Basic insert / search",signal:"implement trie, word search → TrieNode with children[26] + isEnd flag"},
+  {name:"Prefix matching / autocomplete",signal:"search suggestions system, longest word in dictionary → traverse to prefix node, DFS for completions"},
+  {name:"Wildcard search",signal:"design add and search words → DFS with '.' matching any character"},
+  {name:"Word board search",signal:"word search II → Trie + DFS on grid, prune when prefix not in trie"},
+  {name:"XOR trie (maximum XOR)",signal:"maximum XOR of two numbers → insert binary digits, greedily pick opposite bit"}
+]},
+{name:"Union Find",inputs:["graph","arr"],subs:[
+  {name:"Connected components",signal:"number of provinces, friend circles → union edges, count distinct roots"},
+  {name:"Cycle detection (undirected)",signal:"redundant connection → union edge, if already connected = cycle"},
+  {name:"Dynamic connectivity",signal:"accounts merge, most stones removed → group elements that share a property"},
+  {name:"Kruskal's MST",signal:"minimum spanning tree, min cost to connect all points → sort edges, union if no cycle"}
+]},
+{name:"Backtracking",inputs:["arr","str"],subs:[
+  {name:"Subsets",signal:"all subsets, power set → at each element choose include or exclude"},
+  {name:"Permutations",signal:"all permutations → choose unused element at each position, mark used"},
+  {name:"Combinations",signal:"combination sum, combinations of k → choose from remaining elements, no repeat"},
+  {name:"Constraint satisfaction",signal:"N-Queens, sudoku solver → place element, check validity, backtrack if invalid"},
+  {name:"Word break / path",signal:"word break II, palindrome partitioning → cut string at valid positions, recurse on rest"}
+]},
+{name:"Linked List",inputs:["ll"],subs:[
+  {name:"Fast and slow pointer",signal:"detect cycle, find middle, nth from end → fast moves 2x, slow moves 1x"},
+  {name:"Reverse linked list",signal:"reverse entire list or sublist → iterative with prev/curr/next pointers"},
+  {name:"Merge sorted lists",signal:"merge two sorted lists, merge k sorted lists → compare heads, advance smaller"},
+  {name:"Remove / modify nodes",signal:"remove nth from end, remove duplicates → dummy head + two pointer"},
+  {name:"Reorder list",signal:"reorder list, odd even linked list → find middle, reverse second half, merge"}
+]},
+{name:"Bit Manipulation",inputs:["bits","int","arr"],subs:[
+  {name:"Check power of 2",signal:"is power of two → n>0 && (n&(n-1))==0, single 1-bit means power of 2"},
+  {name:"Count set bits (popcount)",signal:"number of 1 bits, counting bits → n&1 gets last bit, n>>=1 shifts right"},
+  {name:"XOR for finding unique",signal:"single number, missing number → a^a=0, a^0=a, XOR all numbers"},
+  {name:"Clear lowest set bit",signal:"n&(n-1) removes lowest 1-bit → count bits, check power of 2"},
+  {name:"Get lowest set bit",signal:"n&(-n) isolates lowest 1-bit → used in Fenwick tree, bit tricks"},
+  {name:"Bit masking for subsets",signal:"enumerate all subsets → 0 to 2^n-1, bit i set means include element i"},
+  {name:"Bit DP",signal:"minimum XOR partition, traveling salesman → dp[mask] represents state of subset"},
+  {name:"Operations reducing to zero",signal:"min ops to reach 0 using powers of 2 → BFS on state OR bit carry trick for consecutive 1s"}
+]},
+{name:"Math / Number Theory",inputs:["int","arr"],subs:[
+  {name:"GCD / LCM",signal:"simplify fractions, water jug problem → Euclidean algorithm gcd(a,b)=gcd(b,a%b)"},
+  {name:"Prime sieve",signal:"count primes → Sieve of Eratosthenes, mark multiples as composite"},
+  {name:"Modular arithmetic",signal:"large number problems, combinations mod 10^9+7 → (a*b)%m, avoid overflow"},
+  {name:"Fast exponentiation",signal:"pow(x,n) → square and halve exponent, O(log n) not O(n)"},
+  {name:"Digit manipulation",signal:"reverse integer, palindrome number → extract digits with %10 and /10"},
+  {name:"Pigeonhole / counting argument",signal:"find duplicate in array of n+1 integers 1..n → must exist by pigeonhole"}
+]},
+{name:"System Design (OOD)",inputs:["design"],subs:[
+  {name:"LRU Cache",signal:"get/put O(1) with eviction → HashMap + DoublyLinkedList, move to front on access"},
+  {name:"LFU Cache",signal:"evict least frequently used → HashMap + frequency buckets (each bucket is LinkedHashSet)"},
+  {name:"Rate Limiter",signal:"allow N requests per window → token bucket or sliding window counter"},
+  {name:"Connection Pool",signal:"reuse connections, block when full → BlockingQueue of connections"},
+  {name:"Thread Pool",signal:"fixed workers process tasks → BlockingQueue of tasks + N worker threads"},
+  {name:"Consistent Hashing",signal:"distribute load with minimal remapping → sorted ring of virtual nodes"},
+  {name:"Pub/Sub",signal:"decouple producers and consumers → HashMap of topic → list of subscriber handlers"},
+  {name:"Iterator design",signal:"flatten nested list, design iterator → stack-based lazy evaluation"}
+]}
+];
+
+let activeFilter="all";
+
+function buildFilters(){
+  const row=document.getElementById("filters");
+  const all=document.createElement("button");
+  all.className="filter-btn active";all.textContent="All";
+  all.onclick=()=>setFilter("all",all);
+  row.appendChild(all);
+  Object.entries(TAGS).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.className="filter-btn";b.textContent=v.label;
+    b.style.cssText=`background:${v.bg};color:${v.color};border-color:${v.color}40`;
+    b.onclick=()=>setFilter(k,b);
+    row.appendChild(b);
+  });
+}
+
+function setFilter(key,btn){
+  activeFilter=key;
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  filterAll();
+}
+
+function buildList(){
+  const list=document.getElementById("list");
+  list.innerHTML="";
+  DATA.forEach((p,pi)=>{
+    const block=document.createElement("div");
+    block.className="pattern-block";block.dataset.pi=pi;
+    const header=document.createElement("div");
+    header.className="pattern-header";
+    const tags=p.inputs.map(i=>{
+      const t=TAGS[i];
+      return `<span class="itag" style="background:${t.bg};color:${t.color}">${t.label}</span>`;
+    }).join("");
+    header.innerHTML=`<span class="pattern-name">${p.name}</span><span class="input-tags">${tags}</span><span class="chevron">▶</span>`;
+    header.onclick=()=>{
+      const sl=block.querySelector(".subpattern-list");
+      const ch=block.querySelector(".chevron");
+      sl.classList.toggle("open");ch.classList.toggle("open");
+    };
+    const subList=document.createElement("div");
+    subList.className="subpattern-list";
+    p.subs.forEach(s=>{
+      const row=document.createElement("div");
+      row.className="sub-row";
+      row.innerHTML=`<span class="sub-name">${s.name}</span><span class="sub-signal">${s.signal}</span>`;
+      subList.appendChild(row);
+    });
+    block.appendChild(header);block.appendChild(subList);
+    list.appendChild(block);
+  });
+}
+
+function filterAll(){
+  const q=document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".pattern-block").forEach((block,pi)=>{
+    const p=DATA[pi];
+    const inputMatch=activeFilter==="all"||p.inputs.includes(activeFilter);
+    const nameMatch=p.name.toLowerCase().includes(q);
+    const subMatch=p.subs.some(s=>s.name.toLowerCase().includes(q)||s.signal.toLowerCase().includes(q));
+    const show=inputMatch&&(q===""||nameMatch||subMatch);
+    block.classList.toggle("hidden",!show);
+    if(q&&subMatch&&!nameMatch){
+      block.querySelector(".subpattern-list").classList.add("open");
+      block.querySelector(".chevron").classList.add("open");
+    }
+  });
+}
+
+buildFilters();
+buildList();
+</script>

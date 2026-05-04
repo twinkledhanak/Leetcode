@@ -148,6 +148,7 @@ const DATA=[
 {name:"Dynamic Programming — 1D",inputs:["arr","str","int","tree"],subs:[
   {name:"Linear scan DP",example:"LeetCode #198 — House Robber",signal:"house robber, climbing stairs, min cost climbing → dp[i] depends on dp[i-1] or dp[i-2]"},
   {name:"Kadane's (max subarray)",example:"LeetCode #53 — Maximum Subarray",signal:"maximum subarray sum → dp[i] = max(nums[i], dp[i-1]+nums[i]), reset when negative"},
+  {name:"Kadane's + one allowed edit (two-track)",example:"LeetCode #1746 — Maximum Subarray Sum After One Operation",signal:"exactly one element replaced (e.g. nums[i]→nums[i]²); two states ending at i: max sum without using the op yet, max sum after exactly one use (square here or extend subarray that already used it)"},
   {name:"Knapsack 0/1",example:"LeetCode #416 — Partition Equal Subset Sum",signal:"partition equal subset sum, target sum → for each item decide include or exclude"},
   {name:"Knapsack unbounded",example:"LeetCode #322 — Coin Change",signal:"coin change, coin change 2 → item can be used multiple times"},
   {name:"Longest increasing subsequence",example:"LeetCode #300 — Longest Increasing Subsequence",signal:"LIS, number of LIS → dp[i] = max dp[j]+1 for all j<i where nums[j]<nums[i]"},

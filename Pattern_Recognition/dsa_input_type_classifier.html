@@ -116,7 +116,9 @@ const DATA=[
   {name:"Find boundary (first true)",example:"LeetCode #278 — First Bad Version",signal:"rotated sorted array pivot, first bad version → lo<hi, hi=mid not mid-1, return lo"},
   {name:"Find upper bound",example:"LeetCode #34 — Find First and Last Position of Element in Sorted Array",signal:"last position of element, rightmost index → condition arr[mid]<=target, lo=mid+1"},
   {name:"Find lower bound",example:"LeetCode #34 — Find First and Last Position of Element in Sorted Array",signal:"first position of element, leftmost index → condition arr[mid]<target, lo=mid+1"},
-  {name:"Binary search on answer",example:"LeetCode #875 — Koko Eating Bananas",signal:"koko eating bananas, capacity to ship packages → binary search on the RESULT not array index"},
+  {name:"Binary search on answer — ship capacity (days)",example:"LeetCode #1011 — Capacity To Ship Packages Within D Days",signal:"packages in order; minimize max ship load per day so all ship within days; greedy count days for a trial capacity, binary search on capacity"},
+  {name:"Binary search on answer — min eating speed",example:"LeetCode #875 — Koko Eating Bananas",signal:"piles, h hours; pick integer bananas-per-hour k; time per pile ⌈pile/k⌉; binary search smallest feasible k with O(n) check"},
+  {name:"Binary search on answer — m splits, minimize peak sum",example:"LeetCode #410 — Split Array Largest Sum",signal:"split nums into m contiguous parts; minimize largest part sum; try bound X, greedily count parts needed, binary search on X"},
   {name:"Binary search on sorted but rotated",example:"LeetCode #33 — Search in Rotated Sorted Array",signal:"find element in rotated sorted array → determine which half is sorted, binary search that half"},
   {name:"Binary search on window boundary",example:"LeetCode #658 — Find K Closest Elements",signal:"k closest elements → binary search on left edge of window of size k"}
 ]},

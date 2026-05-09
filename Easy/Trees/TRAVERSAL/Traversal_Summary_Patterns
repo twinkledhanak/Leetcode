@@ -328,6 +328,38 @@ diameter = Math.max(diameter, left+right + 1); // counting current node as well
 globalMax = Math.max(globalMax, left+right+root.val); // Here, it doesnt depend on no of nodes/edges
 // We calculate something else 
 
+/**
+every pre-order or top-down flow code that I write has a hint of bottom-up in it? So, in this problem BT_Upward_path, we are 
+achieving both top-down and bottom-up simultaneously? And in Bottom-up code we write, we write it as postorder, but the call stack will
+have top-down path? This is just incredibly insane. Both top-down and bottom-up are actually present together in some way
+in every code we write, no matter what we name it.
+*/
+Every recursive function has two phases whether you name them or not.
+The going down phase — passing information from parent to child. Top-down.
+The coming back up phase — returning information from child to parent. Bottom-up.
+
+
+The Naming Is Just About Which Phase Does The Work
+Preorder/Top-down — going down phase does the meaningful work. Coming up phase just returns.
+Postorder/Bottom-up — coming up phase does the meaningful work. Going down phase just recurses.
+
+
+But Both Phases Always Exist
+void helper(node) {
+    // going down phase
+    helper(node.left);   // stack grows downward
+    helper(node.right);  // stack grows downward
+
+    // coming back up phase — stack unwinds upward
+}
+The call stack always goes down first. Always comes back up.
+You can not have one without the other.
+
+When stuck on a tree problem — ask:
+Which phase should do the work here?
+That question alone tells you preorder vs postorder.
+
+Q.257. Binary Tree Upward path uses both approaches at the same time
 
 --------------------------------------------------------------------------------------------------------
 /////////////////////////////////////////////////////////
@@ -371,3 +403,37 @@ TreeNode helper(TreeNode node, ...) {
     // optionally update node (rare for BST insert)
     return node;  // return SAME node (structure preserved)
 }
+
+/////////////////////////////////////////////////////////
+6. Building a parent Map
+/////////////////////////////////////////////////////////
+
+// Part 1: Parent map — lets us move upward
+class Solution{
+  Map<TreeNode, TreeNode> parentMap = new HashMap<>();
+
+  public void helper(TreeNode root) {
+    if (root == null) 
+      return result;
+          
+    // Step 1: Build parent map using DFS
+    buildParentMap(root, null);
+
+    // Just can access any node's parent using this map
+    TreeNode parentNode = parentMap.get(root);
+  }
+
+  // Preorder DFS — going down phase records parent for each node
+  public void buildParentMap(TreeNode node, TreeNode parent) {
+      if (node == null) 
+          return;
+      
+      parentMap.put(node, parent);
+      buildParentMap(node.left, node);
+      buildParentMap(node.right, node);
+  }
+
+}
+
+
+      

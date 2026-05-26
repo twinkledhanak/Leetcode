@@ -1,0 +1,1004 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); color: var(--color-text-primary); }
+.container { padding: 1.5rem 0; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 6px 14px; border-radius: var(--border-radius-md);
+  border: 0.5px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  color: var(--color-text-secondary); font-size: 13px; cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: var(--color-background-secondary); }
+.nav-btn.active { background: #185FA5; color: #E6F1FB; border-color: #185FA5; }
+.section { display: none; }
+.section.active { display: block; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.fw-card {
+  border-radius: var(--border-radius-lg);
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  overflow: hidden;
+}
+.fw-header {
+  padding: 10px 14px 8px;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+}
+.fw-header.sb { background: #E6F1FB; color: #0C447C; }
+.fw-header.fl { background: #EAF3DE; color: #27500A; }
+.fw-header.dj { background: #FAECE7; color: #712B13; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 400; }
+.badge.sb { background: #B5D4F4; color: #042C53; }
+.badge.fl { background: #C0DD97; color: #173404; }
+.badge.dj { background: #F5C4B3; color: #4A1B0C; }
+.fw-body { padding: 12px 14px; }
+pre {
+  background: var(--color-background-tertiary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--color-text-primary);
+}
+.note {
+  font-size: 12px; color: var(--color-text-secondary);
+  margin-top: 8px; line-height: 1.5;
+}
+.insight {
+  background: var(--color-background-secondary);
+  border-left: 2px solid #378ADD;
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.insight strong { color: var(--color-text-primary); font-weight: 500; }
+.section-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.section-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+.ask-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 6px 12px;
+  border-radius: var(--border-radius-md);
+  border: 0.5px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  color: var(--color-text-secondary); font-size: 12px; cursor: pointer;
+}
+.ask-btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Comparison of Spring Boot, Flask, and Django across key development concepts</h2>
+
+  <div class="nav" id="nav">
+    <button class="nav-btn active" onclick="show('overview')">Overview</button>
+    <button class="nav-btn" onclick="show('setup')">Project setup</button>
+    <button class="nav-btn" onclick="show('routing')">Routing</button>
+    <button class="nav-btn" onclick="show('get')">GET request</button>
+    <button class="nav-btn" onclick="show('post')">POST request</button>
+    <button class="nav-btn" onclick="show('orm')">Database / ORM</button>
+    <button class="nav-btn" onclick="show('auth')">Auth & middleware</button>
+    <button class="nav-btn" onclick="show('errors')">Error handling</button>
+    <button class="nav-btn" onclick="show('structure')">Project structure</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="overview">
+    <p class="section-title">At a glance</p>
+    <p class="section-sub">What each framework is, who uses it, and when to pick it.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot <span class="badge sb">Java · Enterprise</span></div>
+        <div class="fw-body">
+          <p class="note" style="margin-bottom:8px">Full-stack, opinionated, annotation-driven. Built for large teams and enterprise systems. You already know this.</p>
+          <p class="note"><strong>Used by:</strong> Banks, fintechs, large enterprise SaaS</p>
+          <p class="note">
+            <strong>Strengths:</strong>
+            Dependency Injection (DI) container via Spring Context (you declare beans, the framework wires them together),
+            huge and mature ecosystem (Spring Data, Spring Security, Spring Cloud),
+            strong type safety and IDE tooling,
+            very good fit for microservices and complex enterprise architectures.
+          </p>
+          <p class="note">
+            <strong>Pain / trade-offs:</strong>
+            verbose configuration and annotations once projects grow,
+            higher memory usage and slower startup time compared with lightweight Python frameworks,
+            steep learning curve around proxies, bean scopes, and auto-configuration magic.
+          </p>
+          <p class="note">
+            <strong>How it runs / deploys:</strong>
+            Option A (common now): run Spring Boot as a single app (JAR). It starts its own Tomcat internally.<br>
+            Flow: website → load balancer → Spring Boot app → your controller method.<br><br>
+            
+            
+            Option B (what your team did):<br>
+            <br> <strong> SPRINGBOOT BASED ARCHITECTURE BUT LEGACY TOMCAT DEPLOYMENT (USING EXTERNAL TOMCAT RUNNING ON UNIX SERVERS)</strong> <br> <br>
+            1. Software ArchitecturePattern: Microservices Architecture.<br>
+            Implementation: The team successfully refactored a legacy monolithic application by breaking its business domains down into \(N\) small, self-contained, loosely coupled services (e.g., User Service, Payment Service).Framework: Every microservice component was built as an independent Spring Boot application.<br><br>
+            2. Application PackagingBuild Artifact: The team configured the build automation tool (Maven or Gradle) to package each Spring Boot application into a WAR (Web Application Archive) file, rather than an executable JAR.Target Environment: Packaging as a WAR meant the code was intentionally designed to be a "tenant" dependent on a servlet container, rather than using Spring Boot's standalone capabilities.<br><br>
+            3. Infrastructure and Deployment (The Core Complexity)Hardware Tier: The production environment consisted of 6 separate physical or virtual Unix operating system servers.Topology: The team executed a highly redundant "All-on-All" deployment strategy for high availability and fault tolerance. Every single microservice was deployed onto every single Unix server.Server Middleware: Instead of utilizing embedded runtimes, the Operations team manually installed and managed multiple independent Apache Tomcat instances (External Tomcat) on each individual Unix server.Resource Conflict Mitigation: Because multiple Tomcat instances lived on the same Unix operating system, the team had to manually externalize and reconfigure the network port allocations (e.g., 8080, 8081, 8082) inside each Tomcat instance's server.xml file to avoid network binding conflicts.Deployment Mechanism: Deployment required copying each distinct service's .war file directly into the corresponding Tomcat instance's local webapps/ directory on all 6 machines.<br><br>
+            4. Networking and Traffic RoutingInbound Flow: A Load Balancer sat at the front gate to accept public traffic.Reverse Proxy Routing: The load balancer read incoming HTTP request paths (e.g., /api/users vs /api/payments) and used custom routing rules to map and forward that traffic to the correct server IP address and corresponding port number of the specific Tomcat instance running that service.
+            <br><br>
+            <strong>The Core Design: A WAR Cannot Run By Itself</strong><br>
+            A WAR file is completely dead on its own. If you double-click it or try to run it via the command line, nothing happens.<br>
+            It does not contain a web server.<br>
+            It is designed strictly as a plugin for a Servlet Container (like Apache Tomcat, WildFly, or GlassFish).<br>
+            The container acts as the operating system for your WAR file.<br><br>
+
+            <strong>Inside a WAR File: The Standard Structure</strong><br>
+            Because an external Tomcat server has to read WAR files from hundreds of different companies, every WAR file must follow an identical internal folder structure.<br>
+            If you change a single folder name, Tomcat will reject it.<br>
+            Here is what the inside of your team's <code>user-service.war</code> looked like:<br>
+            📂 <code>user-service.war</code> (The root folder)<br>
+            📄 <code>index.html</code> / <code>login.jsp</code> (Static frontend web pages, if your app had them)<br>
+            📂 <code>WEB-INF/</code> (The most critical, private folder. The outside internet cannot look inside here)<br>
+            📄 <code>web.xml</code> (The deployment descriptor. The instruction manual that tells Tomcat how to route URLs to your Java code)<br>
+            📂 <code>classes/</code> (Your actual compiled Spring Boot Java code — the <code>.class</code> files)<br>
+            📂 <code>lib/</code> (All the third-party <code>.jar</code> libraries your code depends on to function)<br><br>
+
+            <strong>How Tomcat Processes a WAR (Deployment)</strong><br>
+            When your operations team dropped <code>user-service.war</code> into Tomcat's <code>webapps/</code> folder, a process called Deployment (or "Exploding") happened automatically:<br>
+            Detection: Tomcat continuously watches its <code>webapps/</code> folder. It detects the new file.<br>
+            Extraction: Tomcat automatically unzips the WAR file into a normal folder of the same name.<br>
+            Bootstrapping: Tomcat reads the <code>WEB-INF/web.xml</code> file to understand what your app needs.<br>
+            Lifecycle Management: Tomcat boots up your Spring Boot application context, allocates memory to it, and opens up the network port to start feeding HTTP requests directly into your code.<br><br>
+
+            <strong>In your previous team's setup</strong><br>
+            The Built-In Server Was Turned Off: Spring Boot's famous built-in, embedded Tomcat feature was completely deactivated or bypassed.<br>
+            The External Server Ran the Show: Your Spring Boot code was stripped down into a passive WAR file and forced to run inside those heavy, standalone Tomcat programs installed manually on the Unix operating systems.<br>
+            Essentially, your team used Spring Boot as a framework to write the microservice features, but they completely rejected Spring Boot's modern deployment method (Option A) in favor of the legacy Tomcat-as-a-landlord method (Option B).
+          
+            <strong> Lot of redundancy, it is a Springboot app with embedded tomcat but we were still using external tomcat server to deploy the same code.</strong><br>
+          
+            With Option A, we just use the embedded tomcat server for each of the Springboot service.
+            No external tomcat servers on Unix Servers. 
+            Every single Spring Boot service running in production uses its own separate, private Tomcat instance.
+
+            <strong>how does concurrency work? It is still one Springboot server. Does scaling here would mean, having same springboot app present in multiple unix servers?</strong>
+            Scaling absolutely means running copies of that exact same Spring Boot app across multiple Unix servers.
+
+            Level 1: Internal Concurrency (Inside One Spring Boot App)Even though it is "one Spring Boot server," a single Tomcat instance is not limited to handling one request at a time. Tomcat is a multithreaded server.When a single user-service.jar boots up, its embedded Tomcat automatically creates a Thread Pool (usually 200 threads by default).
+            If 50 users hit your User Service at the exact same millisecond, Tomcat assigns 50 different threads from its internal pool to handle them.All 50 users are processed concurrently inside that single running JAR process.
+
+            <br><br><br>
+            Level 2: External Scaling (When One JAR Isn't Enough)What happens if 5,000 users hit your User Service at once? The 200 internal threads will get maxed out, the CPU will spike, and the single app will slow down or crash.This is exactly where your 6 Unix servers and your Load Balancer come into play. To scale, you spin up identical copies of the user-service.jar across your servers:
+            You run java -jar user-service.jar on all 6 Unix servers.You now have 6 separate processes, each running its own internal Tomcat, each with its own pool of 200 threads.The Load Balancer sits in front of all 6 servers. When traffic pours in, it acts like a traffic cop, spraying the requests evenly across all 6 servers (\(5,000 \div 6\)).
+
+            
+          </p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask <span class="badge fl">Python · Micro</span></div>
+        <div class="fw-body">
+          <p class="note" style="margin-bottom:8px">Micro-framework. Gives you a server and routing — you wire everything else yourself. Closest to raw Express.js.</p>
+          <p class="note"><strong>Used by:</strong> ML teams, data science, small APIs, prototypes</p>
+          <p class="note">
+            <strong>Strengths:</strong>
+            extremely small core and minimal abstractions (you can understand the entire request flow by reading a few files),
+            very fast to spin up a proof-of-concept or thin API over an ML model,
+            flexibility to pick your own stack for every concern (ORM, validation, auth, background jobs).
+          </p>
+          <p class="note">
+            <strong>Pain / trade-offs:</strong>
+            no built-in Dependency Injection container or opinionated architecture,
+            you assemble everything — auth, ORM, validation, configuration, testing strategy — yourself,
+            larger teams can easily end up with inconsistent patterns if you don’t enforce conventions.
+          </p>
+          <p class="note">
+            <strong>How it runs / deploys:</strong>
+            Local: <code>flask run</code> (dev server).<br>
+            Prod: run Flask with a production server like Gunicorn/uWSGI/Waitress (often behind Nginx/load balancer).<br>
+            Flow: website → load balancer → (Nginx optional) → Gunicorn/uWSGI → Flask route function.
+            <pre style="margin-top:10px">LOCAL DEVELOPMENT
+─────────────────────────────────────────────────────
+
+Spring Boot                          Flask
+───────────────                      ───────────────
+mvn spring-boot:run                  flask run
+↓                                    ↓
+Embedded Tomcat starts               Flask dev server starts
+↓                                    ↓
+Binds to localhost:8080              Binds to localhost:5000
+↓                                    ↓
+React hits localhost:8080            React hits localhost:5000
+↓                                    ↓
+@GetMapping("/articles")             @app.route('/articles')
+executes, returns JSON               executes, returns JSON
+
+
+PRODUCTION (EC2)
+─────────────────────────────────────────────────────
+
+Spring Boot                          Flask
+───────────────                      ───────────────
+java -jar myapp.jar                  gunicorn app:app
+↓                                    ↓
+Embedded Tomcat starts               Gunicorn starts
+↓                                    ↓
+Binds to 0.0.0.0:8080               Binds to 0.0.0.0:8080
+↓                                    ↓
+React hits EC2-IP:8080               React hits EC2-IP:8080
+↓                                    ↓
+@GetMapping("/articles")             @app.route('/articles')
+executes, returns JSON               executes, returns JSON</pre>
+          </p>
+
+          <div class="note" style="margin-top:10px">
+            <strong>The Practical Consequences</strong>
+            <table style="width:100%; margin-top:8px; border-collapse:collapse; font-size:12px; line-height:1.5;">
+              <thead>
+                <tr>
+                  <th style="text-align:left; padding:6px 8px; border-bottom:0.5px solid var(--color-border-tertiary);"></th>
+                  <th style="text-align:left; padding:6px 8px; border-bottom:0.5px solid var(--color-border-tertiary);">Embedded Tomcat</th>
+                  <th style="text-align:left; padding:6px 8px; border-bottom:0.5px solid var(--color-border-tertiary);">Gunicorn</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>Concurrency model</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Threads inside 1 process</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Multiple processes</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>Default concurrency</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">200 threads</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">(2 × CPU cores) + 1 workers</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>Memory</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">One shared memory space</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Each worker has its own memory copy</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>Memory usage</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Lower (threads share memory)</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Higher (each process is a full copy)</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>A crash in one worker</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Can affect all threads (shared memory)</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">Other workers unaffected (isolated processes)</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);"><strong>Startup time</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">One process starts</td>
+                  <td style="padding:6px 8px; vertical-align:top; border-bottom:0.5px solid var(--color-border-tertiary);">N processes start (slightly slower)</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; vertical-align:top;"><strong>Why this model</strong></td>
+                  <td style="padding:6px 8px; vertical-align:top;">Java has no GIL — threads truly parallel</td>
+                  <td style="padding:6px 8px; vertical-align:top;">Python GIL makes threads useless for parallelism</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note" style="margin-top:14px">
+            <strong>The Memory Consequence — The Big Tradeoff</strong><br>
+            This is the real cost of Gunicorn's process model.
+            <pre style="margin-top:8px">Embedded Tomcat
+───────────────
+1 process using 512MB RAM
+200 threads share that 512MB
+Total RAM: 512MB
+
+Gunicorn (4 workers)
+────────────────────
+Worker 1: 512MB RAM (full copy of Flask app)
+Worker 2: 512MB RAM (full copy of Flask app)
+Worker 3: 512MB RAM (full copy of Flask app)
+Worker 4: 512MB RAM (full copy of Flask app)
+Total RAM: 2048MB (4× more)</pre>
+            <p class="note" style="margin-top:8px">
+              Each Gunicorn worker is a full independent copy of your Flask app loaded into memory. 4 workers = 4 copies of everything. This is why Python web servers need more RAM than equivalent Java servers handling the same traffic.
+            </p>
+            <strong>Bottom Line</strong><br>
+            Tomcat thread model works for Java because:<br>
+            Java threads → truly parallel → no GIL → efficient<br><br>
+            Gunicorn process model works for Python because:<br>
+            Python threads → fake parallel due to GIL → useless<br>
+            Python processes → each has own GIL → truly parallel → efficient<br>
+            Tradeoff: more RAM per worker<br><br>
+            The difference isn't a design preference. It's a language-level constraint forcing a different architecture. If Python didn't have the GIL, Gunicorn would just use threads like Tomcat does.
+          </div>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django <span class="badge dj">Python · Full-stack</span></div>
+        <div class="fw-body">
+          <p class="note" style="margin-bottom:8px">Batteries-included. ORM, admin, auth, migrations all built-in. Closest philosophy to Spring Boot.</p>
+          <p class="note"><strong>Used by:</strong> Content platforms, agencies, internal tools, established startups</p>
+          <p class="note">
+            <strong>Strengths:</strong>
+            very fast CRUD and back-office development thanks to built-in admin UI,
+            integrated stack (ORM, auth, sessions, templates, forms) that just works together,
+            clear conventions around project/apps that help medium-sized teams stay organized.
+          </p>
+          <p class="note">
+            <strong>Pain / trade-offs:</strong>
+            opinionated “Django way” of doing things (URL routing, class-based views, ORM patterns),
+            less natural fit for ultra-high-performance microservices compared to lighter frameworks,
+            can feel restrictive when you want to deviate heavily from the standard stack.
+          </p>
+          <p class="note">
+            <strong>How it runs / deploys:</strong>
+            Local: <code>python manage.py runserver</code> (dev server).<br>
+            Prod: run Django with Gunicorn/uWSGI (most common) behind Nginx/Apache/load balancer.<br>
+            Flow: website → load balancer → Nginx/Apache → Gunicorn/uWSGI → Django view (or DRF view).
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Mental model:</strong> Spring Boot and Django share the same philosophy — "framework does the heavy lifting, you configure." Flask is the opposite — "you build what you need." If you're comfortable with Spring Boot, Django will feel familiar. Flask will feel liberatingly simple but also naked.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Dive deeper into the overview differences between Spring Boot, Flask, and Django')">Go deeper on overview ↗</button>
+  </div>
+
+  <!-- SETUP -->
+  <div class="section" id="setup">
+    <p class="section-title">Project setup</p>
+    <p class="section-sub">How you bootstrap a new project in each framework.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+# Use Spring Initializr
+# start.spring.io or IntelliJ
+
+# Maven pom.xml auto-generated
+# with dependencies selected
+
+mvn spring-boot:run
+# or
+./mvnw spring-boot:run
+</pre>
+          <p class="note">GUI-based project generator. Picks dependencies for you. Generates a lot of boilerplate upfront.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+pip install flask
+
+# app.py — that's it
+from flask import Flask
+app = Flask(__name__)
+
+# Run
+flask run
+# or
+python app.py
+</pre>
+          <p class="note">Single file to get started. No generator needed. You add dependencies as you need them.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django</div>
+        <div class="fw-body">
+<pre>
+pip install django
+
+django-admin startproject mysite
+cd mysite
+python manage.py startapp api
+
+python manage.py runserver
+</pre>
+          <p class="note">CLI generates folder structure. A "project" contains "apps" (modules). manage.py is your main tool for everything.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Flask is one file. Django scaffolds a full folder structure. Spring Boot generates an entire Maven/Gradle project. Django's <code>manage.py</code> is your Swiss army knife — migrations, running server, creating superusers — like Spring Boot CLI but more central.
+    </div>
+  </div>
+
+  <!-- ROUTING -->
+  <div class="section" id="routing">
+    <p class="section-title">Routing</p>
+    <p class="section-sub">How URL paths map to your handler functions/methods.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+@RestController
+@RequestMapping("/articles")
+public class ArticleController {
+
+  @GetMapping("/{id}")
+  public Article get(
+    @PathVariable Long id) {
+    ...
+  }
+
+  @PostMapping("/")
+  public Article create(...) {
+    ...
+  }
+}
+</pre>
+          <p class="note">Routing lives ON the class and method via annotations. Routes are co-located with logic.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+# Routes via decorator
+# directly on functions
+
+@app.route('/articles/&lt;int:id&gt;',
+           methods=['GET'])
+def get_article(id):
+    ...
+
+@app.route('/articles/',
+           methods=['POST'])
+def create_article():
+    ...
+</pre>
+          <p class="note">Decorator on each function. Simple and explicit. All in one file or split with Blueprints.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django</div>
+        <div class="fw-body">
+<pre>
+# urls.py (separate file)
+urlpatterns = [
+  path(
+    'articles/&lt;int:id&gt;/',
+    views.ArticleView.as_view()
+  ),
+  path(
+    'articles/',
+    views.ArticleListView.as_view()
+  ),
+]
+</pre>
+          <p class="note">Routes live in urls.py — completely separate from view logic. Cleaner separation but two files to maintain.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Spring Boot and Flask co-locate routing with logic (annotation / decorator on the handler). Django separates routing entirely into urls.py. Django's approach is cleaner at scale — you can read all routes in one place — but requires jumping between files.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Tell me more about Django URL routing with nested urls.py and include()')">Ask about nested routing ↗</button>
+  </div>
+
+  <!-- GET -->
+  <div class="section" id="get">
+    <p class="section-title">GET request — fetch by ID</p>
+    <p class="section-sub">GET /articles/42 → return article JSON or 404.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+@RestController
+@RequestMapping("/articles")
+public class ArticleController {
+
+  @Autowired
+  private ArticleRepository repo;
+
+  @GetMapping("/{id}")
+  public ResponseEntity&lt;Article&gt;
+      get(@PathVariable Long id) {
+
+    return repo.findById(id)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity
+        .notFound().build());
+  }
+}
+</pre>
+          <p class="note">@Autowired injects the repo. ResponseEntity wraps the response + status code.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+from flask import jsonify, abort
+
+@app.route(
+  '/articles/&lt;int:id&gt;',
+  methods=['GET'])
+def get_article(id):
+    article = Article.query\
+      .get(id)
+
+    if not article:
+        abort(404)
+
+    return jsonify({
+      'id': article.id,
+      'title': article.title
+    })
+</pre>
+          <p class="note">jsonify() serializes the dict. abort(404) triggers error. No automatic serialization — you build the dict manually.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django (DRF)</div>
+        <div class="fw-body">
+<pre>
+# serializers.py
+class ArticleSerializer(
+  serializers.ModelSerializer):
+  class Meta:
+    model = Article
+    fields = ['id','title']
+
+# views.py
+class ArticleView(APIView):
+  def get(self, request, id):
+    try:
+      a = Article.objects.get(pk=id)
+    except Article.DoesNotExist:
+      return Response(
+        {'error':'Not found'},
+        status=404)
+    s = ArticleSerializer(a)
+    return Response(s.data)
+</pre>
+          <p class="note">Serializer handles model→JSON. APIView gives you explicit get/post methods per HTTP verb.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Spring Boot auto-serializes via Jackson. Flask requires manual dict building. Django/DRF uses an explicit Serializer class — more code upfront but it also handles validation on POST. DRF's Serializer = Jackson + @Valid + DTO all in one.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me DRF generic views like RetrieveAPIView that reduce boilerplate for GET requests')">Show me DRF shortcuts ↗</button>
+  </div>
+
+  <!-- POST -->
+  <div class="section" id="post">
+    <p class="section-title">POST request — create a resource</p>
+    <p class="section-sub">POST /articles/ with JSON body → validate → save → return 201.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+@PostMapping("/")
+public ResponseEntity&lt;Article&gt;
+  create(
+  @Valid @RequestBody
+  ArticleDTO dto) {
+
+  Article a = new Article();
+  a.setTitle(dto.getTitle());
+  repo.save(a);
+
+  return ResponseEntity
+    .status(201)
+    .body(a);
+}
+
+// DTO with validation
+public class ArticleDTO {
+  @NotBlank
+  private String title;
+}
+</pre>
+          <p class="note">@RequestBody deserializes JSON. @Valid triggers bean validation. Separate DTO class for input.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+from flask import request, jsonify
+
+@app.route('/articles/',
+           methods=['POST'])
+def create_article():
+  data = request.get_json()
+
+  if not data.get('title'):
+    return jsonify(
+      {'error':'title required'}
+    ), 400
+
+  article = Article(
+    title=data['title'])
+  db.session.add(article)
+  db.session.commit()
+
+  return jsonify({
+    'id': article.id,
+    'title': article.title
+  }), 201
+</pre>
+          <p class="note">request.get_json() parses body. Validation is manual — you check fields yourself. No automatic validation framework.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django (DRF)</div>
+        <div class="fw-body">
+<pre>
+class ArticleView(APIView):
+
+  def post(self, request):
+    serializer = ArticleSerializer(
+      data=request.data)
+
+    if not serializer.is_valid():
+      return Response(
+        serializer.errors,
+        status=400)
+
+    serializer.save()
+    return Response(
+      serializer.data,
+      status=201)
+</pre>
+          <p class="note">Serializer validates AND saves. is_valid() checks all field rules. serializer.errors returns structured error map automatically.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Flask validation is fully manual — you write every check. Spring Boot uses bean validation annotations (@NotBlank etc). DRF's serializer does validation + deserialization + saving in one object — the most elegant of the three for CRUD APIs once you learn the pattern.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me how to add custom validation rules in DRF serializers')">DRF custom validation ↗</button>
+  </div>
+
+  <!-- ORM -->
+  <div class="section" id="orm">
+    <p class="section-title">Database / ORM</p>
+    <p class="section-sub">How models are defined and queried.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot (JPA)</div>
+        <div class="fw-body">
+<pre>
+// Entity
+@Entity
+public class Article {
+  @Id
+  @GeneratedValue
+  private Long id;
+  private String title;
+}
+
+// Repository
+public interface ArticleRepo
+  extends JpaRepository
+    &lt;Article, Long&gt; {}
+
+// Query
+repo.findById(id);
+repo.findByTitle("hello");
+repo.save(article);
+</pre>
+          <p class="note">Annotations on class. Repository interface auto-generates queries from method names. Hibernate under the hood.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask (SQLAlchemy)</div>
+        <div class="fw-body">
+<pre>
+# Model
+class Article(db.Model):
+  id = db.Column(
+    db.Integer, primary_key=True)
+  title = db.Column(db.String(200))
+
+# Query
+Article.query.get(id)
+Article.query.filter_by(
+  title='hello').first()
+db.session.add(article)
+db.session.commit()
+</pre>
+          <p class="note">SQLAlchemy is a separate library you add. Similar pattern to JPA but Python-style. Session-based writes.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django ORM</div>
+        <div class="fw-body">
+<pre>
+# Model
+class Article(models.Model):
+  title = models.CharField(
+    max_length=200)
+
+# Query (QuerySet API)
+Article.objects.get(pk=id)
+Article.objects.filter(
+  title='hello').first()
+Article.objects.all()\
+  .order_by('-created_at')[:10]
+
+# Save
+article.save()
+Article.objects.create(
+  title='hello')
+</pre>
+          <p class="note">ORM built-in, no extra library. QuerySets are lazy and chainable. Migrations auto-generated with makemigrations.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Django ORM is built-in and tightly integrated — models, migrations, admin all work together automatically. Flask uses SQLAlchemy (separate library, more powerful but more setup). Spring Boot uses JPA/Hibernate via annotations. Django's QuerySet API is the most readable of the three for common queries.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Compare Django ORM QuerySet with JPA queries — show complex filter examples')">Compare complex queries ↗</button>
+  </div>
+
+  <!-- AUTH -->
+  <div class="section" id="auth">
+    <p class="section-title">Auth & middleware</p>
+    <p class="section-sub">How you protect routes and intercept requests.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+// Spring Security config
+@Configuration
+public class SecurityConfig {
+  @Bean
+  SecurityFilterChain chain(
+    HttpSecurity http) throws Exception {
+    http
+      .authorizeRequests()
+      .antMatchers("/admin/**")
+      .hasRole("ADMIN")
+      .anyRequest().authenticated();
+    return http.build();
+  }
+}
+
+// Protect a route
+@PreAuthorize("hasRole('ADMIN')")
+@GetMapping("/admin/data")
+public String adminOnly() {...}
+</pre>
+          <p class="note">Spring Security is a separate module. Powerful but notoriously complex to configure initially.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+# Using flask-login or JWT manually
+from functools import wraps
+
+def login_required(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if not current_user:
+      return jsonify(
+        {'error':'Unauthorized'}
+      ), 401
+    return f(*args, **kwargs)
+  return decorated
+
+@app.route('/protected')
+@login_required
+def protected():
+  return jsonify({'data': '...'})
+</pre>
+          <p class="note">No built-in auth. You use decorators (like Python's version of middleware). flask-login or flask-jwt-extended are common add-ons.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django</div>
+        <div class="fw-body">
+<pre>
+# Built-in auth — just use it
+from rest_framework.permissions\
+  import IsAuthenticated
+
+class ArticleView(APIView):
+  permission_classes = [
+    IsAuthenticated]
+
+  def get(self, request):
+    # request.user is available
+    return Response({...})
+
+# settings.py middleware
+MIDDLEWARE = [
+  'django.middleware.security...',
+  'django.contrib.sessions...',
+  'django.contrib.auth...',
+  'myapp.middleware.CustomMW',
+]
+</pre>
+          <p class="note">Auth is built-in. DRF adds permission_classes for API protection. Middleware is a simple list in settings.py.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Django ships with a full user/auth/session system — biggest advantage over Flask. Flask requires assembling auth from libraries. Spring Security is the most powerful but also the most complex to configure. Django hits the sweet spot for most use cases.
+    </div>
+  </div>
+
+  <!-- ERRORS -->
+  <div class="section" id="errors">
+    <p class="section-title">Error handling</p>
+    <p class="section-sub">How each framework handles exceptions and returns error responses.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+// Global exception handler
+@RestControllerAdvice
+public class GlobalHandler {
+
+  @ExceptionHandler(
+    ResourceNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ErrorResponse handleNotFound(
+    ResourceNotFoundException ex) {
+    return new ErrorResponse(
+      ex.getMessage());
+  }
+}
+
+// Custom exception
+public class ResourceNotFoundException
+  extends RuntimeException {...}
+</pre>
+          <p class="note">@RestControllerAdvice is a global handler. Clean separation — controllers throw, handler catches.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+# Register error handlers
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify(
+      {'error': 'Not found'}
+    ), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify(
+      {'error': 'Server error'}
+    ), 500
+
+# In a route
+abort(404)  # triggers handler
+</pre>
+          <p class="note">Simple decorator-based error handlers. abort() triggers them. Minimal but effective for small APIs.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django (DRF)</div>
+        <div class="fw-body">
+<pre>
+# DRF handles common errors
+# automatically (404, 405, etc.)
+
+# Custom exception handler
+# settings.py
+REST_FRAMEWORK = {
+  'EXCEPTION_HANDLER':
+    'myapp.utils.custom_handler'
+}
+
+# utils.py
+def custom_handler(exc, context):
+  response = exception_handler(
+    exc, context)
+  if response is not None:
+    response.data['status'] = \
+      response.status_code
+  return response
+</pre>
+          <p class="note">DRF has sensible defaults — 404, 405, auth errors all handled automatically. Custom handler for global overrides.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Spring Boot's @RestControllerAdvice is the most structured — great for large teams. Flask's error handlers are simple but you wire everything manually. DRF gives you the most out of the box — common errors just work, and the custom handler is a clean single override point.
+    </div>
+  </div>
+
+  <!-- STRUCTURE -->
+  <div class="section" id="structure">
+    <p class="section-title">Project structure</p>
+    <p class="section-sub">How a typical production project is laid out.</p>
+    <div class="grid">
+      <div class="fw-card">
+        <div class="fw-header sb">Spring Boot</div>
+        <div class="fw-body">
+<pre>
+src/
+  main/java/com/app/
+    controller/
+      ArticleController.java
+    service/
+      ArticleService.java
+    repository/
+      ArticleRepository.java
+    model/
+      Article.java
+    dto/
+      ArticleDTO.java
+  resources/
+    application.properties
+pom.xml
+</pre>
+          <p class="note">Layered by type (controller / service / repo). Verbose but predictable. Every layer is its own class.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header fl">Flask</div>
+        <div class="fw-body">
+<pre>
+app/
+  __init__.py    # app factory
+  models.py      # DB models
+  routes/
+    articles.py  # Blueprint
+    users.py
+  services/
+    article_svc.py
+  schemas/
+    article.py   # marshmallow
+config.py
+run.py
+</pre>
+          <p class="note">No enforced structure — this is a common convention. Blueprints group related routes. You decide the architecture.</p>
+        </div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-header dj">Django</div>
+        <div class="fw-body">
+<pre>
+mysite/           # project root
+  settings.py
+  urls.py         # root router
+  wsgi.py
+articles/         # app module
+  models.py
+  views.py
+  serializers.py
+  urls.py         # app routes
+  admin.py        # admin config
+  migrations/     # auto-generated
+users/            # another app
+  models.py
+  ...
+manage.py
+</pre>
+          <p class="note">Django enforces app-based modularity. Each app is self-contained. migrations/ is auto-generated — never edit manually.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>Key difference:</strong> Spring Boot organizes by layer (all controllers together, all services together). Django organizes by feature/app (all article code together). Django's approach scales better for large teams — each feature is a self-contained module. Flask gives you total freedom, for better or worse.
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('For a production Django REST API project, what is the recommended folder structure for a medium-sized team?')">Production Django structure ↗</button>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

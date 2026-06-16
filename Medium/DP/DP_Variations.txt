@@ -1,0 +1,408 @@
+Q:
+You are a professional robber planning to rob houses along a street. Each house has a certain amount 
+of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses 
+have security systems connected and it will automatically contact the police if two adjacent houses 
+were broken into on the same night.
+Given an integer array nums representing the amount of money of each house, 
+return the maximum amount of money you can rob tonight without alerting the police.
+
+1. What am I computing? => max amount of money
+2. What decision is made at each step? => whether to pick a house or not
+3. What constraint governs that decision? => two adjacent houses cannot be broken into
+4. Whats the minimum information from the past that enforces that constraint? => if prev house was robbed or not
+5. That information becomes your state dimensions => dp[j] = max money if last house that was robbed was j
+dp[j] = Math.max( dp[j-1] , dp[j-2]+nums[j]);
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+Q:
+You are a professional robber planning to rob houses along a street. Each house has a certain amount 
+of money stashed. All houses at this place are arranged in a circle. That means the first house is 
+the neighbor of the last one. Meanwhile, adjacent houses have a security system connected, and 
+it will automatically contact the police if two adjacent houses were broken into on the same night.
+Given an integer array nums representing the amount of money of each house, return the maximum amount of 
+money you can rob tonight without alerting the police.
+
+
+1. What am I computing? => maximum amount of money you can rob
+2. What decision is made at each step? => whether to include a house or not 
+3. What constraint governs that decision? => That means the first house is the neighbor of the last one.
+4. What's the minimum information from the past that enforces that constraint? => last robbed house
+5. That information becomes your state dimensions =>
+run dp twice, once from index: 0 to n-1 and once from index: 1 to n
+dp[j] = Math.max( dp[j-1] , dp[j-2]+nums[j]);
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+Q:
+Given an integer array nums, find the subarray with the largest sum, and return its sum. Array can contain
+negative integers
+
+1. What am I computing? => Kadane algorithm; sum and maxSum at every element
+2. What decision is made at each step? => to include current element in prev sub-array or start a new one
+3. What constraint governs that decision? => if prev sum is <0? start new. Else stick with prev.
+4. What's the minimum information from the past that enforces that constraint? => prefix sum 
+5. That information becomes your state dimensions =>
+No specific DP array or recurrrence
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+Q:
+You are given an integer array nums. You must perform exactly one operation where you can replace one 
+element nums[i] with nums[i] * nums[i]. 
+Return the maximum possible subarray sum after exactly one operation. The subarray must be non-empty.
+Array can contain negative integers.
+
+Two most neg integers help create a bigger positive
+
+1. What am I computing? => maximum possible subarray sum after exactly one operation
+2. What decision is made at each step? => → did I use the operation yet or not? to include current element
+ in prev sub-array or start a new one
+3. What constraint governs that decision? => must use operation EXACTLY once. if prev sum is <0? start new.
+ Else stick with prev.
+4. What's the minimum information from the past that enforces that constraint? => whether the operation
+ has been used yet; prefix sum
+5. That information becomes your state dimensions =>
+TWO tracks running simultaneously
+     Track A: best subarray ending here, NOT yet used operation [Original Kadane]
+     Track B: best subarray ending here, ALREADY used operation [for some element at index before current index i]
+
+withOp = "operation has been used SOMEWHERE
+          in the subarray ending at i"
+
+NOT: "operation is used AT i"  
+
+Multiple ways to reach a state
+= the state definition is BROAD
+= "op used somewhere" not "op used at exact index j"
+
+Broad state definition → fewer dimensions → simpler code
+long newTrackB = Math.max(
+            trackB + curr,                   // Way 1: extend trackB, op was used earlier
+            Math.max(
+                // Two choices with current element: Square it and extend with prev ; Square it and start afresh                                            
+                trackA + currSq,             // Way 2: cross from trackA, use op NOW, extend prev
+                currSq                       // Way 3: cross from trackA, use op NOW, start fresh
+            )
+        );
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+
+Q:
+You are given an integer array nums and an integer target.
+You want to build an expression out of nums by adding one of the symbols '+' and '-' before each integer in nums and then 
+concatenate all the integers.
+For example, if nums = [2, 1], you can add a '+' before 2 and a '-' before 1 and concatenate them to build the expression "+2-1".
+Return the number of different expressions that you can build, which evaluates to target.
+Can you find a subset of sum k?
+
+1. What am I computing? =>
+2. What decision is made at each step? =>
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+Q:
+Given an integer array nums, return true if you can partition the array into two subsets such that the sum of the elements 
+in both subsets is equal or false otherwise. Array has only positive elements.
+Can you find a subset of sum k? k=n/2 since both arrays will have equal sum.
+Subset/Subsequence NOT subarray. No need to look for something contiguous.
+
+1. What am I computing? => find if a subset can have sum as k
+2. What decision is made at each step? => whether to include a number in a subset group or not 
+3. What constraint governs that decision? => If running sum value exceeds target or not?
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+boolean[][] dp = new boolean[nums.length+1][target+1]; // or amount=1, just like coin change and coin change 2
+/** dp[i][j] => row i= ith element of array; j= smaller target j of target */
+/** dp[i][j] => For a subsequence ending at index i, can it make sum=j (of bigger target)? */
+
+            ---> 0   1   2 ....  Target
+arr[0]  |
+arr[1]  |
+...     |    
+arr[n]  V
+
+if(dp[i-1][j] == true) // we already found sum for subseq ending at prev array index
+    dp[i][j] = true;
+else{
+    if(j >= nums[i-1] && dp[i-1][j - nums[i-1]]) // current amount >= prev element
+        dp[i][j] = true;
+} 
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+Q:
+You are given an integer array coins representing coins of different denominations and an integer amount representing a 
+total amount of money.
+Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any 
+combination of the coins, return -1.
+You may assume that you have an infinite number of each kind of coin.
+
+combination style problem. WHY?
+“coins of different denominations”
+“infinite number of each kind”
+“make up that amount”
+ 
+1. What am I computing? => fewest number of coins that you need to make up that amount
+2. What decision is made at each step? => Recording min denomination needed to make a smaller amount
+3. What constraint governs that decision? => Use coins of all denominations
+4. What's the minimum information from the past that enforces that constraint? => Use all of the given denominations
+5. That information becomes your state dimensions =>
+Split the amount into coins from every denomination.
+for amount:
+    for choice:
+
+dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+int[] dp = new int[amount + 1]; // always amount+1 for amount problems
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+Q:
+You are given an integer array coins representing coins of different denominations and an integer amount representing a 
+total amount of money.
+Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination 
+of the coins, return 0.
+You may assume that you have an infinite number of each kind of coin.
+The answer is guaranteed to fit into a signed 32-bit integer.
+
+ 
+1. What am I computing? => number of combinations that make up that amount; NOT fewest coins that make up the amount
+2. What decision is made at each step? =>
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+/** dp[i] = no of combinations for amount i overall possible */
+/** dp[i] gets altered with every choice iteration */
+/** Combination for Amount i gets accumulated across each iteration of loop,
+once for choice=2, then next for choice=3 and lastly for choice=5
+That is how we ensure that 5 does not appear before 2 does. This is NOT permutation.
+Combinations have to be unique, we must ensure that denominations do not get repeated.
+/** How we ensure combinations? Running each choice in order for every element */
+for coins:
+    for amount:
+    dp[i] += dp[i-coins[j]]; // not dp[i-coins[j]]+1
+*/
+int[] dp = new int[amount + 1]; // always amount+1 for amount problems
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+Q:
+Given an integer array nums, return the length of the longest strictly increasing subsequence.
+
+1. What am I computing? => longest increasing subsequence/subset
+2. What decision is made at each step? => 
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+Whenever going from left to right: consider i as end index 
+dp[i] => length of increasing subsequence that ends at index i.
+
+At every index i, compare all values from 0 to j (all previous values)
+if(nums[i] > nums[j])
+    dp[i] = Math.max(dp[i], dp[j]+1);
+answer can lie anywhere in the dp array, not at the start or end 
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+Q:
+Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, 
+return 0.
+A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without 
+changing the relative order of the remaining characters.
+For example, "ace" is a subsequence of "abcde".
+A common subsequence of two strings is a subsequence that is common to both strings.
+
+1. What am I computing? =>
+2. What decision is made at each step? =>
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+s1 = number of rows; s2 = number of columns
+Always have one extra row and column at the end for zeroes
+This is the first example where final answer will be at the start pos of matrix
+    a   c   e   _
+a   
+b
+c
+d
+e
+_
+
+/** 
+dp[i][j] represents:
+
+The length of the Longest Common Subsequence (LCS) between:
+
+* s1 starting from index i
+* s2 starting from index j
+
+
+    String1 is along the rows; String2 is along the columns */
+    int[][] dp = new int[row+1][col+1];
+
+    /** Iterate over the matrix, but from second last row & second last col */
+    /** If we go right in matrix, String2 loses its first character */
+    /** If we go down in matrix, String1 loses its first character */
+    /** If we go diagonal in matrix, both lose its first character */
+    /** Last character in Matrix is a blank and doesnt exist in String */
+    for(int i=row-1; i>=0; i--){
+        for(int j=col-1; j>=0; j--){
+            /** Get characters at i and j */
+            char c1=text1.charAt(i);
+            char c2=text2.charAt(j);
+
+            /** If initial chars are same, get 1 + LCS of remaining (diag) */
+            if(c1==c2)
+                dp[i][j]=1+dp[i+1][j+1];
+            else
+                dp[i][j]=Math.max(dp[i+1][j], dp[i][j+1]);
+        }
+    }
+
+    return dp[0][0];
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+
+Q:
+You are given an array prices where prices[i] is the price of a given stock on the ith day.
+Find the maximum profit you can achieve. You may complete as many transactions as you like. 
+(i.e., buy one and sell one share of the stock multiple times) with the following restrictions:
+
+After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).
+Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
+
+1. What am I computing? => maximum profit you can achieve
+2. What decision is made at each step? => what action to take? [buy, sell, cooldown]
+3. What constraint governs that decision? => Given in question
+4. What's the minimum information from the past that enforces that constraint? => Action on previous day
+5. That information becomes your state dimensions =>
+
+dp[i][j] => on day i, action j was done, value is max profit
+        cols -> buy         sell       cooldown
+ rows
+ |
+ V 
+ day[0]        -prices[0]   0           0       => Can only buy on day1, no other action can be done 
+ day[1]
+
+Check the constraints to determine order for profit
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+Digit DP: https://leetcode.com/problems/number-of-digit-one/description/
+
+1. What am I computing? =>
+2. What decision is made at each step? =>
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+
+Q: Streak based DP
+
+Given the integers n (password length) and k (maximum allowed consecutive identical characters), calculate the total number 
+of distinct safe passwords that can be generated. Since the number can be large, return the result modulo (10^9 + 7).
+Consider n = 2, k = 2
+
+The total number of passwords of length 2 is 26 * 26 = 676. There are 26 cases where k = 2 consecutive characters are the same. 
+Thus, the answer is 26 * 26 - 26 = 650, and 650 modulo (10^9 + 7) = 650.
+
+1. What am I computing?
+Answer: The total number of valid lowercase alphabetic passwords of length \(N\) 
+that do not violate the consecutive repetition rule, modulo \(10^9 + 7\).
+
+2. What decision is made at each step?
+Answer: At each index \(i\) (from \(1\) to \(N\)), you decide whether to continue the existing character streak by placing 
+the exact same character as the previous position, or break the streak by picking any of the other 25 lowercase English characters.
+
+3. What constraint governs that decision?
+Answer: You cannot let the current consecutive run of identical characters reach a length of \(k\) or more.
+
+4. What's the minimum information from the past that enforces that constraint?
+Answer: You need to know the current streak length of identical characters ending at the previous position. 
+Because all 26 lowercase English characters are completely symmetrical in this problem, you do not need to know which
+specific character is repeating—only how many times it has repeated consecutively.
+
+5. That information becomes your state dimensionsAnswer:
+Dimension 1: Current length of the password prefix 
+(index, from \(1\) to \(N\)).
+Dimension 2: The exact length of the active, unbroken streak (streak_length, 
+from \(1\) to \(k-1\)).Resulting State Array: dp[index][streak_length].
+
+dp[last index][streak length=k] DOES NOTTTT represents the final answer.
+Why? We cannnot have streak length as k in answer, it has to be from 1 to k-1
+The total number of safe passwords of the full length \(N\) is the sum of all valid streak configurations at that final index.
+
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+Q:
+Counting based DP 
+
+Given a Salesforce workflow configuration string config consisting of digits (0-9) and placeholders (?), 
+determine the number of ways the placeholders can be replaced with digits (0-9) such that no two adjacent workflow steps 
+(digits) are the same.
+
+Input
+The workflow configuration string consisting of digits (0-9) and placeholders (?).
+
+Output
+The total number of valid configurations modulo (10^9 + 7).
+
+Example
+Given the workflow configuration string config = "1?3?":
+
+The first placeholder (?) can be replaced with 8 possible digits: {2, 4, 5, 6, 7, 8, 9, 0} (all digits except 1 and 3).
+The second placeholder can be replaced with 9 possible digits: {1, 2, 4, 5, 6, 7, 8, 9, 0} (all digits except 3). 
+This results in a total of 72 possible configurations. Since the total number of configurations may be very large, return the result modulo (10^9 + 7).
+
+1. What am I computing?
+Answer: The total number of valid digit sequences of length \(N\) that match the pattern given by the config string, 
+modulo \(10^9 + 7\).
+
+2. What decision is made at each step?
+Answer: At each index i (from 0 to N-1), you decide which specific digit from 0 to 9 to place down.
+
+3. What constraint governs that decision?
+Answer: The choice must fulfill two criteria:It must match the given template (it must equal the fixed digit if config.charAt(i)
+is a number, or it can be any digit if it is a ?).It cannot be identical to the digit chosen at the immediately preceding 
+step (i - 1).
+
+4. What's the minimum information from the past that enforces that constraint?
+Answer: You only need to know the exact digit that was placed at index i - 1. You do not need to know any digits prior to that, 
+nor do you need to know how long the sequence has been running.
+
+5. That information becomes your state dimensions
+Answer:
+Dimension 1: Current length/position in the configuration prefix (index).
+Dimension 2: The ending digit of the previous step (last_digit, from 0 to 9).Resulting State Array: dp[index][last_digit].
+
+-------------------------------------------------------------------------------------------------------------------
+*******************************************************************************************************************
+-------------------------------------------------------------------------------------------------------------------
+
+1. What am I computing? =>
+2. What decision is made at each step? =>
+3. What constraint governs that decision? =>
+4. What's the minimum information from the past that enforces that constraint? =>
+5. That information becomes your state dimensions =>

@@ -1,0 +1,180 @@
+************************************************************************************************************************
+1. Proving how Greedy fails
+************************************************************************************************************************
+If we propose Greedy works,
+How to find a counter test case that proves Greedy Doesnot work?
+=> Eg. [5    50      11]
+       [10   100     20] 
+We cannot pick same index on two consecutive days. 
+Being Greedy => From first row, select i=1 which is 50. Max of all three.
+From second row, cannot select i=1 as it is repetitive. Can select i=0 or i=2 => Take Max => 20
+Total answer by greedy = 50+20 = 70
+
+But, actual answer = 100 + 11 => 111
+This proves that Greedy failed and DP works
+
+************************************************************************************************************************
+2. Finding right transition state for DP
+************************************************************************************************************************
+
+The core principle: the state must contain everything needed to make the next decision
+This is called the Markov property in formal terms, but practically it means:
+
+If I'm at state S, I should be able to compute all future transitions without looking back at history.
+
+The state is not about "what looks natural" or "what the input looks like". It's about what information the next step needs.
+Eg. Refer Ninja's training question by Striver
+
+The real trap: defining state by what's convenient to compute, not what's needed to decide
+This is the trap you almost fell into, and it's extremely common.
+--------------------------------------------
+Trap 1: Mirroring the input structure
+--------------------------------------------
+
+"2D input → 2D DP"
+
+This is coincidence, not principle. You got lucky here. Consider:
+
+Longest Increasing Subsequence: 1D input → 1D DP ✓
+Edit Distance: 2 strings → 2D DP ✓
+Burst Balloons: 1D input → 2D DP (interval) — breaks the pattern
+
+The input shape is a hint at best, a trap at worst.
+
+--------------------------------------------
+Trap 2: Defining state as "what I picked" instead of "what the future needs to know"
+--------------------------------------------
+
+These are often the same, but not always. The right question is always:
+
+What is the minimum information the next step needs from all previous steps?
+
+In House Robber: next step needs to know "was the previous house robbed?" → 1 bit of info → can reduce to O(1) space.
+In this problem: next step needs to know "what activity was done yesterday?" → 1 value (0, 1, or 2) → that's your second dimension.
+
+--------------------------------------------
+Trap 3: Adding dimensions for things that don't affect future decisions
+--------------------------------------------
+
+Suppose you thought: "I need to track total points accumulated so far" as a state dimension. That explodes your state space to dp[day][activity][total_points] — completely unnecessary because total_points is what you're computing, not what you're deciding with.
+
+--------------------------------------------
+Trap 4: dp[i][j] - is j the one chosen on Day i OR j is forbidden on Day i
+--------------------------------------------
+
+Former: Easy to derive
+Latter: Complex state definitions
+
+
+The framework to arrive at states from scratch
+Ask these questions in order:
+1. What am I computing?
+→ Maximum points over N days
+2. What decision is made at each step?
+→ Which activity to pick today
+3. What constraint governs that decision?
+→ Can't repeat yesterday's activity
+4. What's the minimum information from the past that enforces that constraint?
+→ Just yesterday's activity choice — nothing else
+5. That information becomes your state dimensions:
+→ dp[day][last_activity]
+Notice step 4 is the critical one. You're asking: "how much history do I actually need?" If the answer is "just the last choice" → one extra dimension. If "last two choices" → two extra dimensions (rare). If "none" → 1D DP.
+
+A contrasting example to cement this
+In Longest Increasing Subsequence, the decision at index i is: "do I extend a subsequence ending here?"
+The constraint: the previous element in the subsequence must be smaller than nums[i].
+What's the minimum info needed from the past? Not just "what was the last element" — because you might extend any previous subsequence, not just the immediately preceding one.
+So the state becomes: dp[i] = length of longest subsequence ending at index i — capturing which element is "last" by the index itself.
+The future only needs to know: "what's the value at the end of this subsequence?" And nums[i] tells you that.
+
+
+--------------------------------------------
+Identifying DP vs BFS, DFS, on grid problems
+--------------------------------------------
+Eg. Unique Path 1, Unique Path 2
+
+Signal                              What it tells you
+Grid with start and end             Could be BFS/DFS/DP
+Only 2 directions (right, down)     No cycles possible → never needs BFS
+"Number of unique paths"            Counting all possibilities, not finding one
+
+If there is a grid with start and destination,
+BFS,DFS => Gives me ONE shortest path from S to D. Tells me, path is possible.
+
+But question asks => Number of unique paths =>
+BFS, DFS => We need to explore all paths and keep a count => exponential complexity.
+DP => Already knows path is possible.
+Only 2 directions =< cannot revisit earlier states > => prev state forms a subproblem
+
+(Refer to white book notes as to how to approach these problems)
+
+But, sometimes number of directions is NOT the only reason to eliminate BFS.
+Consider this scenario:
+
+When question is: Minimum Path sum in a grid => path that minimizes sum along the way.
+Grid with start and end             Could be BFS/DFS/DP
+Only 2 directions (right, down)     No cycles possible → never needs BFS [SECONDARY REASON]
+minimizes path...
+
+BFS gives path with shortest no of steps. It does not consider Edge weight/cost at all.
+Hence,
+Only 2 directions (no cycle possible) and edges have weight => NO BFS
+All 4 directions (cycles possible) and edges have weight => Dijkstras
+Only 2 directions (no cycle possible) and edges have weight => Conclude with DP
+
+--------------------------------------------
+The three cases
+--------------------------------------------
+ALWAYS CONSIDER DIRECTIONS AS A SEONDARY FACTOR 
+
+Case 1: BFS
+--------------------------------------------
+
+"Find the shortest path" in an unweighted graph/grid
+
+What it minimises               Number of steps/edges
+Cell weights                    All equal (or ignored)
+Directions                      Any — 2, 4, 8
+Cycles                          Handled naturally — visited array prevents revisits
+
+Why not DP? Cycles mean you can't guarantee a cell is solved before its neighbours need it. DP requires a clear order of computation.
+Why not Dijkstra? All edges cost the same — Dijkstra reduces to BFS anyway, so BFS is simpler.
+Signal words: "minimum steps", "minimum moves", "shortest path", "minimum jumps"
+Examples: Rotting Oranges, 01 Matrix, Shortest Bridge
+
+
+Case 2: Dijkstra
+--------------------------------------------
+
+"Find the shortest path" in a weighted graph/grid with cycles
+
+What it minimises               Total cost/weight along path
+Cell weights                    Different per edge/cell
+Directions                      Any — cycles are possible
+Cycles                          Handled via priority queue + relaxation
+
+
+Why not BFS? Ignores weights — a 3-step path costing 100 looks identical to a 3-step path costing 1.
+Why not DP? Cycles mean no guaranteed computation order. A cell's answer might need to be updated multiple times as cheaper paths are discovered.
+Signal words: "minimum cost", "minimum time", "cheapest path", weighted graph with cycles
+Examples: Network Delay Time, Path with Minimum Effort (with 4 directions), Cheapest Flights Within K Stops
+
+Case 3: DP
+
+"Find optimal path" in a weighted grid/sequence without cycles
+
+What it optimises               Cost, count, or value along path
+Cell weights                    Different per cell
+Directions                      Restricted — right/down only, or strictly increasing index
+Cycles                          Impossible by problem structure
+
+Why not BFS? Ignores weights.
+Why not Dijkstra? No cycles means computation order is guaranteed — you never need to revisit or relax a cell. DP is simpler and faster.
+Signal words: "minimum sum", "maximum gold", "number of paths", "minimum energy", right/down only movement
+Examples: Minimum Path Sum, Unique Paths, Frog Jump, Triangle
+
+
+Dijkstras (When cycles exist) VS DP (No cycles)
+4 directions on weighted grid → YES → Dijkstra
+2 directions (right/down) on weighted grid → NO → DP
+Study: Minimum Path Sum vs Minimum Effort Path

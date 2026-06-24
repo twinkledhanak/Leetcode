@@ -215,6 +215,11 @@ List<Edge> graphEdges = new ArrayList<Edge>(
 // Consensus::
 // Collections.reverseOrder() can be used for sorting in decreasing order + creation of Max Heap
 
+// To sort Lexicographically:
+// arr = ["b","a","d"]
+Arrays.sort(arr); => Sorts arr Lexicographically
+Arrays.sort(arr, Collections.reverseOrder()) => Sorts arr in REVERSE Lexicographically
+
 
 class Sortbyroll implements Comparator<Student> 
 { 
@@ -1044,6 +1049,47 @@ Max Product:
 "Keep both fire and ice."
 "You don’t know when a bad value will flip and become your best"
 
+********************************************************************************************************
+INITIALISING VALUES IN DP ARRAY:
+********************************************************************************************************
+
+dp[i] = Indicates a state, Eg. Max Sum ending at i 
+dp[i] must be initialized with INVALID states that do not interfere. How to decide?
+
+1. MINIMIZATION DP (Coin Change, Path Min, etc.)
+dp = “minimum cost / minimum steps”
+Initialize with INF (very large number). We are trying to minimize so invalid must not interfere. dp[i] = amount + 1 or Integer.MAX_VALUE
+
+
+2. MAXIMIZATION DP (Kadane, House Robber, etc.)
+dp = “maximum value”
+Initialize with -INF (very small number). We are trying to maximise so invalid must not interfere. dp[i] = nums[0] or Integer.MIN_VALUE
+
+3. COUNTING DP (Coin change II, paths)
+dp = “number of ways”
+Initialize with 0 everywhere but dp[base] = 1 ; 0 means “no ways found”
+
+4. BOOLEAN / FEASIBILITY DP (Subset sum, word break)
+dp = “can we form this?”
+Initialize with false everywhere but dp[base] = true; false means "No cannot form"
+
+This leads to one more check. 
+If we have a case where solution is not possible, eg, dp[n-1] = INF. Meaning, we could not reach a solution. Add a check like this:
+return dp[n-1] > amount ? -1 : dp[n-1]; // Initial value for dp[n-1] is INF
+
+
+
+********************************************************************************************************
+DP on Subsequences
+********************************************************************************************************
+
+Subset Sum / Partition Equal Subset Sum / etc
+
+1. We always need an index and target => DP maintains two states 
+2. dp(i,target) => Until index i, have we found the target? 
+
+
+
 /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Recursion and BackTracking:::::
 
@@ -1314,6 +1360,7 @@ others -> normal
     - remove (could be a string/list)
 Word Search -> Backtracking is outside the for loop
 Return all subsets -> We have 2 separate Backtracking calls, for LST and RST 
+
 
 
 
@@ -1660,6 +1707,11 @@ result.toArray()                    // returns Object[] ← won't compile as int
 result.toArray(new int[0][])        // also valid — Java resizes automatically
 result.toArray(new int[result.size()][])  // pre-sized — marginally more efficient
 
+
+// Difference for below method is that:
+// We're using a primitive type int[] for earlier and Integer for second one.
+// Since we have Integer, we have to unbox/unpack each element carefully
+
 // Convert List to Array
 List<Integer> list = new ArrayList<>();
 return list.stream().mapToInt(Integer::intValue).toArray();
@@ -1742,3 +1794,17 @@ PriorityQueue<Integer> pq = new PriorityQueue<>();
 3. Do I need two things moving at once?
    YES → Two pointers or parallel tracking
    NO  → Single iteration
+
+
+
+// On a cartesian plane, directions look like -
+// Right, Down, Left, Up — clockwise order
+int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}};
+
+
+// On a 2D grid, this is how the directions look like -
+Map<Character, int[]> direction = new HashMap<>();
+direction.put('R', new int[]{1,0});
+direction.put('L', new int[]{-1,0});
+direction.put('U', new int[]{0,1});
+direction.put('D', new int[]{0,-1});

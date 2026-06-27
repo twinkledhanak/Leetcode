@@ -51,7 +51,7 @@ class Solution {
         path = path.append(root.val);
         
         if(root.left==null && root.right==null)
-            result.add(path.toString());
+            result.add(path.toString()); // Add to the result here
         else
             path.append("->");
 
